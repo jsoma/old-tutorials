@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Sidequest - Adding latitude and longitude to your dataset (and geocoding it)</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/webapps/sidequest-extending-database-and-geocoding/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Sidequest - Adding latitude and longitude to your dataset (and geocoding it)">
+  <meta property="twitter:title" content="Sidequest - Adding latitude and longitude to your dataset (and geocoding it)">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Web Applications for You and Me</a> &gt;  Sidequest - Adding latitude and longitude to your dataset (and geocoding it)</p>
+
+
+
+                      <p><strong>This tutorial is out of date!</strong> <a href="http://jonathansoma.com/tutorials/flask-sqlalchemy-mapbox/">Try my longer, updated Flask-SQLite webapp tutorial here</a></p>
+
+<h1 id="sidequest-adding-latitude-and-longitude-to-your-dataset-and-geocoding-it">Sidequest: Adding latitude and longitude to your dataset (and geocoding it)</h1>
+
+<p>Much too late I realized <em>we want to map these schools</em>. So first thing we need to do is convert their addresses to latitude and longitude - a.k.a. geocode them.</p>
+
+<h2 id="adding-columns-to-your-database">Adding columns to your database</h2>
+
+<p>First we need t8 be able to <strong>save our latitude and longitude</strong>. Since the rest of our data lives in the database, we might as well put the lat/lng there, too!</p>
+
+<p>It’ll go in the <code class="highlighter-rouge">schools</code> table in the database. The only problem is right now we don’t <em>have</em> columns for latitude and longitude, so neither the database nor peewee would be able to handle this new information.</p>
+
+<p>So let’s do just that: <strong>add the latitude and longitude columns to both peewee and our database</strong>.</p>
+
+<p>It’s easy enough to add it to the model in <code class="highlighter-rouge">models.py</code>. Just two new columns - latitude and longitude are generally stored as decimals, 9 digits long with 6 of those being after the decimal place. This becomes <code class="highlighter-rouge">DecimalField(max_digits=9,decimal_places=6)</code> in peewee.</p>
+
+<p><strong>models.py</strong></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">School</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+  <span class="c"># ...other columns</span>
+  <span class="n">latitude</span> <span class="o">=</span> <span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span><span class="n">decimal_places</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+  <span class="n">longitude</span> <span class="o">=</span> <span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span><span class="n">decimal_places</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span></code></pre></figure>
+
+<p>But what about the database? We need to manually add the columns, which you could do fine by running <code class="highlighter-rouge">sqlite3 schools.db</code> but I think is a little more reproducible by putting it in Python code. Peewee can run raw SQL queries with <code class="highlighter-rouge">db.execute_sql</code>, so we’re going to do just that.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> Adding, removing, or changing your database is called a <strong>migration</strong>.</p>
+</blockquote>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c"># Run the migration</span>
+<span class="c"># Peewee will throw an error if it doesn't work, but we can just use</span>
+<span class="c"># try/except to ignore it</span>
+<span class="k">try</span><span class="p">:</span>  
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN latitude DECIMAL(9,6)"</span><span class="p">)</span>
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN longitude DECIMAL(9,6)"</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="k">print</span> <span class="s">"Already added columns, skipping that part"</span></code></pre></figure>
+
+<p>That will add the right kind of column to our database (notice how the SQL name for it - <code class="highlighter-rouge">DECIMAL(0,6)</code> - is a little different than the peewee code).</p>
+
+<p>If we ran this <em>twice</em>, our database <em>and</em> peewee would throw an error, since we already added the columns. Can’t add them twice, right? Since we don’t care as long as they made it in the at some point, we use <code class="highlighter-rouge">try</code> and <code class="highlighter-rouge">except</code>.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> Code that fails at any point in <code class="highlighter-rouge">try</code> immediately jumps to <code class="highlighter-rouge">except</code>. Even if you’re ignoring errors, it’s good to print a little message to let the user know what’s going on</p>
+</blockquote>
+
+<h2 id="supporting-a-full-address">Supporting a full address</h2>
+
+<p>What are we going to geocode? The <strong>full address</strong>, of course!</p>
+
+<p>…except we don’t have that as a column! Instead we have a lot of <em>pieces</em> of addresses - the street address, the city, the zip code, all separate. Now we need to do two things:</p>
+
+<ol>
+  <li>Something old an boring, in that we make sure that we have all the appropriate columns put in our peewee models.</li>
+  <li>And something fun and new, where we <strong>write a new function for our model to create an entire address</strong>.</li>
+</ol>
+
+<p>Luckily for our second point, you can treat a peewee model <strong>just like a normal class</strong>, and add new functions willy-nilly. Here’s a snippet of what the changes we’ll need:</p>
+
+<p><strong>models.py</strong></p>
+
+<p>class School(Model):
+  # …other columns
+  primary_address_line_1 = CharField()
+  city = CharField()
+  state_code = CharField()
+  zip = CharField()
+  # …other columns</p>
+
+<p># our function to glue the location together
+  def full_address(self):
+    return “{}, {}, {}, {}”.format(self.primary_address_line_1, self.city, self.state_code, self.zip)</p>
+
+<p>Now calling <code class="highlighter-rouge">school.full_address()</code> will give us the location, formatted like <code class="highlighter-rouge">"400 IRVING AVENUE, BROOKLYN, NY, 11237"</code>. Perfect for geocoding!</p>
+
+<p>While we’re at it, we might as well try it out in <strong>add_lat_lng.py</strong> just to see if it works.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c"># Run the migration</span>
+<span class="c"># Peewee will throw an error if it doesn't work, but we can just use</span>
+<span class="c"># try/except to ignore it</span>
+<span class="k">try</span><span class="p">:</span>  
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN latitude Decimal(9,6)"</span><span class="p">)</span>
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN longitude Decimal(9,6)"</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="k">print</span> <span class="s">"Already added columns, skipping that part"</span>
+  
+<span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">school</span> <span class="ow">in</span> <span class="n">schools</span><span class="p">:</span>
+  <span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">full_address</span><span class="p">()</span></code></pre></figure>
+
+<h2 id="adding-in-the-geocoding">Adding in the geocoding</h2>
+
+<p>Okay, so now we have</p>
+
+<ol>
+  <li>The lat/lng columns in the database</li>
+  <li>The lat/lng columns in peewee</li>
+  <li>The full address to geocode</li>
+</ol>
+
+<p>Now it’s time to geocode! Since we don’t have that many we can use Google’s geocoding service. I stole the following URL from <a href="https://opensas.wordpress.com/2013/06/30/using-openrefine-to-geocode-your-data-using-google-and-openstreetmap-api/">this Google Refine geocoding tutorial</a>:</p>
+
+<p><code class="highlighter-rouge">http://maps.googleapis.com/maps/api/geocode/json?sensor=false&amp;address=the_address_im_looking_for</code></p>
+
+<p>We’ll need to add the <code class="highlighter-rouge">requests</code> library to Python first, so we can actually make the request, and <code class="highlighter-rouge">sleep</code> so we can pause betwen them</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span></code></pre></figure>
+
+<p>and instead of getting <em>every</em> school, maybe we should just get the ones without a <code class="highlighter-rouge">latitude</code>, a.k.a. the ones that haven’t been geocoded yet? You apparently select <code class="highlighter-rouge">NULL</code> values in peewee like this:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">latitude</span> <span class="o">&gt;&gt;</span> <span class="bp">None</span><span class="p">)</span></code></pre></figure>
+
+<p>And now we have to actually query good for the lat/lng and save it into the database! Here’s your final <strong>add_lat_lng.py</strong>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c"># Run the migration</span>
+<span class="c"># Peewee will throw an error if it doesn't work, but we can just use</span>
+<span class="c"># try/except to ignore it</span>
+<span class="k">try</span><span class="p">:</span>  
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN latitude Decimal(9,6)"</span><span class="p">)</span>
+  <span class="n">db</span><span class="o">.</span><span class="n">execute_sql</span><span class="p">(</span><span class="s">"ALTER TABLE schools ADD COLUMN longitude Decimal(9,6)"</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+  <span class="k">print</span> <span class="s">"Already added columns, skipping that part"</span>
+
+<span class="c"># Let's get all of the schools that haven't been geocoded yet</span>
+<span class="c"># This is apparently how you select where latitude is null</span>
+<span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">latitude</span> <span class="o">&gt;&gt;</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">school</span> <span class="ow">in</span> <span class="n">schools</span><span class="p">:</span>
+  <span class="c"># Wait a few seconds between each of these because we'd like to pretend</span>
+  <span class="c"># we aren't robots and are polite</span>
+  <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="c"># Wrap this in try/except because hey if it fails it fails</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="c"># Form the URL with the address in it</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"http://maps.googleapis.com/maps/api/geocode/json?sensor=false&amp;address={}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">school</span><span class="o">.</span><span class="n">full_address</span><span class="p">())</span>
+
+    <span class="c"># Request the URL</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="c"># Dig deep into the JSON </span>
+    <span class="c"># this will give us something like</span>
+    <span class="c"># {u'lat': 40.7135296, u'lng': -73.9856844}</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">'results'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'geometry'</span><span class="p">][</span><span class="s">'location'</span><span class="p">]</span>
+    
+    <span class="c"># Assign the lat/lng into the school object (the row)</span>
+    <span class="n">school</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s">'lat'</span><span class="p">]</span>
+    <span class="n">school</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s">'lng'</span><span class="p">]</span>
+    
+    <span class="c"># And now save it to the database</span>
+    <span class="n">school</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">"{} is at {}, {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">school</span><span class="o">.</span><span class="n">school_name</span><span class="p">,</span> <span class="n">school</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">school</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">"Failed to query/save for {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">school</span><span class="o">.</span><span class="n">school_name</span><span class="p">)</span></code></pre></figure>
+
+<p>And now when you run it, you’ll end up with a wonderful situation like this</p>
+
+<p><img src="/tutorials/assets/images/geocoding-schools.png" alt="" /></p>
+
+<p>Problem(s) solved, geocoding success!</p>
+
+<p>Now let’s get on to <a href="../mapping-our-schools/">adding school maps to our webapp</a>!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

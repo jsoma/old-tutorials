@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Saving as a CSV</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/mapping/export-as-csv/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Saving as a CSV">
+  <meta property="twitter:title" content="Saving as a CSV">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Mapping for Journalists (and everyone else)</a> &gt;  Saving as a CSV</p>
+
+
+
+                      <h1 id="saving-as-a-csv">Saving as a CSV</h1>
+
+<p>Let’s say I have a collection of points and I’d like to convert them to a CSV. It’s simple to do in QGIS!</p>
+
+<h2 id="step-one-open-your-layer">Step One: Open Your Layer</h2>
+
+<p>First, <strong>open up your layer</strong> to import it into QGIS. When I double-click it opens for me, but you might need to do <code class="highlighter-rouge">Layer &gt; Add Vector Layer</code>. It will appear on the list of layers on the left-hand side.</p>
+
+<p><img src="/tutorials/assets/images/qgis-add-vector-layer.png" alt="Add Vector Layer" /></p>
+
+<p><img src="/tutorials/assets/images/qgis-points.png" alt="" /></p>
+
+<h2 id="step-two-check-the-attributes">Step Two: Check the attributes</h2>
+
+<p>When you save as a CSV, <strong>it only saves the per-point attributes, not the geographic data</strong>. Let’s take a look a the attribute table to see what’s included - right-click, then “Open Attribute Table”.</p>
+
+<p><img src="/tutorials/assets/images/qgis-points-open-attr.png" alt="" /></p>
+
+<p>If we scroll back and forth between the columns, we see there’s no <code class="highlighter-rouge">X</code> and <code class="highlighter-rouge">Y</code> or <code class="highlighter-rouge">lat</code> and <code class="highlighter-rouge">lon</code> columns. Let’s make some!</p>
+
+<p><img src="/tutorials/assets/images/qgis-no-latlng.png" alt="" /></p>
+
+<h2 id="step-three-adding-latlon-columns">Step Three: Adding lat/lon columns</h2>
+
+<p>From the <strong>top menu</strong>, select <code class="highlighter-rouge">Vector &gt; Geometry Tools &gt; Export/Add Geometry Columns</code></p>
+
+<p><img src="/tutorials/assets/images/qgis-geometry-fields.png" alt="" /></p>
+
+<p>For my <strong>CRS</strong>, I picked <strong>Project</strong>: the file itself is in the New York State Plane CRS, but I’ve set the Project to be <code class="highlighter-rouge">EPSG:4326</code>/<code class="highlighter-rouge">WGS 84</code>. By using <code class="highlighter-rouge">WGS 84</code> for the geometry fields, I’ll get latitude and longitude as my result. If those words don’t make sense to you, <a href="../what-is-a-crs/">read this</a> and <a href="../change-crs-with-qgis/">this</a> or just try and risk it - you’ll know if it went wrong in the next step.</p>
+
+<p><img src="/tutorials/assets/images/qgis-geometry-fields-options.png" alt="" /></p>
+
+<p>After it’s updated the layer, click <strong>Close</strong>. If you get a warning about “simultaneous access” you can just ignore it.</p>
+
+<p><img src="/tutorials/assets/images/qgis-simultaneous-access.png" alt="" /></p>
+
+<h2 id="step-four-checking-your-work">Step Four: Checking Your Work</h2>
+
+<p>Open up your attribute table again…</p>
+
+<p><img src="/tutorials/assets/images/qgis-points-open-attr.png" alt="" /></p>
+
+<p>And scroll all the way to your left. New columns, at your service: <code class="highlighter-rouge">XCOORD</code> and <code class="highlighter-rouge">YCOORD</code>!</p>
+
+<p><img src="/tutorials/assets/images/qgis-XCOORD-YCOORD.png" alt="" /></p>
+
+<p>If your numbers don’t look like latitude and longitude (e.g. they’re well over 100), you probably have a CRS issue. Go read <a href="../what-is-a-crs/">What is a CRS?</a> and <a href="../change-crs-with-qgis/">Changing CRS with QGIS</a> and you’ll be good to go.</p>
+
+<h2 id="step-five-actually-saving-it-as-a-csv">Step Five: Actually saving it as a CSV</h2>
+
+<p>Now that the latitude and longitude are in the attribute table, you can actually save the file as a CSV.</p>
+
+<p>Right-click your layer, select <code class="highlighter-rouge">Save As...</code></p>
+
+<p><img src="/tutorials/assets/images/qgis-result-save-as.png" alt="" /></p>
+
+<p>As long as the <strong>Format</strong> is CSV, the other options really don’t matter. CRS isn’t important since it’s only saving the attribute table, not any of the inherent geographic data.</p>
+
+<p><img src="/tutorials/assets/images/qgis-result-save-as-csv.png" alt="" /></p>
+
+<p><strong>Now you’re all set</strong> - open it in Excel if you’d like to triple-check!</p>
+
+<p><img src="/tutorials/assets/images/qgis-csv-in-excel.png" alt="" /></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

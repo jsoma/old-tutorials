@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Shape maps</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/shape-maps/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Shape maps">
+  <meta property="twitter:title" content="Shape maps">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Shape maps</p>
+
+
+
+                      <h1 id="shape-maps">Shape maps</h1>
+
+<p>We’ve done maps based on points before, now it’s time to stretch out d3 projection skills a little bit further!</p>
+
+<h2 id="data-format-geojson">Data format: GeoJSON</h2>
+
+<p>Generally we use <code class="highlighter-rouge">d3.csv</code> to read in our data, because… our data is a CSV, of course. This time we’re going to be using JSON, and (surprise!) d3 supports that with <code class="highlighter-rouge">d3.json</code>.</p>
+
+<iframe class="iframe-demo" src="/demos/shape-maps-e4a62f413521a5ddb2d8dcc7cf482f3c.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-e4a62f413521a5ddb2d8dcc7cf482f3c.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script&gt;</span>
+<span class="nx">d3</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">"/tutorials/assets/data/gz_2010_us_050_00_5m.json"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-e4a62f413521a5ddb2d8dcc7cf482f3c.html">Open example in new window</a></p>
+
+<p>If you <strong>look at the console</strong>, you can see it has <strong>two keys</strong>:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">type</code>, which is set to <code class="highlighter-rouge">"FeatureCollection"</code></li>
+  <li><code class="highlighter-rouge">features</code>, which is an array with around 3000… <em>things</em> in it.</li>
+</ul>
+
+<p>Each of those <strong>features</strong> has its own attributes, and some of <em>those</em> attributes have their <em>own</em> sub-attributes, and who knows, maybe it goes on forever and ever? Don’t sweat it, though, we’ve got this covered!</p>
+
+<p>This is a specific kind of JSON called <strong>GeoJSON</strong>. It’s the exact same thing as JSON, just formatted in a specific way. For example, from <a href="http://geojson.org/">http://geojson.org/</a>:</p>
+
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Feature"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"geometry"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Point"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">125.6</span><span class="p">,</span><span class="w"> </span><span class="mf">10.1</span><span class="p">]</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dinagat Islands"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span></code></pre></figure>
+
+<p>Every single GeoJSON document will be formatted in the exact(-ish) same way, typically a <code class="highlighter-rouge">FeatureCollection</code> with a bunch of <code class="highlighter-rouge">Features</code> inside of it, and each of those features has <code class="highlighter-rouge">geometry</code> (the geography of the feature) and <code class="highlighter-rouge">properties</code> (the data attached to the feature). What we have now is</p>
+
+<ul>
+  <li><code class="highlighter-rouge">FeatureCollection</code> of all of the counties in the USA</li>
+  <li>Each county is a <code class="highlighter-rouge">Feature</code></li>
+  <li>Each county’s boundaries is inside of <code class="highlighter-rouge">geometry</code>, usually a <code class="highlighter-rouge">MultiPolygon</code></li>
+  <li>Each country’s data set - its name, area, etc - is stored inside of <code class="highlighter-rouge">properties</code></li>
+</ul>
+
+<p>It might be easier if you take a little while to play around with creating your own GeoJSON! I highly highly recommend hopping on over <a href="http://geojson.io">http://geojson.io/</a>, which allows you to build your own GeoJSON.</p>
+
+<h2 id="back-to-our-code">Back to our code</h2>
+
+<h3 id="pulling-out-the-counties">Pulling out the counties</h3>
+
+<p>First, let’s take out all of the counties into their own variable. Since we have a <code class="highlighter-rouge">FeatureCollection</code>, all of the counties are inside of the <code class="highlighter-rouge">features</code> key of our data.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">counties</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">];</span></code></pre></figure>
+
+<h3 id="building-our-chart-space">Building our chart space</h3>
+
+<p>Nothing weird here, just making an <code class="highlighter-rouge">svg</code> and putting a <code class="highlighter-rouge">g</code> inside of it (we don’t <em>have</em> to use a <code class="highlighter-rouge">g</code> since we don’t have margins, but I think it’s good practice.)</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span>
+
+<span class="c1">// Append the svg inside of our div</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"#map"</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+
+<span class="c1">// Add in the g to offset it with the margin space</span>
+<span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"g"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0,0)"</span><span class="p">);</span></code></pre></figure>
+
+<h3 id="creating-our-projection-and-adding-our-shapes">Creating our projection and adding our shapes</h3>
+
+<p>You can’t have a map without a <strong>projection</strong>! Since this is the USA, we’ll stick with <code class="highlighter-rouge">d3.geo.albersUSA</code>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">projection</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">albersUsa</span><span class="p">()</span>
+                        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+                        <span class="p">.</span><span class="nx">translate</span><span class="p">([</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]);</span></code></pre></figure>
+
+<p>Last time we made a map we used <code class="highlighter-rouge">circle</code> to draw points, but how do we draw shapes? Remember when we tried to draw a line on a graph and accidentally drew these really weird ugly shapes instead? It’s the same thing!</p>
+
+<p><strong>In SVG, lines</strong> (with multiple points in them) <strong>and shapes are the same thing</strong>, shapes just happen to be filled in. This means we’ll use <code class="highlighter-rouge">path</code> to draw our shapes.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">);</span></code></pre></figure>
+
+<p>…but last time we made a line with <code class="highlighter-rouge">path</code>, we had to set the <strong>d</strong> attribute to give it a path. We had a <code class="highlighter-rouge">d3.geo.line</code> thingie help us plot the <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code>. You’ll probably remember with an example!</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// map years on the x axis and sales on the y axis</span>
+<span class="c1">// using our xscale and yscale</span>
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">line</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">x</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+      <span class="k">return</span> <span class="nx">xscale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'year'</span><span class="p">]);</span> 
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">y</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+      <span class="k">return</span> <span class="nx">yscale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> 
+    <span class="p">});</span>
+
+<span class="c1">// use line to help plot where the points will go</span>
+<span class="nx">chart</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span></code></pre></figure>
+
+<p>But times have changed! We’re using a projection now, which means we <em>don’t have</em> an x-scale and y-scale anymore, we have some weird convoluted system instead. When we were plotting circles we used something like this:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">circles</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cx'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">coords</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'lng'</span><span class="p">],</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'lat'</span><span class="p">]</span> <span class="p">];</span>
+	<span class="kd">var</span> <span class="nx">projected_coords</span> <span class="o">=</span> <span class="nx">projection</span><span class="p">(</span><span class="nx">coords</span><span class="p">);</span>
+	<span class="k">return</span> <span class="nx">projected_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cy'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">coords</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'lng'</span><span class="p">],</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'lat'</span><span class="p">]</span> <span class="p">];</span>
+	<span class="kd">var</span> <span class="nx">projected_coords</span> <span class="o">=</span> <span class="nx">projection</span><span class="p">(</span><span class="nx">coords</span><span class="p">);</span>
+	<span class="k">return</span> <span class="nx">projected_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">});</span></code></pre></figure>
+
+<p><strong>BUT WORRY NO MORE!</strong> When we’re mapping with lines, d3 takes care of it all behind the scenes. It has a built-in projection helper for lines that is <strong>confusingly called <code class="highlighter-rouge">path</code></strong>. Instead of muddling through like we did with circles, it’s so easy we might just <em>die</em>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// We're using the albers projection</span>
+<span class="kd">var</span> <span class="nx">projection</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">albersUsa</span><span class="p">()</span>
+                        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+                        <span class="p">.</span><span class="nx">translate</span><span class="p">([</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]);</span>
+                        
+<span class="c1">// Use the projection to create a path helper for our lines</span>
+<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">projection</span><span class="p">(</span><span class="nx">projection</span><span class="p">);</span>
+
+<span class="c1">// Use the path helper with the d attribute to draw the path</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span></code></pre></figure>
+
+<h3 id="putting-it-together">Putting it together</h3>
+
+<p>I know it’s been a lot! We just haven’t had enough to draw an entire page yet. Let’s do that now!</p>
+
+<iframe class="iframe-demo" src="/demos/shape-maps-1f499d7c8a8906a78d42cd4fcaf69a46.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-1f499d7c8a8906a78d42cd4fcaf69a46.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"map"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">d3</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">"/tutorials/assets/data/gz_2010_us_050_00_5m.json"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+	<span class="cm">/* Take a look at our data */</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+
+  <span class="cm">/* Hmmmm, it has a .type and it has .features. What's in .features? */</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">]);</span>
+
+  <span class="cm">/* It's a long list of stuff! Let's look inside one of those features */</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+  
+  <span class="cm">/* Let's break out our features into another variable... */</span>
+  <span class="kd">var</span> <span class="nx">counties</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">];</span>
+
+  <span class="cm">/* 
+    Okay, so it has two bits:
+    1) geometry - the type (multipolygon, line, point) and the coordinates
+    2) properties - the bits of data that come along with it
+  */</span>
+  
+  <span class="cm">/* Let's build something at http://geojson.io/ */</span>
+  
+  <span class="c1">// Build our chart space</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span>
+
+  <span class="c1">// Append the svg inside of our div</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"#map"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+  <span class="c1">// Add in the g to offset it with the margin space</span>
+  <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"g"</span><span class="p">);</span>
+
+  <span class="c1">// create our projection</span>
+  <span class="kd">var</span> <span class="nx">projection</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">albersUsa</span><span class="p">()</span>
+                          <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+                          <span class="p">.</span><span class="nx">translate</span><span class="p">([</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]);</span>
+
+  <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">projection</span><span class="p">(</span><span class="nx">projection</span><span class="p">);</span>
+
+  <span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-1f499d7c8a8906a78d42cd4fcaf69a46.html">Open example in new window</a></p>
+
+<p><strong>AWESOME!</strong> And we didn’t even <em>do</em> much at <em>all</em>, really. That’s like <em>ten lines of code</em> after we create the SVG!</p>
+
+<h2 id="coloring-the-map">Coloring the map</h2>
+
+<p>Now we all know we could use <code class="highlighter-rouge">.style('fill', '#ff0000')</code> to make the map red. But how do you change the color based on some value? We could always use <code class="highlighter-rouge">console.log</code> inside of a <code class="highlighter-rouge">.style</code> call, like so:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// look at our data</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+      <span class="c1">// but always return red</span>
+      <span class="k">return</span> <span class="s1">'#ff0000'</span><span class="p">;</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span></code></pre></figure>
+
+<p>It gives us a <code class="highlighter-rouge">type</code>, some <code class="highlighter-rouge">properties</code> and <code class="highlighter-rouge">geometry</code>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span> 
+  <span class="s2">"type"</span><span class="err">:</span> <span class="s2">"Feature"</span><span class="p">,</span> 
+  <span class="s2">"properties"</span><span class="err">:</span> <span class="p">{</span> 
+    <span class="s2">"GEO_ID"</span><span class="err">:</span> <span class="s2">"0500000US02261"</span><span class="p">,</span> 
+    <span class="s2">"STATE"</span><span class="err">:</span> <span class="s2">"02"</span><span class="p">,</span> 
+    <span class="s2">"COUNTY"</span><span class="err">:</span> <span class="s2">"261"</span><span class="p">,</span> 
+    <span class="s2">"NAME"</span><span class="err">:</span> <span class="s2">"Valdez-Cordova"</span><span class="p">,</span> 
+    <span class="s2">"LSAD"</span><span class="err">:</span> <span class="s2">"CA"</span><span class="p">,</span> 
+    <span class="s2">"CENSUSAREA"</span><span class="err">:</span> <span class="mf">34239.880000</span> 
+  <span class="p">},</span> 
+  <span class="s2">"geometry"</span><span class="err">:</span> <span class="p">{</span> 
+    <span class="s2">"type"</span><span class="err">:</span> <span class="s2">"MultiPolygon"</span><span class="p">,</span> 
+    <span class="s2">"coordinates"</span><span class="err">:</span> <span class="p">[</span> <span class="p">]</span> 
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Where we could usually do something like <code class="highlighter-rouge">d['NAME']</code>, <strong>when you work with GeoJSON you always always always need to look inside of <code class="highlighter-rouge">properties</code></strong>. Always always always (usually). <em>You will forget this, but try not to</em>. <code class="highlighter-rouge">console.log</code> will help you realize what you’ve done, but it’s always best to be prepared. Let’s look a everyone’s Census land area.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// look at our data</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]);</span>
+      <span class="c1">// but always return red</span>
+      <span class="k">return</span> <span class="s1">'#ff0000'</span><span class="p">;</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span></code></pre></figure>
+
+<p>Hmmm. That’s… a lot of numbers? If we’re going to build a scale, we’ll want to lean on our old friend <code class="highlighter-rouge">d3.max</code>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// find the largest area of a county</span>
+<span class="kd">var</span> <span class="nx">max_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span></code></pre></figure>
+
+<p>Remember, it’s always inside of <code class="highlighter-rouge">['properties']</code>! Then we’ll make an appropriate scale using this data.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// color them between beige and red</span>
+<span class="kd">var</span> <span class="nx">color_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">max_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="s1">'beige'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">]);</span></code></pre></figure>
+
+<p>And plop that into the <code class="highlighter-rouge">.style</code> call</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">color_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span></code></pre></figure>
+
+<p>And we should be good to go! Let’s put it all together and see if it works.</p>
+
+<iframe class="iframe-demo" src="/demos/shape-maps-565d069d124ecb27c16128558e4b8ec6.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-565d069d124ecb27c16128558e4b8ec6.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"map"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">d3</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">"/tutorials/assets/data/gz_2010_us_050_00_5m.json"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">]);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+  
+  <span class="cm">/* Let's break out our features into another variable... */</span>
+  <span class="kd">var</span> <span class="nx">counties</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">];</span>
+
+  <span class="c1">// Build our chart space</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span>
+
+  <span class="c1">// Append the svg inside of our div</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"#map"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+  <span class="c1">// Add in the g to offset it with the margin space</span>
+  <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"g"</span><span class="p">);</span>
+
+  <span class="c1">// create our projection</span>
+  <span class="kd">var</span> <span class="nx">projection</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">albersUsa</span><span class="p">()</span>
+                          <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+                          <span class="p">.</span><span class="nx">translate</span><span class="p">([</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]);</span>
+
+  <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">projection</span><span class="p">(</span><span class="nx">projection</span><span class="p">);</span>
+
+  <span class="c1">// find the largest area of a county</span>
+  <span class="kd">var</span> <span class="nx">max_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span>
+
+  <span class="c1">// color them between beige and red</span>
+  <span class="kd">var</span> <span class="nx">color_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">max_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="s1">'beige'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">]);</span>
+
+  <span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">color_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]);</span>
+      <span class="p">})</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-565d069d124ecb27c16128558e4b8ec6.html">Open example in new window</a></p>
+
+<h2 id="adjusting-your-scale">Adjusting your scale</h2>
+
+<p>Ah, that’s… pretty useless. You can see that Alaska has some big counties and that the projection is making them nice and small, but it seems <em>kind of</em> useless.</p>
+
+<p>The <strong>right thing to do</strong> in this case is (probably) to make a histogram and figure out what the best ways to cut that up. But hey, instead of doing <em>that</em>, let’s just try a bunch of different color scales!</p>
+
+<h3 id="middle-values">Middle values</h3>
+
+<p>What if instead of saying “these are <em>big</em>”, instead we wanted to say “these are medium and these are big and these are small”? We might have blue be 0, beige be the median, and red be the largest.</p>
+
+<p><strong>Question:</strong> But <em>how</em>?</p>
+
+<p><strong>Answer:</strong> Your friend <code class="highlighter-rouge">d3.max</code> has a friend named <code class="highlighter-rouge">d3.median</code> that you can use with <code class="highlighter-rouge">d3.scale.linear()</code>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">max_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span>
+<span class="kd">var</span> <span class="nx">median_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">median_area</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span></code></pre></figure>
+
+<p>And when you’re making a color scale, you can pass <em>multiple ranges</em>. You can say <strong>zero to the median is blue to beige</strong>, and <strong>the median to max is beige to red</strong>. You do this like so:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// blue to beige to red</span>
+<span class="kd">var</span> <span class="nx">color_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">median_area</span><span class="p">,</span> <span class="nx">max_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="s1">'red'</span><span class="p">,</span> <span class="s1">'beige'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">]);</span></code></pre></figure>
+
+<p>Let’s see how it looks:</p>
+
+<iframe class="iframe-demo" src="/demos/shape-maps-312e56d8e212348bf281b8740f89c12e.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-312e56d8e212348bf281b8740f89c12e.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"map"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">d3</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">"/tutorials/assets/data/gz_2010_us_050_00_5m.json"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">]);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+  
+  <span class="cm">/* Let's break out our features into another variable... */</span>
+  <span class="kd">var</span> <span class="nx">counties</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">];</span>
+
+  <span class="c1">// Build our chart space</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span>
+
+  <span class="c1">// Append the svg inside of our div</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"#map"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+  <span class="c1">// Add in the g to offset it with the margin space</span>
+  <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"g"</span><span class="p">);</span>
+
+  <span class="c1">// create our projection</span>
+  <span class="kd">var</span> <span class="nx">projection</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">albersUsa</span><span class="p">()</span>
+                          <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+                          <span class="p">.</span><span class="nx">translate</span><span class="p">([</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]);</span>
+
+  <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">geo</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">projection</span><span class="p">(</span><span class="nx">projection</span><span class="p">);</span>
+
+  <span class="c1">// find the largest area of a county</span>
+  <span class="kd">var</span> <span class="nx">max_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span>
+  <span class="kd">var</span> <span class="nx">median_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">median</span><span class="p">(</span> <span class="nx">counties</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]</span> <span class="p">});</span>
+
+  <span class="c1">// color them between beige and red</span>
+  <span class="kd">var</span> <span class="nx">color_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">median_area</span><span class="p">,</span> <span class="nx">max_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="s1">'blue'</span><span class="p">,</span> <span class="s1">'beige'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">]);</span>
+
+  <span class="nx">map</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">counties</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">color_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">][</span><span class="s1">'CENSUSAREA'</span><span class="p">]);</span>
+      <span class="p">})</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/shape-maps-312e56d8e212348bf281b8740f89c12e.html">Open example in new window</a></p>
+
+<p>Fun, right?</p>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Now that you’ve seen that mixing up the color scale a little can tell a whole different story, check out the same map colored many many different ways at <a href="/tutorials/d3/color-scale-examples">color scale examples</a>.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

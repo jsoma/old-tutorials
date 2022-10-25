@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Unicode and UTF-8</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/international-data/unicode-and-utf-8/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Unicode and UTF-8">
+  <meta property="twitter:title" content="Unicode and UTF-8">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">International Data Journalism</a> &gt;  Unicode and UTF-8</p>
+
+
+
+                      <h1 id="unicode-and-utf-8">Unicode and UTF-8</h1>
+
+<blockquote>
+  <p>This is <strong>part 3</strong> of a <strong>5-part series</strong> on character encodings in international data journalism. <a href="/tutorials/international-data/utf8-unicode-character-encodings/">Check out the other pieces</a>.</p>
+</blockquote>
+
+<h2 id="review-from-the-story-of-ascii-and-character-encodingsascii-and-character-encodings">Review from <a href="../ascii-and-character-encodings/">The story of ASCII and character encodings</a></h2>
+
+<p>Once upon a time we only had ASCII, which was a 7-bit character set that supported 127 characters. It wasn’t quite enough code points for <em>all the world’s languages</em>, though.</p>
+
+<p>Then came Extended ASCII, which was 8 bits and 255 characters. Still not enough, oddly! It <em>did</em> provide a chance for everyone to make a thousand national variants, though, which still cause problems to this day.</p>
+
+<h2 id="hexadecimal">Hexadecimal</h2>
+
+<p>Before we start talking about Unicode, we need to take a second to talk about hexadecimal! Hexadecimal (a.k.a. <strong>hex</strong>) is another numbering system like binary or decimal, except instead of being based on 0-1 or 0-9 it’s <strong>0-F</strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary</th>
+      <th>Decimal</th>
+      <th>Hex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0000</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>0001</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0010</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>0011</td>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td>1000</td>
+      <td>8</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>1001</td>
+      <td>9</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>1010</td>
+      <td>10</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <td>1011</td>
+      <td>11</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <td>1100</td>
+      <td>12</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <td>1101</td>
+      <td>13</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <td>1110</td>
+      <td>14</td>
+      <td>E</td>
+    </tr>
+    <tr>
+      <td>1111</td>
+      <td>15</td>
+      <td>F</td>
+    </tr>
+    <tr>
+      <td>10000</td>
+      <td>16</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>10001</td>
+      <td>17</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td>10010</td>
+      <td>18</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>10010</td>
+      <td>18</td>
+      <td>FE</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td>11111110</td>
+      <td>254</td>
+      <td>FE</td>
+    </tr>
+    <tr>
+      <td>11111111</td>
+      <td>254</td>
+      <td>FF</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A lot of the time when you’re talking about Unicode, instead of talking about code points using <em>decimal</em> numbers you use <em>hex</em>, just because the numbers are so big.</p>
+
+<p>That means you’ll usually see something like <code class="highlighter-rouge">1F4B8</code> instead of <code class="highlighter-rouge">128184</code>.</p>
+
+<p>This makes sense because 1) it takes up a lot less space, and 2) every binary <code class="highlighter-rouge">1111</code> is a hexadecimal <code class="highlighter-rouge">F</code>, so it’s easy to convert something like <code class="highlighter-rouge">1111 0000 1111</code> into <code class="highlighter-rouge">F0F</code>, even if you don’t know what the decimal numbering is.</p>
+
+<blockquote>
+  <p><strong>NOTE::</strong> When people talk about different numbering systems, they sometimes signal which one they’re using with a little prefix: <code class="highlighter-rouge">0b</code> means binary, and <code class="highlighter-rouge">0x</code> means hex, so: <code class="highlighter-rouge">0b1110110</code> would be binary, and <code class="highlighter-rouge">0xFF03A</code> would be hexadecimal.</p>
+</blockquote>
+
+<h2 id="unicode">Unicode</h2>
+
+<p>After the world got tired of 7- and 8-bit character encodings, they created a character set called Unicode. They didn’t just hop up to 9 bits, either. They put things into overdrive, my friends, and went right  to <em>thirty-two bits</em>. Let’s examine the difference:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Number of bits</th>
+      <th>Largest Number (Binary)</th>
+      <th>Range (Decimal)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7-bit</td>
+      <td><code class="highlighter-rouge">111 1111</code></td>
+      <td>0-127</td>
+    </tr>
+    <tr>
+      <td>8-bit</td>
+      <td><code class="highlighter-rouge">1111 1111</code></td>
+      <td>0-255</td>
+    </tr>
+    <tr>
+      <td>32-bit</td>
+      <td><code class="highlighter-rouge">1111 1111 1111 1111 1111 1111 1111 1111</code></td>
+      <td>0-4,294,967,295</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>That’s a lot, right? Due to magic technical specifications, Unicode can’t actually use that entire range, but it does a pretty good job:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Encoding</th>
+      <th>Number of bits</th>
+      <th>Supported Code Points</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ASCII</td>
+      <td>7</td>
+      <td>127</td>
+    </tr>
+    <tr>
+      <td>Extended ASCII</td>
+      <td>8</td>
+      <td>255</td>
+    </tr>
+    <tr>
+      <td>Unicode</td>
+      <td>32</td>
+      <td>1,114,112</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Do we have a million different symbols and characters across the planet? No, not yet. Even the big hitter of Chinese only has around fifty thousand.</p>
+
+<p>Currently, Unicode has code points mappings for <em>over 120000 characters</em>, which means it’s at only 10% of its capacity. I guess they learned their lesson and left some room to grow!</p>
+
+<p>Along with characters from languages, emoji also have their own place in Unicode. 128,126 is “alien monster” 👾, and 128,540 is “face with stuck-out tongue and winking eye” 😜.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Emoji</th>
+      <th>Unicode Code Point</th>
+      <th>Name</th>
+      <th>Code Point in Hex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>😱</td>
+      <td>128561</td>
+      <td>face screaming in fear</td>
+      <td><code class="highlighter-rouge">U+1F631</code></td>
+    </tr>
+    <tr>
+      <td>🐘</td>
+      <td>128024</td>
+      <td>elephant</td>
+      <td><code class="highlighter-rouge">U+1F418</code></td>
+    </tr>
+    <tr>
+      <td>💸</td>
+      <td>128184</td>
+      <td>money with wings</td>
+      <td><code class="highlighter-rouge">U+1F4B8</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>When you talk about Unicode code points with hex, you put a <code class="highlighter-rouge">U+</code> in front of it so you know you’re talking Unicode. You can see the entire list over at <a href="http://unicode.org/emoji/charts/full-emoji-list.html">Unicode.org’s Emoji List</a>.</p>
+
+<p>All of this extra space for more characters should really make our issues go away, but one question remains: if every symbol needs to have a number associated with it, how can we count that high?</p>
+
+<p>Introducing: UTF-32, UTF-16, and UTF-8!</p>
+
+<h2 id="the-utf-crew">The UTF Crew</h2>
+
+<p>Lots of people still use ASCII because it’s nice and small, and was the default for very many years. 32-bit numbers take up, well, 32 bits, while an 8-bit number can’t count as high, but only takes up 8 bits.</p>
+
+<p>So: if you use an 8-bit encoding instead of a 32-bit encoding, your files will take up <strong>one-quarter as much space</strong>. That means a 5MB 8-bit file would be 20MB if it was saved as a 32-bit file.</p>
+
+<p>UTF stands for the easy-to-remember “Universal Coded Character Set + Transformation Format,” and (sometimes) tries to solve that problem.</p>
+
+<p><strong>What’s the difference between Unicode and UTF-xx?</strong> Unicode is the system of code points that maps a number to a symbol. These UTF things are the format in which you <em>store</em> those numbers (it’ll hopefully make more sense when you read through).</p>
+
+<h3 id="utf-32">UTF-32</h3>
+
+<p>When we wanted to get an ASCII <code class="highlighter-rouge">A</code>, we’d just use the binary for 65: <code class="highlighter-rouge">100 0001</code>. If we used extended ASCII, it’s still 65, it just has an extra bit, so the binary number is a little longer: <code class="highlighter-rouge">0100 0001</code>.</p>
+
+<p>Unicode, though, can count <em>really, really high</em>. Instead of 7 or 8 bits, it supports <em>32</em>, so 65 would look like <code class="highlighter-rouge">0000 0000 0000 0000 0000 0000 0100 0001</code>. If we want a capital <code class="highlighter-rouge">B</code>, we’d need to count to 66, which is the equally-absurd <code class="highlighter-rouge">0000 0000 0000 0000 0000 0000 0100 0010</code>. Just the word “Cat” would look something like:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>UTF-32</th>
+      <th>Number</th>
+      <th>Character</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0100 0011</td>
+      <td>67</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0110 0001</td>
+      <td>97</td>
+      <td>a</td>
+    </tr>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0111 0100</td>
+      <td>116</td>
+      <td>t</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Look at all those <code class="highlighter-rouge">0</code>s lined up! This is called <strong>UTF-32</strong>, because you’re using all 32 bits to represent the number. It’s also a <em>heck</em> of a lot of extra space.</p>
+
+<h3 id="utf-16">UTF-16</h3>
+
+<p>If you’re a little worried about all of those seemingly-useless <code class="highlighter-rouge">0</code>s at the beginning of every number, you might use <strong>UTF-16</strong> instead.</p>
+
+<p>UTF-16 is kind of a misnomer, because it doesn’t <em>only</em> use 16-bits, it uses something called <strong>variable-length encoding</strong>. Variable-length encoding lets you sometimes use 16 bits to represent a character, and sometimes combine two 16-bit numbers into one big 32-bit number. This means it’s <em>usually</em> just using 16 bits, so you’re saving all of the extra space that UTF-32 takes up.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>UTF-32</th>
+      <th>UTF-16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0100 0011</td>
+      <td>0000 0000 0100 0100</td>
+    </tr>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0110 0001</td>
+      <td>0000 0000 0110 0100</td>
+    </tr>
+    <tr>
+      <td>0000 0000 0000 0000 0000 0000 0111 0100</td>
+      <td>0000 0000 0111 0100</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>I can’t for the life of me describe how variable encoding of UTF-16 works, but you can read <a href="https://en.wikipedia.org/wiki/UTF-16">the Wikipedia page</a> if you’d like to know more. There’s also a thing called UCS-2 that was an easier version of UTF-16, the difference is that it wasn’t variable-length encoding (UCS-2 was stuck at 16 bits always and forever).</p>
+
+<h3 id="utf-8">UTF-8</h3>
+
+<p>But the one you’ve probably heard of is <strong>UTF-8</strong>, which uses only 8 bits. It <em>seems</em> like it wouldn’t allow you to represent much at all, but you’d be wrong! Variable encoding to the rescue again.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> You probably don’t need to know all this! The takeaway is that usually UTF-8 is great unless you’re writing in Chinese, Korean or Japanese, in which case UTF-16 will actually take up less space.</p>
+</blockquote>
+
+<p>Remember how ASCII was only 7 bits? Those seven bits of <code class="highlighter-rouge">100 0100</code> are 67 which is translated into <code class="highlighter-rouge">C</code>. It wasn’t until extended ASCII that they expanded to using an eighth bit.</p>
+
+<p>UTF-8 is perfectly compatible with ASCII values, and it handles them beautifully. As long as the <strong>first bit is zero</strong>, (the 128ths place) UTF-8 knows you’re only looking for ASCII values. It’s like having a 7-bit value with a 1-bit placeholder.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>UTF-16</th>
+      <th>UTF-8</th>
+      <th>Number</th>
+      <th>ASCII</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">0000 0000 0100 0100</code></td>
+      <td><code class="highlighter-rouge">0100 0100</code></td>
+      <td>67</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0000 0000 0110 0100</code></td>
+      <td><code class="highlighter-rouge">0110 0100</code></td>
+      <td>97</td>
+      <td>a</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0000 0000 0111 0100</code></td>
+      <td><code class="highlighter-rouge">0111 0100</code></td>
+      <td>116</td>
+      <td>t</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0000 0000 1111 0100</code></td>
+      <td><code class="highlighter-rouge">1111 0100</code></td>
+      <td>244</td>
+      <td>HOLD EVERYTHING</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Once you add a <code class="highlighter-rouge">1</code> in that 128ths place at the beginning of a UTF-8 number, <em>things get crazy</em>. UTF-8 goes into variable encoding mode and can suddenly combine 8-bit sections to create numbers larger than 8 bits.</p>
+
+<p>So as long as you’re writing in ASCII you’ll never need to use those variable-length-encoding codes, and as a result your file stays at an 8-bit size.  To get the details of how the variable-length encoding works, <a href="http://www.alexreisner.com/code/character-encoding">read this great piece</a> (although it doesn’t agree that UTF-16 is variable-length).</p>
+
+<p>If you wind up using a few emoji here or there, UTF-8 will add the magic <code class="highlighter-rouge">1</code> at the beginning of an 8-bit section and <strong>voilà</strong>, it understands you’re after something 16- or 32-bit, and saves the number appropriately. More special codes explain how many more bits you’re looking for.</p>
+
+<p>When you’re saving something more than 7 bits (code points greater than 127) with UTF-8, there’s a <em>little</em> bit of extra room taken up, i.e. it takes more than 16 bits to store a 16-bit character. That room is 1) the signal that you’re about to store a bigger number, and 2) the metadata about how big that bigger number is.</p>
+
+<p>Usually this isn’t a big deal. If you splash an emoji in here or there in what’s normally un-accented English (standard ASCII), most characters only take up 8 bits.</p>
+
+<p><strong>But!</strong> Things get complicated if you’re using a CJK language (Chinese, Japanese, Korean). None of those characters are in the ASCII/7-bit space, so you’ll need to use the variable-length signal <code class="highlighter-rouge">1</code> again and again and again, along with adding in “how many 8-bit sections” codes. This winds up taking up a lot of space!</p>
+
+<p>Because there’s no reason to waste your time yelling “this next piece is going to be 16-bits” over and over again, in those sorts of situations it’s usually better to use UTF-16. It ends up saving a lot of space that is taken up by those variable-length codes.</p>
+
+<p>Generally speaking, through, UTF-8 is gr8.</p>
+
+<h2 id="tldr">TL;DR</h2>
+
+<p>Once upon a time, ASCII was invented. It was <em>fine</em>, but caused a lot of trouble.</p>
+
+<p>Then one day Unicode showed up, which currently represents about 120,000 characters but could theoretically represent over a million. Instead of 7 or 8 bits, it uses 32 bits to represent each of those characters. Most of the time you don’t need to count to the higher numbers, though, so it creates a lot of wasted space.</p>
+
+<p>To combat the size of 32-bit UTF-32 files, UTF-8 cheats and allows you to use abbreviate out some of of the <code class="highlighter-rouge">0</code>s for smaller numbers. UTF-16 does this to a smaller degree, but is probably better for non-Latin languages.</p>
+
+<h2 id="comprehension-quiz">Comprehension Quiz</h2>
+
+<p>Think you’ve got it? Here’s a tiny quiz:</p>
+
+<ol>
+  <li>What standard does Unicode easily replace?</li>
+  <li>Over how many code points does Unicode support? For extra credit, how many does it actually use?</li>
+  <li><code class="highlighter-rouge">DEADBEEF</code> isn’t just a creepy word, it’s also the number 3,735,928,559. What numbering system is <code class="highlighter-rouge">DEADBEEF</code> in? That numbering system goes from 0 to what?</li>
+  <li>If I’m generally writing in English, what encoding system should I use to save my Unicode files?</li>
+  <li>When might you use UTF-16?</li>
+</ol>
+
+<p>Answers are below. I’ve typed out the numbers so it’s a little harder to accidentally cheat.</p>
+
+<ol class="answer-key">
+  <li>ASCII</li>
+  <li>It supports over one million, but only uses about 120,000.</li>
+  <li>Hexadecimal, which goes from 0 to F.</li>
+  <li>UTF-8</li>
+  <li>If you’re writing in Chinese, Japanese or Korean</li>
+</ol>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Head back to <a href="../utf8-unicode-character-encodings/">UTF-8, Unicode, Character Encoding, and International Data Journalism →</a> to grab the next section!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

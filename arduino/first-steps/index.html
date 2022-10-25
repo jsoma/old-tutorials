@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Sending a program to your Arduino</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/arduino/first-steps/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Sending a program to your Arduino">
+  <meta property="twitter:title" content="Sending a program to your Arduino">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Arduno Tutorials</a> &gt;  Sending a program to your Arduino</p>
+
+
+
+                      <h1 id="sending-a-program-to-your-arduino">Sending a program to your Arduino</h1>
+
+<p>First things first, let’s upload our first program to our Arduino and make sure it works!</p>
+
+<ol>
+  <li><a href="#plug">Plug your Arduino in</a></li>
+  <li><a href="#open">Open up the IDE</a></li>
+  <li><a href="#prepare">Prepare your sketch</a></li>
+  <li><a href="#select">Select your Arduino</a></li>
+  <li><a href="#port">Select your Serial Port</a></li>
+  <li><a href="#upload">Upload your sketch</a></li>
+  <li><a href="#stop">Stop it</a></li>
+</ol>
+
+<h2 id="a-namepluga1-plug-your-arduino-in"><a name="plug"></a>1. Plug your Arduino in</h2>
+
+<p>Connect your <a href="../supplies/#usb">USB cable</a> to your computer and to <a href="../supplies/#arduino">your Arduino</a>. Sometimes people fret about this part, but you don’t have to worry about breaking it unless you’re <em>incredibly strong and reckless</em>.</p>
+
+<p>A light on your Arduino might come on at that point (mine is <em>far too bright</em>).</p>
+
+<h2 id="a-nameopena2-open-up-the-ide"><a name="open"></a>2. Open up the IDE</h2>
+
+<p>Now open up the IDE (it’s called <code class="highlighter-rouge">Arduino</code> on my Macbook). You’ll use the IDE to send your first program to the Arduino.</p>
+
+<p><strong>Don’t have the Arduino software on your computer?</strong> Head back to our <a href="../supplies/#ide">supplies page</a>.</p>
+
+<h2 id="a-namepreparea3-prepare-your-sketch"><a name="prepare"></a>3. Prepare your sketch</h2>
+
+<p>Every Arduino program is called a <strong>sketch</strong>. We’re going to be using an example program called <strong>Blink</strong>.</p>
+
+<p>There are <strong>two menus</strong> in Arduino, which can kind of be confusing. There’s the one that shows up on the top of your screen, and the one with the little icons. When we want you to click an icon, we’ll explain what it looks like. When we just use words, you’ll want to use the standard text menus at the very top of the screen.</p>
+
+<p>You can find it by selecting <code class="highlighter-rouge">File &gt; Examples &gt; 01.Basics &gt; Blink</code> in the IDE, or by pasting the below into a new sketch.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="cm">/*
+  Blink
+  Turns on an LED on for one second, then off for one second, repeatedly.
+ 
+  This example code is in the public domain.
+ */</span>
+ 
+<span class="c1">// Pin 13 has an LED connected on most Arduino boards.
+// give it a name:
+</span><span class="kt">int</span> <span class="n">led</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+
+<span class="c1">// the setup routine runs once when you press reset:
+</span><span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>                
+  <span class="c1">// initialize the digital pin as an output.
+</span>  <span class="n">pinMode</span><span class="p">(</span><span class="n">led</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>     
+<span class="p">}</span>
+
+<span class="c1">// the loop routine runs over and over again forever:
+</span><span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">led</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>   <span class="c1">// turn the LED on (HIGH is the voltage level)
+</span>  <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>               <span class="c1">// wait for a second
+</span>  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">led</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>    <span class="c1">// turn the LED off by making the voltage LOW
+</span>  <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>               <span class="c1">// wait for a second
+</span><span class="p">}</span></code></pre></figure>
+
+<h2 id="a-nameselecta4-select-your-arduino"><a name="select"></a>4. Select your Arduino</h2>
+
+<p>You’ll need to tell the IDE what kind of Arduino it’s going to be talking to. Since yours is an Uno, you’ll want to pick <code class="highlighter-rouge">Tools &gt; Board &gt; Arduino Uno</code>.</p>
+
+<h2 id="a-nameporta5-select-your-serial-port"><a name="port"></a>5. Select your Serial Port</h2>
+
+<p>Now we’ll tell the IDE <strong>how the Arduino is connected</strong>. From the top menu in your program, select <code class="highlighter-rouge">Tools &gt; Serial Port</code> and then select a port:</p>
+
+<ul>
+  <li>
+    <p>On <strong>Windows</strong> it’ll probably be <code class="highlighter-rouge">COM3</code> or <code class="highlighter-rouge">COM4</code> (or something else above <code class="highlighter-rouge">COM2</code>). You don’t need to be 100% sure which one - we’ll be able to pick again if it doesn’t work!</p>
+  </li>
+  <li>
+    <p>On a <strong>Mac</strong> it should be something like <code class="highlighter-rouge">/dev/tty.usbmodem</code> (there might be a few numbers after <code class="highlighter-rouge">usbmodem</code>).</p>
+  </li>
+</ul>
+
+<p>Missing <code class="highlighter-rouge">tty.usbmodem</code> or a <code class="highlighter-rouge">COM</code> port? Not using an Uno? You migh want to check the official documentation for <a href="https://www.arduino.cc/en/Guide/MacOSX">Mac OS X</a> or <a href="https://www.arduino.cc/en/Guide/Windows">Windows</a>.</p>
+
+<h2 id="a-nameuploada6-upload-your-sketch"><a name="upload"></a>6. Upload your sketch</h2>
+
+<p>Now we need to upload the sketch to the Arduino itself.</p>
+
+<p>In the green area there’s a little button with a right-facing arrow on it. When you hover over it, you should see the word <strong>Upload</strong> appear. Click it!</p>
+
+<p>Your board will blink ferociously for a moment, then (hopefully) a little light to the left will start blinking, one second on, one second off.</p>
+
+<p><strong>CONGRATULATIONS, YOU ARE A WORLD-CLASS CHAMPION AND YOUR ARDUINO WORKS</strong>.</p>
+
+<blockquote>
+  <p>If something goes wrong, try selecting a <strong>different Serial Port</strong> for your Arduino. If it still doesn’t work, it might be that your Arduino is <strong>broken!</strong> That just happens sometimes, especially with the cheaper ones.</p>
+</blockquote>
+
+<h2 id="a-namestopa7-stop-it"><a name="stop"></a>7. Stop it</h2>
+
+<p>Want your Arduino to stop blinking? Just <strong>unplug the USB cable</strong>. No need to warn it or turn it off or click an ‘Eject’ button or anything.</p>
+
+<h1 id="moving-on">Moving on</h1>
+
+<p>Now that we know how to plug in an Arduino and get it running, we’ll <a href="../breadboarding/">learn about breadboards</a> and then tackle a real project!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

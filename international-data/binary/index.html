@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Binary Basics</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/international-data/binary/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Binary Basics">
+  <meta property="twitter:title" content="Binary Basics">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">International Data Journalism</a> &gt;  Binary Basics</p>
+
+
+
+                      <h1 id="binary-basics">Binary Basics</h1>
+
+<blockquote>
+  <p>This is <strong>part 1</strong> of a <strong>5-part series</strong> on character encodings in international data journalism. <a href="/tutorials/international-data/utf8-unicode-character-encodings/">Check out the other pieces</a>.</p>
+</blockquote>
+
+<p>As you might know, <strong>computers can only talk in numbers</strong>. Specifically, binary numbers - long strings of <code class="highlighter-rouge">1</code>s and <code class="highlighter-rouge">0</code>s that somehow get converted into everything we hold dear.</p>
+
+<blockquote>
+  <p>If you have sound, I recommend you watch <a href="https://www.youtube.com/watch?v=Ak0IdUoXZcs">this clip from Mr. Wizard</a>.</p>
+</blockquote>
+
+<p>Binary numbers look a little something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>1000 1011 0100 1001 0000 0111 0001 0100 0110
+</code></pre>
+</div>
+
+<p>(The spaces aren’t actually part of binary, they’re just in there so you can read them more easily.)</p>
+
+<p>Binary numbers represent the same numbers as our normal written numbers, a.k.a. decimal numbers. For example, 42 in decimal is <code class="highlighter-rouge">101010</code> in binary, and <code class="highlighter-rouge">011011001</code> is 217. But how does it work with only <code class="highlighter-rouge">1</code>s and <code class="highlighter-rouge">0</code>s? First let’s take a look at how decimal numbers a.k.a. normal numbers work.</p>
+
+<h2 id="counting-with-decimal-numbers">Counting with decimal numbers</h2>
+
+<p>When we talk about each digit in a decimal number, we have names for each spot - the ones place, the tens place, the hundreds place. These names are important! Let’s think about <code class="highlighter-rouge">742</code> for a second.</p>
+
+<p>What’s it mean when you have a <code class="highlighter-rouge">7</code> in the hundreds place? Our number has <em>seven one-hundreds in it</em>.</p>
+
+<p>What’s it mean when you have a <code class="highlighter-rouge">4</code> in the tens place? Our number has <em>four tens in it</em>.</p>
+
+<p>And a <code class="highlighter-rouge">2</code> in the ones place? Yup, <em>two ones</em>.</p>
+
+<p>And there’s the magic! 742 just means <strong>seven one-hundreds + four tens + two ones</strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Decimal number</th>
+      <th>No. of 100s</th>
+      <th>No. of 10s</th>
+      <th>No. of 1s</th>
+      <th>Represents</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">123</code></td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>1 100s + 2 10s + 3 1s</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">54</code></td>
+      <td>0</td>
+      <td>5</td>
+      <td>4</td>
+      <td>0 100s + 5 10s + 4 1s</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">9</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>0 100s + 0 10s + 9 1s</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">520</code></td>
+      <td>5</td>
+      <td>2</td>
+      <td>0</td>
+      <td>5 100s + 2 10s + 0 1s</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The number <code class="highlighter-rouge">9</code> is actually <code class="highlighter-rouge">009</code> - it has a zero in the 100s place, a zero in the 10s place, and a 9 in the 1s place. That’s zero 100s, one ten and nine ones, totaling up to 9.</p>
+
+<p>It might <em>seem</em> obvious, but you’ll see why I’m breaking it down that way in a second.</p>
+
+<blockquote>
+  <p>Decimal numbers get their name from the Latin <em>decimus</em>, “tenth,” while binary comes from <em>bini</em>, meaning “by twos”</p>
+</blockquote>
+
+<h2 id="ones-and-zeroes">Ones and zeroes</h2>
+
+<p>Binary starts off exactly the same as decimal does, with a ones place. But since you can only use two numbers - <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code> - you can only count up to 1 before you run out of numbers!</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary number</th>
+      <th>No. of 1s</th>
+      <th>Decimal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">0</code></td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1</code></td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>When we’re counting with decimals in the ones place and reach 9, we can’t go any higher without adding a new digit. This new digit represents the next-highest number, 10 (i.e. the tens place). We go from zero tens and nine ones (<code class="highlighter-rouge">09</code>) to one ten and zero ones (<code class="highlighter-rouge">10</code>).</p>
+
+<p>It’s exactly the same with binary! Now that <code class="highlighter-rouge">1</code> has us at the highest number we can represent, 1, we need a way to represent the next-highest number, 2. We solve this by adding another digit to represent <strong>the number of twos</strong>.</p>
+
+<p>With the number 1, we had zero twos and one one (<code class="highlighter-rouge">01</code>). Now we have one two and zero ones, which means we’ll represent 2 as <code class="highlighter-rouge">10</code> in binary.</p>
+
+<p><strong>Pop quiz:</strong> what’s the binary number <code class="highlighter-rouge">11</code> mean in decimal?</p>
+
+<p>Let’s take a look at what what numbers we can put together so far.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary number</th>
+      <th>No. of 2s</th>
+      <th>No. of 1s</th>
+      <th>Represents</th>
+      <th>Decimal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">00</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 + 0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">01</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>0 + 1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">10</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>2 + 0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">11</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>2 + 1</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Now that we’re stuck at <code class="highlighter-rouge">3</code>, how do we get to <code class="highlighter-rouge">4</code>? That’s right, <strong>add a new digit that is the number of fours</strong>.</p>
+
+<p>What’s going to be our next stopping point? Well, with <code class="highlighter-rouge">111</code> we’ll be adding one four + one 2 + one 1, giving us a maximum number of <code class="highlighter-rouge">7</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary number</th>
+      <th>No. 4s</th>
+      <th>No. of 2s</th>
+      <th>No. of 1s</th>
+      <th>Represents</th>
+      <th>Decimal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">000</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 + 0 + 0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">001</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0 + 0 + 1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">010</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0 + 2 + 0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">011</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0 + 2 + 1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">100</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>4 + 0 + 1</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">101</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>4 + 0 + 1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">110</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4 + 2 + 0</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">111</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4 + 2 + 1</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Next digit? Yup, it’ll be <strong>the eighths place</strong>. <code class="highlighter-rouge">1000</code> is <code class="highlighter-rouge">8</code> in decimal, because it has one 8 and zero 4s, 2s and 1s.</p>
+
+<p>If you noticed a pattern, you’d be right. Every new digit is twice as big as the one before it - after 8 you have 16, then 32, then 64, 128, 256, 512, and 1024!</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary number</th>
+      <th>No. of 8s</th>
+      <th>No. of 4s</th>
+      <th>No. of 2s</th>
+      <th>No. of 1s</th>
+      <th>Represents</th>
+      <th>Decimal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">0000</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 + 0 + 0 + 0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0001</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0 + 0 + 0 + 1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0010</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0 + 0 + 2 + 0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0011</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0 + 0 + 2 + 1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0100</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 + 4 + 0 + 0</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0101</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0 + 4 + 0 + 1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0110</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0 + 4 + 2 + 0</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">0111</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0 + 4 + 2 + 1</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1000</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8 + 0 + 0 + 0</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1001</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>8 + 0 + 0 + 1</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1010</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>8 + 0 + 2 + 0</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1011</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>8 + 0 + 2 + 1</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1100</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8 + 4 + 0 + 0</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1101</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>8 + 4 + 0 + 1</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1110</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>8 + 4 + 2 + 0</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">1111</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>8 + 4 + 2 + 1</td>
+      <td>15</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>So for <code class="highlighter-rouge">1010</code> we have (left to right) zero 1s, one 2, zero 3’s and one four. 0 + 2 + 0 + 4 = 6!</p>
+
+<h2 id="bits-and-bytes">Bits and bytes</h2>
+
+<p>Each of of these binary digits is called a bit. A <strong>bi</strong>nary digi<strong>t</strong>, get it? <code class="highlighter-rouge">10</code> is a <strong>two bit number</strong>, because it only has two avilable bits, while <code class="highlighter-rouge">0001</code> is a <strong>four bit number</strong>, since it has four digits.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Number of bits</th>
+      <th>Smallest Binary Number</th>
+      <th>Largest Binary Number</th>
+      <th>Decimal range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code class="highlighter-rouge">0</code></td>
+      <td><code class="highlighter-rouge">1</code></td>
+      <td>0-1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code class="highlighter-rouge">00</code></td>
+      <td><code class="highlighter-rouge">11</code></td>
+      <td>0-3</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code class="highlighter-rouge">000</code></td>
+      <td><code class="highlighter-rouge">111</code></td>
+      <td>0-7</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code class="highlighter-rouge">0000</code></td>
+      <td><code class="highlighter-rouge">1111</code></td>
+      <td>0-15</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><code class="highlighter-rouge">0000 0000</code></td>
+      <td><code class="highlighter-rouge">1111 1111</code></td>
+      <td>0-255</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As you can see, a 2-bit number can only ever count up to <code class="highlighter-rouge">3</code>. An 8-bit number, on the other hand, can go all the way up to <code class="highlighter-rouge">255</code>. The more binary digits you have available to count with, the higher you can count.</p>
+
+<p>Speaking of computers: a <strong>byte</strong> is four bits, like <code class="highlighter-rouge">0000</code>. We won’t mention them again, but I thought you should know!</p>
+
+<blockquote>
+  <p><strong>Note</strong>: When we talk about larger binary numbers, I’m going to throw in a space every four digits, so <code class="highlighter-rouge">010010</code> would be written as <code class="highlighter-rouge">01 0010</code>. The space doesn’t really mean anything, it’s the same as when we use a comma for 65,536. Keeps everything tidy.</p>
+</blockquote>
+
+<h2 id="comprehension-quiz">Comprehension Quiz</h2>
+
+<p>Think you’ve got it? Here’s a tiny quiz:</p>
+
+<ol>
+  <li>How many bits is <code class="highlighter-rouge">01 1101 0100</code>?</li>
+  <li>What is <code class="highlighter-rouge">1111</code> in decimal? What numbers did you add together?</li>
+  <li>What is <code class="highlighter-rouge">10 1001</code> in decimal? What numbers did you add together?</li>
+  <li>How do you represent the decimal number <code class="highlighter-rouge">13</code> in binary?</li>
+  <li>There are <code class="highlighter-rouge">10</code> types of people in the world, those who understand binary and those who don’t. LOL?</li>
+</ol>
+
+<p>Answers are below. I’ve typed out the numbers so it’s a little harder to accidentally cheat.</p>
+
+<ol class="answer-key">
+  <li>Ten bits, one for every <strong>bi</strong>nary digi<strong>t</strong> (bit)</li>
+  <li>Fifteen, because it’s one eight plus one four plus one two plus one one.</li>
+  <li>One plus seven plus thirty-two, so forty-one.</li>
+  <li>Eight plus four plus one, so <code class="highlighter-rouge">1101</code>.</li>
+  <li>LOL.</li>
+</ol>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Head back to <a href="../utf8-unicode-character-encodings/">UTF-8, Unicode, Character Encoding, and International Data Journalism →</a> to grab the next section!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

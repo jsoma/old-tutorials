@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Databases and ORMs</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/webapps/dbs-and-orms/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Databases and ORMs">
+  <meta property="twitter:title" content="Databases and ORMs">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Web Applications for You and Me</a> &gt;  Databases and ORMs</p>
+
+
+
+                      <p><strong>This tutorial is out of date!</strong> <a href="http://jonathansoma.com/tutorials/flask-sqlalchemy-mapbox/">Try my longer, updated Flask-SQLite webapp tutorial here</a></p>
+
+<h1 id="databases-and-orms">Databases and ORMs</h1>
+
+<p>Okay, you have some data. <strong>Where’s it live?</strong></p>
+
+<ol>
+  <li>in a spreadsheet</li>
+  <li>in a CSV</li>
+  <li>in a database (MySQL, Postgres, SQLite, etc)</li>
+</ol>
+
+<p>Out of all of those, the <strong>database</strong> is the most powerful, and can handle the most (and most complex) data. One of the downsides of a databases, though, is <strong>they aren’t so user-friendly.</strong> They aren’t <em>tragic</em>, but they can just be a little opaque sometimes.</p>
+
+<h2 id="the-tiniest-introduction-to-sql">The tiniest introduction to SQL</h2>
+
+<p>Usually when you’d like to get some information out of a database, you <strong>query it</strong>. Most of the time you’ll be using a database that supports a language called <strong>SQL</strong> - Structured Query Language.</p>
+
+<p>You might have heard of SQL before, the “SQL” moniker is attached to a lot of the database systems that use it - MySQL, PostgreSQL (or Postgres), SQLite, MS SQL, etc. Each one of those can do sliiiiightly different things with SQL when you get into the more advanced stuff, but the basics are usually the same.</p>
+
+<p>SQL isn’t too bad, as languages go. Let’s say we had a list of schools in New York City - the SQL query to get all the schools in Brooklyn might look like this:</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">schools</span> <span class="k">WHERE</span> <span class="n">borough</span> <span class="o">=</span> <span class="s1">'BK'</span></code></pre></figure>
+
+<p>Which would give me back</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>school_name</th>
+      <th>borough</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7</td>
+      <td>Abraham Lincoln</td>
+      <td>BK</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Ronald Edmonds Learning Center II</td>
+      <td>BK</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Roberto Clemente</td>
+      <td>BK</td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td>Francis White School</td>
+      <td>BK</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>And if Abraham Lincoln moved to Queens? Well, first there might be <em>multiple</em> schools named “Abraham Lincoln”, so I’m going to update it by keeping an eye on the <code class="highlighter-rouge">id</code>, which should be unique.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">UPDATE</span> <span class="n">schools</span> <span class="k">SET</span> <span class="n">borough</span> <span class="o">=</span> <span class="s1">'QN'</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">7</span></code></pre></figure>
+
+<p>SQL is nice and easy enough, but <strong>I don’t want to have to sprinkle it throughout my Python code</strong> (or Ruby, or C++, etc). If only there were some way to connect that seemed kind of Python-y!</p>
+
+<h2 id="orms">ORMs</h2>
+
+<p>ORMs <a href="http://www.yegor256.com/2014/12/01/orm-offensive-anti-pattern.html">to the rescue</a>! ORM stands for <strong>Object-Relational Management</strong>, and it’s a way of treating your database just like any other object that you’d be programming with.</p>
+
+<p>For example, <a href="http://guides.rubyonrails.org/active_record_basics.html">ActiveRecord</a> is one I really enjoy for Ruby. If you wanted to get all of the schools from Brooklyn?</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">School</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">borough: </span><span class="s1">'BK'</span><span class="p">)</span></code></pre></figure>
+
+<p>Or grab Abraham Lincoln (Public School #7), and update it to be in Queens?</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">lincoln</span> <span class="o">=</span> <span class="no">School</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">lincoln</span><span class="p">.</span><span class="nf">borough</span> <span class="o">=</span> <span class="s1">'QN'</span>
+<span class="n">lincoln</span><span class="p">.</span><span class="nf">save</span></code></pre></figure>
+
+<p>ORMs have problems, sure, but they’re especially useful when building web applications when you have to do a lot of querying and searching.</p>
+
+<p>I’m going to show you <strong>two ORMs for Python</strong>, SQLAlchemy and peewee.</p>
+
+<h2 id="orm-1-sqlalchemyintro-to-sqlalchemy">ORM #1: <a href="../intro-to-sqlalchemy/">SQLAlchemy</a></h2>
+
+<p><a href="http://www.sqlalchemy.org/">SQLAlchemy</a> is Python’s #1 ORM. It’s definitey <em>powerful</em>, but the learning curve is a little steeper than the alternatives.</p>
+
+<p><a href="../intro-to-sqlalchemy/">Read about SQLAlchemy</a></p>
+
+<h2 id="orm-2-peeweeintro-to-peewee">ORM #2: <a href="../intro-to-peewee/">peewee</a></h2>
+
+<p><a href="https://github.com/coleifer/peewee">Peewee</a> is a “small, expressive orm,” which is code words for “it doesn’t support everything under the sun.” Sometimes you need to be greedy, but sometimes simple works best.</p>
+
+<p><a href="../intro-to-peewee/">Read about peewee</a></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

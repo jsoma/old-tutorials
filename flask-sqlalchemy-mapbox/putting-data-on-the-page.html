@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 Putting data on the page | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox</title>
+  <meta name="description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 Putting data on the page | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 Putting data on the page | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox" />
+  
+  <meta name="twitter:description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  
+
+<meta name="author" content="Jonathan Soma" />
+
+
+<meta name="date" content="2019-06-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="connecting-flask-to-sqlite.html">
+<link rel="next" href="leveling-up-with-advanced-sqlalchemy-queries.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style.replace(/;/g, ' !important;') + '}', j);
+    }
+  }
+})();
+</script>
+<style>
+.sourceCode.python {
+  margin-bottom: 0 !important;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal .sourceCode.python + p {
+  margin-top: 1.275em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal .sourceCode.python + table {
+  margin-top: 1.275em !important;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal pre > code {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#our-goal"><i class="fa fa-check"></i><b>1.1</b> Our goal</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#every-step-well-take"><i class="fa fa-check"></i><b>1.2</b> Every step we’ll take</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#why-in-the-name-of-undiscovered-species-am-i-doing-this"><i class="fa fa-check"></i><b>1.3</b> Why in the name of undiscovered species am I doing this?</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html"><i class="fa fa-check"></i><b>2</b> Getting started with Flask</a><ul>
+<li class="chapter" data-level="2.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#babys-first-web-app"><i class="fa fa-check"></i><b>2.1</b> Baby’s first web app</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#servers-up-servers-down"><i class="fa fa-check"></i><b>2.1.1</b> Servers up servers down</a></li>
+<li class="chapter" data-level="2.1.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#routing-in-flask"><i class="fa fa-check"></i><b>2.1.2</b> Routing in Flask</a></li>
+<li class="chapter" data-level="2.1.3" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#here-we-go-again"><i class="fa fa-check"></i><b>2.1.3</b> Here we go again</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#template-time"><i class="fa fa-check"></i><b>2.2</b> Template time</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#bringing-structure-to-this-world"><i class="fa fa-check"></i><b>2.2.1</b> Bringing structure to this world</a></li>
+<li class="chapter" data-level="2.2.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#template-time-1"><i class="fa fa-check"></i><b>2.2.2</b> Template time</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#adding-css"><i class="fa fa-check"></i><b>2.3</b> Adding CSS</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#hello-bootstrap"><i class="fa fa-check"></i><b>2.3.1</b> Hello Bootstrap!</a></li>
+<li class="chapter" data-level="2.3.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#what-now"><i class="fa fa-check"></i><b>2.3.2</b> What now?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html"><i class="fa fa-check"></i><b>3</b> Setting up our database</a><ul>
+<li class="chapter" data-level="3.1" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#intro-to-sqlite"><i class="fa fa-check"></i><b>3.1</b> Intro to SQLite</a></li>
+<li class="chapter" data-level="3.2" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#creating-a-new-sqlite-database"><i class="fa fa-check"></i><b>3.2</b> Creating a new SQLite database</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#double-checking-the-import"><i class="fa fa-check"></i><b>3.2.1</b> Double-checking the import</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html"><i class="fa fa-check"></i><b>4</b> Connecting Flask to SQLite</a><ul>
+<li class="chapter" data-level="4.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#speaking-sql"><i class="fa fa-check"></i><b>4.1</b> Speaking SQL</a></li>
+<li class="chapter" data-level="4.2" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#introduction-to-orms"><i class="fa fa-check"></i><b>4.2</b> Introduction to ORMs</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#setting-up-sqlalchemy"><i class="fa fa-check"></i><b>4.2.1</b> Setting up SQLAlchemy</a></li>
+<li class="chapter" data-level="4.2.2" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#adding-our-model"><i class="fa fa-check"></i><b>4.2.2</b> Adding our Model</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#using-sqlalchemy"><i class="fa fa-check"></i><b>4.3</b> Using SQLAlchemy</a><ul>
+<li class="chapter" data-level="4.3.0.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#ready-to-go"><i class="fa fa-check"></i><b>4.3.0.1</b> Ready to go?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html"><i class="fa fa-check"></i><b>5</b> Putting data on the page</a><ul>
+<li class="chapter" data-level="5.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-data-to-the-template"><i class="fa fa-check"></i><b>5.1</b> Sending data to the template</a></li>
+<li class="chapter" data-level="5.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#hello-jinja2"><i class="fa fa-check"></i><b>5.2</b> Hello Jinja2</a></li>
+<li class="chapter" data-level="5.3" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-meaningful-data-to-the-template"><i class="fa fa-check"></i><b>5.3</b> Sending meaningful data to the template</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#formatting-your-numbers"><i class="fa fa-check"></i><b>5.3.1</b> Formatting your numbers</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-lists-to-our-template"><i class="fa fa-check"></i><b>5.4</b> Sending lists to our template</a></li>
+<li class="chapter" data-level="5.5" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#making-school-pages"><i class="fa fa-check"></i><b>5.5</b> Making school pages</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#slugs"><i class="fa fa-check"></i><b>5.5.1</b> Slugs</a></li>
+<li class="chapter" data-level="5.5.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#building-our-detail-route"><i class="fa fa-check"></i><b>5.5.2</b> Building our detail route</a></li>
+<li class="chapter" data-level="5.5.3" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#crafting-a-detail-page"><i class="fa fa-check"></i><b>5.5.3</b> Crafting a detail page</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#linking-from-the-index-to-the-detail-page"><i class="fa fa-check"></i><b>5.6</b> Linking from the index to the detail page</a></li>
+<li class="chapter" data-level="5.7" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#reusing-templates"><i class="fa fa-check"></i><b>5.7</b> Reusing templates</a><ul>
+<li class="chapter" data-level="5.7.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#adding-yet-another-route"><i class="fa fa-check"></i><b>5.7.1</b> Adding yet another route</a></li>
+<li class="chapter" data-level="5.7.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#fixing-up-the-root-route"><i class="fa fa-check"></i><b>5.7.2</b> Fixing up the root route</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#cleaning-up"><i class="fa fa-check"></i><b>5.8</b> Cleaning up</a><ul>
+<li class="chapter" data-level="5.8.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#our-code"><i class="fa fa-check"></i><b>5.8.1</b> Our code</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html"><i class="fa fa-check"></i><b>6</b> Leveling up with advanced SQLAlchemy queries</a><ul>
+<li class="chapter" data-level="6.1" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#listing-all-of-our-cities"><i class="fa fa-check"></i><b>6.1</b> Listing all of our cities</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#cleaning-text-in-our-jinja2-templates"><i class="fa fa-check"></i><b>6.1.1</b> Cleaning text in our Jinja2 templates</a></li>
+<li class="chapter" data-level="6.1.2" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#no-wait-maybe-not"><i class="fa fa-check"></i><b>6.1.2</b> No wait, maybe not!</a></li>
+<li class="chapter" data-level="6.1.3" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#doing-the-same-for-zip-codes"><i class="fa fa-check"></i><b>6.1.3</b> Doing the same for ZIP codes</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html"><i class="fa fa-check"></i><b>7</b> Layouts for our templates</a><ul>
+<li class="chapter" data-level="7.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#layouts"><i class="fa fa-check"></i><b>7.1</b> Layouts</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#and-a-final-fun-trick"><i class="fa fa-check"></i><b>7.1.1</b> And a final fun trick</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#adding-in-our-navigation"><i class="fa fa-check"></i><b>7.2</b> Adding in our navigation</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#a-dropdown-for-cities"><i class="fa fa-check"></i><b>7.2.1</b> A dropdown for cities</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html"><i class="fa fa-check"></i><b>8</b> Mapping our schools</a><ul>
+<li class="chapter" data-level="8.1" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-mapbox-to-our-pages"><i class="fa fa-check"></i><b>8.1</b> Adding MapBox to our pages</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-mapbox-css-and-js"><i class="fa fa-check"></i><b>8.1.1</b> Adding MapBox CSS and JS</a></li>
+<li class="chapter" data-level="8.1.2" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-a-basic-and-fake-map"><i class="fa fa-check"></i><b>8.1.2</b> Adding a basic (and fake) map</a></li>
+<li class="chapter" data-level="8.1.3" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#inserting-our-data-into-the-map"><i class="fa fa-check"></i><b>8.1.3</b> Inserting our data into the map</a></li>
+<li class="chapter" data-level="8.1.4" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#zooming-and-centering"><i class="fa fa-check"></i><b>8.1.4</b> Zooming and centering</a></li>
+<li class="chapter" data-level="8.1.5" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adjusting-the-style-of-our-dot"><i class="fa fa-check"></i><b>8.1.5</b> Adjusting the style of our dot</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="reorganizing-our-page-with-columns.html"><a href="reorganizing-our-page-with-columns.html"><i class="fa fa-check"></i><b>9</b> Reorganizing our page with columns</a><ul>
+<li class="chapter" data-level="9.1" data-path="reorganizing-our-page-with-columns.html"><a href="reorganizing-our-page-with-columns.html#columns-and-rows"><i class="fa fa-check"></i><b>9.1</b> Columns and rows</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="putting-data-on-the-page" class="section level1">
+<h1><span class="header-section-number">5</span> Putting data on the page</h1>
+<p>So far we’ve touched a lot of new technology! This might cover most of it:</p>
+<ul>
+<li>Flask, a Python web application framework</li>
+<li>HTML to draw a page, through the <code>render_template</code> method</li>
+<li>CSS via Bootstrap to beautify our web page</li>
+<li>SQLite, our database system</li>
+<li>SQLAlchemy, our ORM</li>
+</ul>
+<p>But fret not, <em>we’re not done!</em> We still have at least one more: a <strong>templating engine</strong> called Jinja, to help us add data from our database onto our web page.</p>
+<div id="sending-data-to-the-template" class="section level2">
+<h2><span class="header-section-number">5.1</span> Sending data to the template</h2>
+<p>Right now when we call <code>render_template</code>, all we give it is the name of the template. If we cut out the ORM practice, our <code>/</code> route looks pretty simple:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    <span class="co"># ....ignoring the ORM practice ....</span>
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>)</code></pre>
+<p>Turns out we can level things up by sending additional information to the template! Let’s say we wanted to send the number of schools to the web page, and we guessed it was around 900 schools. We could adjust the <code>render_template</code> call like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    <span class="co"># ....ignoring the ORM practice ....</span>
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span><span class="dv">90</span>)</code></pre>
+<p><code>count</code> is just a new variable name, it could be <em>anything</em>. <code>potato</code>, <code>bubblegum</code>, you could pick just about any variable name in there and you’d be fine. By count <code>count=90</code> with <code>render_template</code>, we’re <strong>sending a variable called <code>count</code> to the template</strong>.</p>
+<p>Now we just need to figure out how to use it!</p>
+<p>Let’s go back to the template - <code>templates/index.html</code> - and make a little edit.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;jumbotron&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;h1</span><span class="ot"> class=</span><span class="st">&quot;display-4&quot;</span><span class="kw">&gt;</span>There are {{ count }} schools in New York City.<span class="kw">&lt;/h1&gt;</span>
+    <span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;lead&quot;</span><span class="kw">&gt;</span>It&#39;s pretty cool.<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<p>Refresh the page and <strong>be amazed!</strong></p>
+<p><img src="images/26.png" /></p>
+<p>That incredibly fake and contrived <code>90</code> wormed its way from the Python side of things to the HTML side of things without too much trouble.</p>
+</div>
+<div id="hello-jinja2" class="section level2">
+<h2><span class="header-section-number">5.2</span> Hello Jinja2</h2>
+<p>That <code>{{ count }}</code> thing is <em>not</em> HTML. Before Flask sends the web page to your browser, it goes through the page and finds things like <code>{{ count }}</code> and fills it in with variable names.</p>
+<p>This is a <em>templating language</em> called <a href="http://jinja.pocoo.org/docs/2.10/templates/">Jinja2</a>. It can do a lot more than fill-in-the-blanks, including loops and <a href="http://jinja.pocoo.org/docs/2.10/templates/">all sorts of stuff</a>. It’s super useful and an odd combination of pain<strong>less</strong> and pain<strong>ful</strong>. You’ll enjoy it!</p>
+<p>The double-curly-braces thing - <code>{{ }}</code> - is pretty common across different templating languages. Sometimes you might hear them referred to as “mustaches,” thanks to <a href="https://mustache.github.io/">mustache.js</a> and the later <a href="https://handlebarsjs.com/">handlebars.js</a>. They might look similar to Jinja2, but don’t get distracted! Just think “oh mustaches sure ok” and move on with life.</p>
+</div>
+<div id="sending-meaningful-data-to-the-template" class="section level2">
+<h2><span class="header-section-number">5.3</span> Sending meaningful data to the template</h2>
+<p>This fake 90 is killin me, so lets’s adjust our <code>app.py</code> to send the <em>actual</em> number of schools. I’m going to cruelly ignore the <code>print</code> statements we added before (feel free to comment them out!).</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    school_count <span class="op">=</span> School.query.count()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count)</code></pre>
+<p><img src="images/25.png" /></p>
+<p>Beautiful! Wonderful! Incredible!</p>
+<p>You might be tempted to do the ORM query inside of <code>render_template</code>, like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python">    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>School.query.count())</code></pre>
+<p>While this <em>works</em>, it just seems a little messy to me. Saving the count as another variable doesn’t kill anyone (I don’t think), and it’s potentially more organized if you end up sending more variables to the template.</p>
+<div id="formatting-your-numbers" class="section level3">
+<h3><span class="header-section-number">5.3.1</span> Formatting your numbers</h3>
+<p>While “1640” is pretty ugly, “1,640” looks a little more solid. If we wanted to add commas, we could do it one of <strong>two ways</strong>. The second way is probably better, but the first one uses f-strings! Crises, crises.</p>
+<p><img src="images/24.png" /></p>
+<p>In the first way, we add the commas <strong>before it goes to the template.</strong></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    school_count <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>School<span class="sc">.</span>query<span class="sc">.</span>count()<span class="sc">:,}</span><span class="ss">&quot;</span>
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count)</code></pre>
+<p>So instead of sending an actual count to the template, we’re sending the <strong>pretty, comma-ful version</strong>. If we’re doing math in the template that’s a bad idea, but… maybe it’s fine otherwise?</p>
+<p><strong>Another option</strong> is to do the formatting in the template. Since Jinja is a Python thing, you can do Python things inside of the <code>{{ }}</code>………except f-strings! If we want to use Python’s string formatting, we need to do it with a slightly older style:</p>
+<pre><code>&lt;div class=&quot;jumbotron&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;h1 class=&quot;display-4&quot;&gt;There are {{ &quot;{:,}&quot;.format(count) }} schools in New York City.&lt;/h1&gt;
+    &lt;p class=&quot;lead&quot;&gt;It&#39;s pretty cool.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p><strong>This is probably the better way</strong>, as you’re preserving the formatting rules until <em>exactly when you’re formatting it</em>. If you love f-strings to death, though, it might give you a heart attack, so I figured I’d give you another option.</p>
+</div>
+</div>
+<div id="sending-lists-to-our-template" class="section level2">
+<h2><span class="header-section-number">5.4</span> Sending lists to our template</h2>
+<p>Sending a single integer to our template is pretty easy, but so is sending a whole mess of things! Let’s send those schools we found, the ones from the 10466 ZIP code.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    school_count <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>School<span class="sc">.</span>query<span class="sc">.</span>count()<span class="sc">:,}</span><span class="ss">&quot;</span>
+    zip_schools <span class="op">=</span> School.query.filter_by(ZIP<span class="op">=</span><span class="st">&#39;10466&#39;</span>).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count, schools<span class="op">=</span>zip_schools)</code></pre>
+<p>Adding <code>schools=zip_schools</code> sends another variable to our template. In the template, the variable will be called <code>schools</code>, but it will have the contents of the <code>zip_schools</code> variable. Now all we need to do is display them!</p>
+<p>Over in HTML world, printing them is a <em>little</em> different than when we did the <code>{{ count }}</code>. Because there are multiples, we need a <strong>loop</strong>. Loops in Jinja2 are reasonably different than Python, but you’ll get the gist. We’ll put these down near the bottom, replacing <strong>Look at this stuff!!!</strong>:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;p&gt;</span>I&#39;m amazed and frankly you should be, too.<span class="kw">&lt;/p&gt;</span>
+  {% for school in schools %}
+    <span class="kw">&lt;p&gt;</span>{{ school.SCHOOLNAME }}<span class="kw">&lt;/p&gt;</span>
+  {% endfor %}
+<span class="kw">&lt;/div&gt;</span></code></pre>
+<p>Refresh, and you should be good to go! If not, make sure you matched up the variable names - <code>schools=zip_schools</code> and <code>{% for school in schools %}</code>. Also check that you used <code>{% %}</code> instead of <code>{ }</code>.</p>
+<p>In the same way that in <code>app.py</code> we used school.SCHOOLNAME<code>to grab the</code>SCHOOLNAME<code>column, we can do the same thing in the template. Anything you send through</code>render_template` you’re free to use in the HTML side of things!</p>
+<blockquote>
+<p>Remember that SQLALchemy is <em>not</em> like pandas, and you only get to use one item at a time! <code>schools.SCHOOLNAME</code> will not give you the name for every single school, you’ll need to use a loop like a normal list.</p>
+</blockquote>
+</div>
+<div id="making-school-pages" class="section level2">
+<h2><span class="header-section-number">5.5</span> Making school pages</h2>
+<div id="slugs" class="section level3">
+<h3><span class="header-section-number">5.5.1</span> Slugs</h3>
+<p>Back in historical times when we first talked about webapps, we described them like this:</p>
+<blockquote>
+<p>Typically you end up with an automatically-generated web page for every single item in your database - whether it’s a doctor, or a school, or a company. That page can list all of the sorts of data that’s hiding in your database about that doctor, school, or company… but in a nice friendly that’s palatable to people who are allergic to Excel et al.</p>
+</blockquote>
+<p>When you have these pages - we’ll call them “show” or “detail” pages - they need to live at a specific URL. If <code>example.com</code> has a list of states, you might click one to be send to the individual state detail page at one of the following:</p>
+<ul>
+<li><code>example.com/states/2</code></li>
+<li><code>example.com/states/WA</code></li>
+<li><code>example.com/states/washington</code></li>
+<li><code>example.com/states-WA</code></li>
+</ul>
+<p>The little bit at the end - the <code>2</code> or the <code>WA</code> or the <code>washington</code>, etc - is called the <strong>id</strong> or the <strong>slug</strong>. Practically speaking, the <strong>slug</strong> is how the webapp finds the state you’re interested in from the database.</p>
+<p>We have a few options about what we could use for a slug, it just needs to be something <em>unique</em> for each row of our dataset. For example, every school has a different name! But if we used school name as the slug, we’d end up with:</p>
+<pre><code>http://example.com/schools/RIVERDALE / KINGSBRIDGE ACADEMY (MIDDLE SCHOOL / H</code></pre>
+<p>which doesn’t look exactly professional. An easy out is to use whatever the <code>primary_true</code> is in your database - it’s guaranteed to be unique, so each row in your database has a separate one. It might not be the most attractice, but it’s easy!</p>
+<p>In our case, we set the <code>primary_key</code> in the last line of our model:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> School(db.Model):
+    __tablename__ <span class="op">=</span> <span class="st">&#39;schools-geocoded&#39;</span>
+    __table_args__ <span class="op">=</span> { <span class="st">&#39;extend_existing&#39;</span>: <span class="va">True</span> }
+    LOC_CODE <span class="op">=</span> db.Column(db.Text, primary_key<span class="op">=</span><span class="va">True</span>)    </code></pre>
+<p>There we go, <code>LOC_CODE</code>! So the Riverdale school we mentioned up above would be found at</p>
+<pre><code>http://example.com/schools/X141</code></pre>
+<p>Which is a lot nicer.</p>
+<blockquote>
+<p>The slug can be the <strong>primary key</strong>, but it doesn’t have to be! It can be anything unique. A lot of times you’ll take something that’s a string like “Riverdale Middle School” and convert it to something URL-friendly, like “riverdale-middle-school.” You’ll save this in a new column called <code>slug</code> and make that be your slug.</p>
+</blockquote>
+</div>
+<div id="building-our-detail-route" class="section level3">
+<h3><span class="header-section-number">5.5.2</span> Building our detail route</h3>
+<p>To build our detail page, we need a new route. This is going to be a special route, since the end of the URL can change - <code>/schools/X141</code> is Riverdale, but <code>/schools/X068</code> is Public School 068. To accomplish this we add a variable into our route.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/schools/&lt;slug&gt;&#39;</span>)
+<span class="kw">def</span> detail(slug):
+    school <span class="op">=</span> School.query.filter_by(LOC_CODE<span class="op">=</span>slug).first()
+    <span class="cf">return</span> school.SCHOOLNAME</code></pre>
+<p>Now <em>anything</em> can do into the part after <code>/schools/</code>. If we want to find P.S. 68, we’ll check out <a href="http://localhost:5000/schools/X068">http://localhost:5000/schools/X068</a>. And it works!</p>
+<p><img src="images/22.png" /></p>
+<p>If we want to go line by line, we’ll start with the route. Any variables in the URL - and you can have a million! - are surrounded by angle brackets. These brackets don’t show up in the URL, they just mean “something else is gonna be there.”</p>
+<pre class="pthon"><code>@app.route(&#39;/schools/&lt;slug&gt;&#39;)</code></pre>
+<p>When we make our function, we used to always use <code>def hello()</code>, but now <em>our variable shows up in the parentheses</em>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> detail(slug):</code></pre>
+<p>We then use that slug to filter through the schools (like a <code>WHERE</code>) and take the very first result.</p>
+<p>Because we used <code>first()</code> SQLAlchemy gives us back one row that we can do things like <code>.SCHOOLNAME</code> on it. If we’d asked for <code>all()</code> instead, we’d have a list that we’d need to loop through (even if there was only one result!).</p>
+<pre><code>school = School.query.filter_by(LOC_CODE=slug).first()
+return school.SCHOOLNAME</code></pre>
+<p>We used <code>return</code> to print the school’s name to the web page, but now it’s time to upgrade to a full-fledged detail page.</p>
+</div>
+<div id="crafting-a-detail-page" class="section level3">
+<h3><span class="header-section-number">5.5.3</span> Crafting a detail page</h3>
+<p>Before we make our actual detail page, let’s write the code to use the template. Kind of backwards, but let’s do it anyway!</p>
+<p>Instead of using <code>return</code> with just <code>school.SCHOOLNAME</code>, we’ll ask it to send a new template. We’ll call this template <code>detail.html</code>, and send the school we found in the database, just like we sent the school count to the other template.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/schools/&lt;slug&gt;&#39;</span>)
+<span class="kw">def</span> detail(slug):
+    school <span class="op">=</span> School.query.filter_by(LOC_CODE<span class="op">=</span>slug).first()
+    <span class="cf">return</span> render_template(<span class="st">&quot;detail.html&quot;</span>, school<span class="op">=</span>school)</code></pre>
+<p>We’re missing <code>detail.html</code>, but we can fix that! Create a new file called <code>detail.html</code> and paste the following code into it.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="dt">&lt;!doctype </span>html<span class="dt">&gt;</span>
+<span class="kw">&lt;html&gt;</span>
+  <span class="kw">&lt;head&gt;</span>
+    <span class="kw">&lt;title&gt;</span>School page: {{ school.SCHOOLNAME }}<span class="kw">&lt;/title&gt;</span>
+    <span class="kw">&lt;link</span><span class="ot"> rel=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> href=</span><span class="st">&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&quot;</span><span class="ot"> crossorigin=</span><span class="st">&quot;anonymous&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;/head&gt;</span>
+  <span class="kw">&lt;body&gt;</span>
+      <span class="kw">&lt;nav</span><span class="ot"> class=</span><span class="st">&quot;navbar navbar-expand-lg navbar-dark bg-dark&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;navbar-brand&quot;</span><span class="ot"> href=</span><span class="st">&quot;#&quot;</span><span class="kw">&gt;</span>Schools<span class="kw">&lt;/a&gt;</span>
+      <span class="kw">&lt;/nav&gt;</span>
+      <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;jumbotron&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+          <span class="kw">&lt;h1</span><span class="ot"> class=</span><span class="st">&quot;display-4&quot;</span><span class="kw">&gt;</span>{{ school.SCHOOLNAME }}<span class="kw">&lt;/h1&gt;</span>
+          <span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;lead&quot;</span><span class="kw">&gt;</span>{{ school.ADDRESS }}, {{ school.city }}<span class="kw">&lt;/p&gt;</span>
+        <span class="kw">&lt;/div&gt;</span>
+      <span class="kw">&lt;/div&gt;</span>
+      <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+          <span class="kw">&lt;p&gt;&lt;/p&gt;</span>
+          <span class="kw">&lt;p&gt;&lt;/p&gt;</span>
+          <span class="kw">&lt;p&gt;&lt;/p&gt;</span>
+      <span class="kw">&lt;/div&gt;</span>
+    <span class="kw">&lt;/div&gt;</span>
+  <span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></code></pre>
+<p>Look at that!!! We can just use `{{ school.column_name }}`` anywhere on the page to fill in details about the school!</p>
+<p><img src="images/21.png" /></p>
+<p>But… the text itself is kind of ugly, as <code>4011 MONTICELLO AVENUE, BRONX</code> seems a little TOO MUCH LIKE YELLING FOR MY TASTES. Since our Jinja2 template is Python-based, though, a solution is not far off.</p>
+<p>Just like we can do <code>.upper()</code> and <code>.lower()</code> on a string to make it <code>ALL CAPS</code> or <code>all lowercase</code>, Python has another fun string manipulator called <code>.title()</code>. Let’s change our address section to look like this:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;lead&quot;</span><span class="kw">&gt;</span>{{ school.ADDRESS.title() }}, {{ school.city.title() }}<span class="kw">&lt;/p&gt;</span></code></pre>
+<p>You could even change the <code>school.SCHOOLNAME</code> in the same way! <strong>It looks beautiful now!</strong></p>
+<p><img src="images/19.png" /></p>
+</div>
+</div>
+<div id="linking-from-the-index-to-the-detail-page" class="section level2">
+<h2><span class="header-section-number">5.6</span> Linking from the index to the detail page</h2>
+<p>Right now you need to know the specific URL of a school in order to end up on the detail page. But who has time for that?! I think our homepage - our <code>/</code> route - should list <em>all</em> the schools and also include links to each of their detail pages. It’s easy enough!</p>
+<p>A link in HTML looks like this:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://example/states/WA&quot;</span><span class="kw">&gt;</span>Washington<span class="kw">&lt;/a&gt;&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://example/states/VA&quot;</span><span class="kw">&gt;</span>Virginia<span class="kw">&lt;/a&gt;&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://example/states/&quot;</span><span class="kw">&gt;</span>Virginia<span class="kw">&lt;/a&gt;&lt;/p&gt;</span></code></pre>
+<p>Or rather, a series of links in a series of paragaph tags. Right now if you look at <code>index.html</code>, we’re listing our schools in an almost-similar fashion.</p>
+<pre class="sourceCode html"><code class="sourceCode html">{% for school in schools %}
+  <span class="kw">&lt;p&gt;</span>{{ school.SCHOOLNAME }}<span class="kw">&lt;/p&gt;</span>
+{% endfor %}</code></pre>
+<p>If we want to change this to be links, we need to do a fill-in-the-blanks with the <code>href="..."</code>, just like we did with the school’s name.</p>
+<pre class="sourceCode html"><code class="sourceCode html">{% for school in schools %}
+  <span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;/schools/{{ school.LOC_CODE }}&quot;</span><span class="kw">&gt;</span>{{ school.SCHOOLNAME }}<span class="kw">&lt;/a&gt;&lt;/p&gt;</span>
+{% endfor %}</code></pre>
+<p>The <code>href</code> attribute now changes based on which school you’re looking at! Refresh the page and see all those sweet, sweet links. Click on any of them and you’ll be able to go back and forth between the school list and the school detail page.</p>
+<p><img src="images/17.png" /></p>
+<p>But oh, wait! This is only the schools in a certain ZIP code. If you want to make it be <em>all</em> schools, you need to open up <code>app.py</code> and change a bit of code. Inside of <code>def hello()</code> we’re finding out schools like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python">zip_schools <span class="op">=</span> School.query.filter_by(ZIP<span class="op">=</span><span class="st">&#39;10466&#39;</span>).<span class="bu">all</span>()</code></pre>
+<p>When we should instead do something like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python">zip_schools <span class="op">=</span> School.query.<span class="bu">all</span>()</code></pre>
+<p>And, well, calling it <code>zip_schools</code> doesn’t make much sense any more, so let’s rename our variable to just plain <code>schools</code>:</p>
+<pre class="sourceCode python"><code class="sourceCode python">schools <span class="op">=</span> School.query.<span class="bu">all</span>()
+<span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count, schools<span class="op">=</span>schools)</code></pre>
+</div>
+<div id="reusing-templates" class="section level2">
+<h2><span class="header-section-number">5.7</span> Reusing templates</h2>
+<p>That’s a BIG web page we have now, though! It might make more sense if we had a few smaller web pages, ones where you could find a list of schools in a particular borough/city or zip code (…which we just got rid of).</p>
+<p><img src="images/16.png" /></p>
+<p>If we look at the dataset, the <code>city</code> column seems like a good place to start. Let’s build a new route called <code>city</code> so people can browse to <code>/city/BRONX</code> and get all of the schools in the Bronx (although for now we’ll just print the number of schools instead of showing a list).</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname).<span class="bu">all</span>()
+    <span class="cf">return</span> <span class="ss">f&quot;This city has </span><span class="sc">{</span><span class="bu">len</span>(schools)<span class="sc">}</span><span class="ss"> schools&quot;</span></code></pre>
+<p>Take a peek at <a href="http://localhost:5000/city/BRONX">http://localhost:5000/city/BRONX</a> and be amazed!</p>
+<blockquote>
+<p>Note that the school counting text is an f-string, not a Jinja template!</p>
+</blockquote>
+<p>I… don’t like that URL. We would much rather have <code>/city/bronx</code> instead of <code>/city/BRONX</code>, right? To fix that up, we just need to take whatever comes in as the search term, capitalize it, and <em>then</em> send it to the database. So if you type <code>bronx</code> or <code>BROnx</code> or <code>bronX</code> or whatever it’ll always be translated to <code>BRONX</code> when you search.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> <span class="ss">f&quot;This city has </span><span class="sc">{</span><span class="bu">len</span>(schools)<span class="sc">}</span><span class="ss"> schools&quot;</span></code></pre>
+<p>Seeing <a href="http://localhost:5000/city/bronx">http://localhost:5000/city/bronx</a> is a nicer experience, right? Right.</p>
+<p>Now that we want to show a list of the schools, you might think it’s time we made yet another template. But what if… we didn’t need to do that? <strong>What if we could just re-use another template?</strong></p>
+<p>Typically you have a handful of templates, and re-use them in different routes (or “views”). Showing all of the schools in a particular zip code and all of the schools in a particular city and all of the schools in generally is practically the same thing, it’s just a <em>list of schools</em>.</p>
+<p>Right now our <code>index.html</code> template takes a variable called <code>schools</code> and displays all of them. What if we just send the schools for this city on over to that template?</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, schools<span class="op">=</span>schools)</code></pre>
+<p><img src="images/15.png" /></p>
+<p>A horrible error!!! We didn’t pass it a <code>count=</code> variable, so when we tried to do this code:</p>
+<pre class="sourceCode html"><code class="sourceCode html">There are {{ &quot;{:,}&quot;.format(count) }} schools in New York City.</code></pre>
+<p>it freaked out and panicked and shut down. An easy fix is to adjust our city route to also send the number of schools to the template - we don’t need to do <code>.count()</code> or anything, we can just stick with a simple <code>len(schools)</code></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools))</code></pre>
+<p><img src="images/13.png" /></p>
+<p>Hooray! A little better, except <a href="http://localhost:5000/city/bronx">http://localhost:5000/city/bronx</a> reads <strong>There are 392 schools in New York City.</strong>, when we’re definitely just trying to look at the Bronx!</p>
+<p>We don’t need a whole new template for that - we just need to adjust each template to print out <em>where</em> we’re looking, and change our view to send that data. Let’s call it <code>location</code>, and just have it be the city name:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools), location<span class="op">=</span>cityname)</code></pre>
+<p>We’ll make a tiny adjustment in our <code>index.html</code> to use the new variable:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1</span><span class="ot"> class=</span><span class="st">&quot;display-4&quot;</span><span class="kw">&gt;</span>There are {{ &quot;{:,}&quot;.format(count) }} schools in {{ location.title() }}.<span class="kw">&lt;/h1&gt;</span></code></pre>
+<p>and we now have <strong>There are 392 schools in Bronx</strong> on the top of <a href="http://localhost:5000/city/bronx">our page!</a> It also works for <a href="http://localhost:5000/city/manhattan">Manhattan</a> and <a href="http://localhost:5000/city/brooklyn">Brooklyn</a>, too.</p>
+<p>The Staten Island link, though, is <code>http://localhost:5000/city/staten island</code>, which is gross and ugly. Our little fix is going to be an extra step beyond <code>.upper()</code> on our city before we search in the database - we’ll also replace all <code>-</code> with spaces.</p>
+<ol style="list-style-type: decimal">
+<li>We receive <code>staten-island</code> from the URL</li>
+<li><code>staten-island</code> gets the ‘-’ replaced with ’ ’, making <code>staten island</code></li>
+<li><code>staten island</code> gets uppercased into <code>STATEN ISLAND</code></li>
+<li><code>STATEN ISLAND</code> gets searched!</li>
+</ol>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    cityname <span class="op">=</span> cityname.replace(<span class="st">&quot;-&quot;</span>, <span class="st">&quot; &quot;</span>)
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools), location<span class="op">=</span>cityname)</code></pre>
+<p>Beauty! Success!</p>
+<blockquote>
+<p>You can try doing it all in the <code>filter_by</code> statement, but then we’ll see “Staten-Island” printed out on the web page. Give it a try if you’d like!</p>
+</blockquote>
+<div id="adding-yet-another-route" class="section level3">
+<h3><span class="header-section-number">5.7.1</span> Adding yet another route</h3>
+<p>And what about a route for zip codes? Easy-peasy! WE’ll just make a route called <code>zip</code> and do the exact same thing - same template, just with a different filter.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&#39;/zip/&lt;zipcode&gt;&#39;</span>)
+<span class="kw">def</span> <span class="bu">zip</span>(zipcode):
+    schools <span class="op">=</span> School.query.filter_by(ZIP<span class="op">=</span>zipcode).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools), location<span class="op">=</span>zipcode)</code></pre>
+<p>Look at that! All of six seconds to get a brand new way to browse the schools.</p>
+</div>
+<div id="fixing-up-the-root-route" class="section level3">
+<h3><span class="header-section-number">5.7.2</span> Fixing up the root route</h3>
+<p>Before we jump ahead, there’s one tiny thing we need to fix - our root route! If you visit our homepage <a href="http://localhost:5000/">http://localhost:5000/</a> we get a nice big <strong>‘location’ is undefined’</strong> error.</p>
+<p><strong>This is because we didn’t send a location from our root route, so the template panics when it sees our <code>schools in {{ location.title() }}</code> phrase.</strong></p>
+<p>The <code>app.py</code> currently looks like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    school_count <span class="op">=</span> School.query.count()
+    schools <span class="op">=</span> School.query.<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count, schools<span class="op">=</span>schools)</code></pre>
+<p>If we don’t have a variable we’re passing in, how do we get a <code>location</code> to give to our template? …we can just use a string! Instead of <code>location=cityname</code>, we can just say <code>location="New York City"</code> and it works just fine.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>, count<span class="op">=</span>school_count, schools<span class="op">=</span>schools, location<span class="op">=</span><span class="st">&quot;New York City&quot;</span>)</code></pre>
+<p><a href="http://localhost:5000/">Voilà!</a> Perfect, amazing, beautiful, and a total dream.</p>
+</div>
+</div>
+<div id="cleaning-up" class="section level2">
+<h2><span class="header-section-number">5.8</span> Cleaning up</h2>
+<p>Let’s clean up a little bit!</p>
+<ul>
+<li>Remove the <code>shoelaces</code> and <code>about</code> route (if you want an <code>about</code> route later you can always add it back in)</li>
+<li>Rename our root route function from <code>def hello()</code> to <code>def index()</code>. It doesn’t change anything, really, but it’s a nicer name.</li>
+<li>Change the navbar on <code>index.html</code> to say <code>Schools</code> instead of <code>An incredible site</code></li>
+<li>Rename <code>index.html</code> to <code>list.html</code> (because it’s a list, right?) and change the <code>render_template</code> calls in our index, city and zipcode routes.</li>
+</ul>
+<div id="our-code" class="section level3">
+<h3><span class="header-section-number">5.8.1</span> Our code</h3>
+<p>Overall, our Python code should now look like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co"># app.py</span>
+<span class="im">from</span> flask <span class="im">import</span> Flask
+<span class="im">from</span> flask <span class="im">import</span> render_template
+<span class="im">from</span> flask_sqlalchemy <span class="im">import</span> SQLAlchemy
+
+app <span class="op">=</span> Flask(<span class="va">__name__</span>)
+
+app.config[<span class="st">&#39;SQLALCHEMY_DATABASE_URI&#39;</span>] <span class="op">=</span> <span class="st">&#39;sqlite:///schools.sqlite3&#39;</span>
+db <span class="op">=</span> SQLAlchemy(app)
+
+db.Model.metadata.reflect(db.engine)
+
+<span class="kw">class</span> School(db.Model):
+    __tablename__ <span class="op">=</span> <span class="st">&#39;schools-geocoded&#39;</span>
+    __table_args__ <span class="op">=</span> { <span class="st">&#39;extend_existing&#39;</span>: <span class="va">True</span> }
+    LOC_CODE <span class="op">=</span> db.Column(db.Text, primary_key<span class="op">=</span><span class="va">True</span>)    
+
+<span class="at">@app.route</span>(<span class="st">&#39;/schools/&lt;slug&gt;&#39;</span>)
+<span class="kw">def</span> detail(slug):
+    school <span class="op">=</span> School.query.filter_by(LOC_CODE<span class="op">=</span>slug).first()
+    <span class="cf">return</span> render_template(<span class="st">&quot;detail.html&quot;</span>, school<span class="op">=</span>school)
+
+<span class="at">@app.route</span>(<span class="st">&#39;/zip/&lt;zipcode&gt;&#39;</span>)
+<span class="kw">def</span> <span class="bu">zip</span>(zipcode):
+    schools <span class="op">=</span> School.query.filter_by(ZIP<span class="op">=</span>zipcode).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;list.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools), location<span class="op">=</span>zipcode)
+
+<span class="at">@app.route</span>(<span class="st">&#39;/city/&lt;cityname&gt;&#39;</span>)
+<span class="kw">def</span> city(cityname):
+    cityname <span class="op">=</span> cityname.replace(<span class="st">&quot;-&quot;</span>, <span class="st">&quot; &quot;</span>)
+    schools <span class="op">=</span> School.query.filter_by(city<span class="op">=</span>cityname.upper()).<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;list.html&quot;</span>, schools<span class="op">=</span>schools, count<span class="op">=</span><span class="bu">len</span>(schools), location<span class="op">=</span>cityname)
+
+<span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> index():
+    school_count <span class="op">=</span> School.query.count()
+    schools <span class="op">=</span> School.query.<span class="bu">all</span>()
+    <span class="cf">return</span> render_template(<span class="st">&quot;list.html&quot;</span>, count<span class="op">=</span>school_count, schools<span class="op">=</span>schools, location<span class="op">=</span><span class="st">&quot;New York City&quot;</span>)
+
+<span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:
+    app.run(debug<span class="op">=</span><span class="va">True</span>)</code></pre>
+<p>Our <code>list.html</code> should look like this:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="dt">&lt;!doctype </span>html<span class="dt">&gt;</span>
+<span class="kw">&lt;html&gt;</span>
+  <span class="kw">&lt;head&gt;</span>
+    <span class="kw">&lt;title&gt;</span>My incredible web site.<span class="kw">&lt;/title&gt;</span>
+    <span class="kw">&lt;link</span><span class="ot"> rel=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> href=</span><span class="st">&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&quot;</span><span class="ot"> crossorigin=</span><span class="st">&quot;anonymous&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;/head&gt;</span>
+  <span class="kw">&lt;body&gt;</span>
+      <span class="kw">&lt;nav</span><span class="ot"> class=</span><span class="st">&quot;navbar navbar-expand-lg navbar-dark bg-dark&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;navbar-brand&quot;</span><span class="ot"> href=</span><span class="st">&quot;#&quot;</span><span class="kw">&gt;</span>Schools<span class="kw">&lt;/a&gt;</span>
+      <span class="kw">&lt;/nav&gt;</span>
+      <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;jumbotron&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+          <span class="kw">&lt;h1</span><span class="ot"> class=</span><span class="st">&quot;display-4&quot;</span><span class="kw">&gt;</span>There are {{ &quot;{:,}&quot;.format(count) }} schools in {{ location.title() }}.<span class="kw">&lt;/h1&gt;</span>
+          <span class="kw">&lt;p</span><span class="ot"> class=</span><span class="st">&quot;lead&quot;</span><span class="kw">&gt;</span>It&#39;s pretty cool.<span class="kw">&lt;/p&gt;</span>
+        <span class="kw">&lt;/div&gt;</span>
+      <span class="kw">&lt;/div&gt;</span>
+      <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;container&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;p&gt;</span>I&#39;m amazed and frankly you should be, too.<span class="kw">&lt;/p&gt;</span>
+        {% for school in schools %}
+          <span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;/schools/{{ school.LOC_CODE }}&quot;</span><span class="kw">&gt;</span>{{ school.SCHOOLNAME }}<span class="kw">&lt;/a&gt;&lt;/p&gt;</span>
+        {% endfor %}
+      <span class="kw">&lt;/div&gt;</span>
+    <span class="kw">&lt;/div&gt;</span>
+  <span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></code></pre>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="connecting-flask-to-sqlite.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="leveling-up-with-advanced-sqlalchemy-queries.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection",
+"scroll_highlight": true
+}
+});
+});
+</script>
+
+</body>
+
+</html>

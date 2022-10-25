@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Connecting Flask to SQLite | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox</title>
+  <meta name="description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Connecting Flask to SQLite | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Connecting Flask to SQLite | Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox" />
+  
+  <meta name="twitter:description" content="A guide to building a simple database-based web application with Flask and SQLAlchemy, along with a little MapBox mapping thrown in for good measure." />
+  
+
+<meta name="author" content="Jonathan Soma" />
+
+
+<meta name="date" content="2019-06-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="setting-up-our-database.html">
+<link rel="next" href="putting-data-on-the-page.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style.replace(/;/g, ' !important;') + '}', j);
+    }
+  }
+})();
+</script>
+<style>
+.sourceCode.python {
+  margin-bottom: 0 !important;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal .sourceCode.python + p {
+  margin-top: 1.275em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal .sourceCode.python + table {
+  margin-top: 1.275em !important;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal pre > code {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#our-goal"><i class="fa fa-check"></i><b>1.1</b> Our goal</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#every-step-well-take"><i class="fa fa-check"></i><b>1.2</b> Every step we’ll take</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#why-in-the-name-of-undiscovered-species-am-i-doing-this"><i class="fa fa-check"></i><b>1.3</b> Why in the name of undiscovered species am I doing this?</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html"><i class="fa fa-check"></i><b>2</b> Getting started with Flask</a><ul>
+<li class="chapter" data-level="2.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#babys-first-web-app"><i class="fa fa-check"></i><b>2.1</b> Baby’s first web app</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#servers-up-servers-down"><i class="fa fa-check"></i><b>2.1.1</b> Servers up servers down</a></li>
+<li class="chapter" data-level="2.1.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#routing-in-flask"><i class="fa fa-check"></i><b>2.1.2</b> Routing in Flask</a></li>
+<li class="chapter" data-level="2.1.3" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#here-we-go-again"><i class="fa fa-check"></i><b>2.1.3</b> Here we go again</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#template-time"><i class="fa fa-check"></i><b>2.2</b> Template time</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#bringing-structure-to-this-world"><i class="fa fa-check"></i><b>2.2.1</b> Bringing structure to this world</a></li>
+<li class="chapter" data-level="2.2.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#template-time-1"><i class="fa fa-check"></i><b>2.2.2</b> Template time</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#adding-css"><i class="fa fa-check"></i><b>2.3</b> Adding CSS</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#hello-bootstrap"><i class="fa fa-check"></i><b>2.3.1</b> Hello Bootstrap!</a></li>
+<li class="chapter" data-level="2.3.2" data-path="getting-started-with-flask.html"><a href="getting-started-with-flask.html#what-now"><i class="fa fa-check"></i><b>2.3.2</b> What now?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html"><i class="fa fa-check"></i><b>3</b> Setting up our database</a><ul>
+<li class="chapter" data-level="3.1" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#intro-to-sqlite"><i class="fa fa-check"></i><b>3.1</b> Intro to SQLite</a></li>
+<li class="chapter" data-level="3.2" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#creating-a-new-sqlite-database"><i class="fa fa-check"></i><b>3.2</b> Creating a new SQLite database</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="setting-up-our-database.html"><a href="setting-up-our-database.html#double-checking-the-import"><i class="fa fa-check"></i><b>3.2.1</b> Double-checking the import</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html"><i class="fa fa-check"></i><b>4</b> Connecting Flask to SQLite</a><ul>
+<li class="chapter" data-level="4.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#speaking-sql"><i class="fa fa-check"></i><b>4.1</b> Speaking SQL</a></li>
+<li class="chapter" data-level="4.2" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#introduction-to-orms"><i class="fa fa-check"></i><b>4.2</b> Introduction to ORMs</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#setting-up-sqlalchemy"><i class="fa fa-check"></i><b>4.2.1</b> Setting up SQLAlchemy</a></li>
+<li class="chapter" data-level="4.2.2" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#adding-our-model"><i class="fa fa-check"></i><b>4.2.2</b> Adding our Model</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#using-sqlalchemy"><i class="fa fa-check"></i><b>4.3</b> Using SQLAlchemy</a><ul>
+<li class="chapter" data-level="4.3.0.1" data-path="connecting-flask-to-sqlite.html"><a href="connecting-flask-to-sqlite.html#ready-to-go"><i class="fa fa-check"></i><b>4.3.0.1</b> Ready to go?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html"><i class="fa fa-check"></i><b>5</b> Putting data on the page</a><ul>
+<li class="chapter" data-level="5.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-data-to-the-template"><i class="fa fa-check"></i><b>5.1</b> Sending data to the template</a></li>
+<li class="chapter" data-level="5.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#hello-jinja2"><i class="fa fa-check"></i><b>5.2</b> Hello Jinja2</a></li>
+<li class="chapter" data-level="5.3" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-meaningful-data-to-the-template"><i class="fa fa-check"></i><b>5.3</b> Sending meaningful data to the template</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#formatting-your-numbers"><i class="fa fa-check"></i><b>5.3.1</b> Formatting your numbers</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#sending-lists-to-our-template"><i class="fa fa-check"></i><b>5.4</b> Sending lists to our template</a></li>
+<li class="chapter" data-level="5.5" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#making-school-pages"><i class="fa fa-check"></i><b>5.5</b> Making school pages</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#slugs"><i class="fa fa-check"></i><b>5.5.1</b> Slugs</a></li>
+<li class="chapter" data-level="5.5.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#building-our-detail-route"><i class="fa fa-check"></i><b>5.5.2</b> Building our detail route</a></li>
+<li class="chapter" data-level="5.5.3" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#crafting-a-detail-page"><i class="fa fa-check"></i><b>5.5.3</b> Crafting a detail page</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#linking-from-the-index-to-the-detail-page"><i class="fa fa-check"></i><b>5.6</b> Linking from the index to the detail page</a></li>
+<li class="chapter" data-level="5.7" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#reusing-templates"><i class="fa fa-check"></i><b>5.7</b> Reusing templates</a><ul>
+<li class="chapter" data-level="5.7.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#adding-yet-another-route"><i class="fa fa-check"></i><b>5.7.1</b> Adding yet another route</a></li>
+<li class="chapter" data-level="5.7.2" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#fixing-up-the-root-route"><i class="fa fa-check"></i><b>5.7.2</b> Fixing up the root route</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#cleaning-up"><i class="fa fa-check"></i><b>5.8</b> Cleaning up</a><ul>
+<li class="chapter" data-level="5.8.1" data-path="putting-data-on-the-page.html"><a href="putting-data-on-the-page.html#our-code"><i class="fa fa-check"></i><b>5.8.1</b> Our code</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html"><i class="fa fa-check"></i><b>6</b> Leveling up with advanced SQLAlchemy queries</a><ul>
+<li class="chapter" data-level="6.1" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#listing-all-of-our-cities"><i class="fa fa-check"></i><b>6.1</b> Listing all of our cities</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#cleaning-text-in-our-jinja2-templates"><i class="fa fa-check"></i><b>6.1.1</b> Cleaning text in our Jinja2 templates</a></li>
+<li class="chapter" data-level="6.1.2" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#no-wait-maybe-not"><i class="fa fa-check"></i><b>6.1.2</b> No wait, maybe not!</a></li>
+<li class="chapter" data-level="6.1.3" data-path="leveling-up-with-advanced-sqlalchemy-queries.html"><a href="leveling-up-with-advanced-sqlalchemy-queries.html#doing-the-same-for-zip-codes"><i class="fa fa-check"></i><b>6.1.3</b> Doing the same for ZIP codes</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html"><i class="fa fa-check"></i><b>7</b> Layouts for our templates</a><ul>
+<li class="chapter" data-level="7.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#layouts"><i class="fa fa-check"></i><b>7.1</b> Layouts</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#and-a-final-fun-trick"><i class="fa fa-check"></i><b>7.1.1</b> And a final fun trick</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#adding-in-our-navigation"><i class="fa fa-check"></i><b>7.2</b> Adding in our navigation</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="layouts-for-our-templates.html"><a href="layouts-for-our-templates.html#a-dropdown-for-cities"><i class="fa fa-check"></i><b>7.2.1</b> A dropdown for cities</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html"><i class="fa fa-check"></i><b>8</b> Mapping our schools</a><ul>
+<li class="chapter" data-level="8.1" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-mapbox-to-our-pages"><i class="fa fa-check"></i><b>8.1</b> Adding MapBox to our pages</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-mapbox-css-and-js"><i class="fa fa-check"></i><b>8.1.1</b> Adding MapBox CSS and JS</a></li>
+<li class="chapter" data-level="8.1.2" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adding-a-basic-and-fake-map"><i class="fa fa-check"></i><b>8.1.2</b> Adding a basic (and fake) map</a></li>
+<li class="chapter" data-level="8.1.3" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#inserting-our-data-into-the-map"><i class="fa fa-check"></i><b>8.1.3</b> Inserting our data into the map</a></li>
+<li class="chapter" data-level="8.1.4" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#zooming-and-centering"><i class="fa fa-check"></i><b>8.1.4</b> Zooming and centering</a></li>
+<li class="chapter" data-level="8.1.5" data-path="mapping-our-schools.html"><a href="mapping-our-schools.html#adjusting-the-style-of-our-dot"><i class="fa fa-check"></i><b>8.1.5</b> Adjusting the style of our dot</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="reorganizing-our-page-with-columns.html"><a href="reorganizing-our-page-with-columns.html"><i class="fa fa-check"></i><b>9</b> Reorganizing our page with columns</a><ul>
+<li class="chapter" data-level="9.1" data-path="reorganizing-our-page-with-columns.html"><a href="reorganizing-our-page-with-columns.html#columns-and-rows"><i class="fa fa-check"></i><b>9.1</b> Columns and rows</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Building Python-based, database-driven web applications (with maps!) using Flask, SQLite, SQLAlchemy and MapBox</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="connecting-flask-to-sqlite" class="section level1">
+<h1><span class="header-section-number">4</span> Connecting Flask to SQLite</h1>
+<p>Now that we have our Flask app kind of set up and our SQLite database ready to go, it’s time to make them talk to each other.</p>
+<div id="speaking-sql" class="section level2">
+<h2><span class="header-section-number">4.1</span> Speaking SQL</h2>
+<p>If you’ve used things like <code>sqlite3</code> or <code>pg8000</code> to talk to databases before, you know it can really be a pain to wrangle your data. It’s even <em>worse</em> when working with Flask. Brace yourself and take a look at this awesome <a href="http://flask.pocoo.org/docs/1.0/patterns/sqlite3/">“simple example of how you can use SQLite 3 with Flask”</a></p>
+<pre class="sourceCode python"><code class="sourceCode python">DATABASE <span class="op">=</span> <span class="st">&#39;/path/to/database.db&#39;</span>
+
+<span class="kw">def</span> get_db():
+    db <span class="op">=</span> <span class="bu">getattr</span>(g, <span class="st">&#39;_database&#39;</span>, <span class="va">None</span>)
+    <span class="cf">if</span> db <span class="kw">is</span> <span class="va">None</span>:
+        db <span class="op">=</span> g._database <span class="op">=</span> sqlite3.<span class="ex">connect</span>(DATABASE)
+    <span class="cf">return</span> db
+
+<span class="at">@app.teardown_appcontext</span>
+<span class="kw">def</span> close_connection(exception):
+    db <span class="op">=</span> <span class="bu">getattr</span>(g, <span class="st">&#39;_database&#39;</span>, <span class="va">None</span>)
+    <span class="cf">if</span> db <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:
+        db.close()</code></pre>
+<p>Oof, eef, aaf, this “simple example” it hurts parts of my body I didn’t even know I <em>had</em>.</p>
+<p>And then under the header “Easy Querying” it shows you this real baller piece of work:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> make_dicts(cursor, row):
+    <span class="cf">return</span> <span class="bu">dict</span>((cursor.description[idx][<span class="dv">0</span>], value)
+                <span class="cf">for</span> idx, value <span class="kw">in</span> <span class="bu">enumerate</span>(row))
+
+db.row_factory <span class="op">=</span> make_dicts</code></pre>
+<p>Dear Reader, my Sweet Friend, that’s <em>horrible</em>. That’s a fate worse than <em>ten or twenty unimaginable terrors.</em> So we ain’t gonna do it. We’re gonna do <em>something else</em>.</p>
+<p>We’re gonna do something <em>better</em>.</p>
+</div>
+<div id="introduction-to-orms" class="section level2">
+<h2><span class="header-section-number">4.2</span> Introduction to ORMs</h2>
+<p>Once upon a time there were databases, and there was SQL, and there were people who loved writing SQL. SQL is cool, SQL is great!</p>
+<p>Then everyone <em>else</em> was invented, and they didn’t like writing SQL, they just liked writing Python. So the Gods invented ORMs, which basically mean “instead of writing SQL you’ll just write Python and the ORM will talk to the database for you.”</p>
+<p>Now everyone can be happy!</p>
+<blockquote>
+<p>ORM means <strong>Object-relational mapping</strong>, which doesn’t mean anything to anyone and no one will ever ask you about that</p>
+</blockquote>
+<p>There are a handful of ORMs that work for Python, and plenty that work with Flask. Peewee is one that’s pretty simple to get running with, but it isn’t as popular as SQLAlchemy. SQLAlchemy is… an acquired taste, but it’s <em>very popular</em>, and because it’s so popular I am absolutely certain that my distaste for SQLAlchemy is because I’m too stupid to understand it**, so we’re going to use it for this example.</p>
+<blockquote>
+<p>** Ever since I was a little baby I was programming in a language called Ruby and using an ORM called ActiveRecord. Ruby is a lot like Python, but ActiveRecord is <em>not</em> like SQLAlchemy: ActiveRecord is a beautiful angel sent from heaven to cure the world of all ills. The world - sadly, predictably - just doesn’t listen.</p>
+</blockquote>
+<div id="setting-up-sqlalchemy" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Setting up SQLAlchemy</h3>
+<p>First, before we even <em>look</em> at SQLAlchemy, let’s install a lil’ package that will connect SQLAlchemy to Flask. It’s called - wait for it! - <code>flask_sqlalchemy</code>. Install as such:</p>
+<pre><code>pip install flask_sqlalchemy</code></pre>
+<p>It’ll also automatically install SQLAlchemy itself.</p>
+<p>To use it in our app, you’ll also need to add the appropriate import. At the top of <code>app.py</code>, near where you’re importing all the Flask bits and pieces, add the following:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co"># app.py</span>
+<span class="im">from</span> flask <span class="im">import</span> Flask
+<span class="im">from</span> flask <span class="im">import</span> render_template
+<span class="im">from</span> flask_sqlalchemy <span class="im">import</span> SQLAlchemy</code></pre>
+<p>Standard workhorse stuff, nothing too crazy.</p>
+</div>
+<div id="adding-our-model" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Adding our Model</h3>
+<p>Now the real work begins! We need to define our <strong>Model</strong>, which is the <strong>Python version of our SQL table.</strong> Every table gets a model, and we use that model to play around with its associated table from Python. (Although we only have one table in this case, so we’ll only have one model)</p>
+<p>Going back to our code - right after we make our Flask app with <code>app = Flask(__name__)</code>, you’ll want to tell SQLAlchemy everything important about the database and its tables. It’ll look like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python">app <span class="op">=</span> Flask(<span class="va">__name__</span>)
+
+app.config[<span class="st">&#39;SQLALCHEMY_DATABASE_URI&#39;</span>] <span class="op">=</span> <span class="st">&#39;sqlite:///schools.sqlite3&#39;</span>
+db <span class="op">=</span> SQLAlchemy(app)
+
+db.Model.metadata.reflect(db.engine)
+
+<span class="kw">class</span> School(db.Model):
+    __tablename__ <span class="op">=</span> <span class="st">&#39;schools-geocoded&#39;</span>
+    __table_args__ <span class="op">=</span> { <span class="st">&#39;extend_existing&#39;</span>: <span class="va">True</span> }
+    LOC_CODE <span class="op">=</span> db.Column(db.Text, primary_key<span class="op">=</span><span class="va">True</span>)   </code></pre>
+<p>Let’s take it line-by-line to get an idea of what’s going on (or a-few-lines by a-few-lines).</p>
+<p>First off, you tell the app <strong>where to find the database</strong> and initialize SQLAlchemy:</p>
+<pre class="sourceCode python"><code class="sourceCode python">app.config[<span class="st">&#39;SQLALCHEMY_DATABASE_URI&#39;</span>] <span class="op">=</span> <span class="st">&#39;sqlite:///schools.sqlite3&#39;</span>
+db <span class="op">=</span> SQLAlchemy(app)</code></pre>
+<p>Usually when you’re working with SQLAlchemy, you have to make a nice long list of every column in the table, <em>and</em> whether it’s an integer, text, float, whatever. This table has about sixteen thousand rows, so you’d probably perish from old age before we finished up.</p>
+<p>Luckily, there’s an option to tell SQLALchemy that we’re way too lazy to do that, and for every model it should just <em>look at the columns that already exist in the table</em>. This is called reflecting!</p>
+<p>To tell SQLAlchemy we’re lazy and it should teach itself about the database, we use this line:</p>
+<pre class="sourceCode python"><code class="sourceCode python">db.Model.metadata.reflect(db.engine)</code></pre>
+<p>It’s always the same, never changes. A million tables, weird names, etc etc, nothing affects it. If you don’t want to list all those columns out, you’ll be using that line.</p>
+<p>Now we’re finally ready to make the model!!!!! We need to tell the model four things:</p>
+<ul>
+<li>Its name. In this case, we’re calling it <code>School</code>, because it’s… a list of schools.</li>
+<li>The <strong>table name</strong> to both find the data in and to learn the columns from. That’s <code>schools-geocoded</code>, because TablePlus took the name right from the CSV file and didn’t give us any other choice.</li>
+<li>A weird line about <code>extend_existing</code>, which is always exactly the same. It just means “hey, we’re going to change something about the table,” because…</li>
+<li>…even though it learn the columns by reflecting, SQLAlchemy needs a unique column to be able to keep each row separate, like an id. In this case, it’s the <code>LOC_CODE</code> column. This is called the “primary key.”</li>
+</ul>
+<p>That final bit of code all together looks like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> School(db.Model):
+    __tablename__ <span class="op">=</span> <span class="st">&#39;schools-geocoded&#39;</span>
+    __table_args__ <span class="op">=</span> { <span class="st">&#39;extend_existing&#39;</span>: <span class="va">True</span> }
+    LOC_CODE <span class="op">=</span> db.Column(db.Text, primary_key<span class="op">=</span><span class="va">True</span>)   </code></pre>
+<p>Give your page a refresh to make sure you don’t have any typos or other little issues, and then we’ll charge ahead to actually using this model.</p>
+</div>
+</div>
+<div id="using-sqlalchemy" class="section level2">
+<h2><span class="header-section-number">4.3</span> Using SQLAlchemy</h2>
+<p>We don’t know how to make our database talk to the web page yet, so we’re going to cheat a little bit. Let’s edit the <code>/about</code> route to make it print something out:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    <span class="bu">print</span>(<span class="st">&quot;Total number of schools is&quot;</span>, School.query.count())
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>)</code></pre>
+<p>Refresh the page and you’ll see…. nothing changed? But pop on over to your command line, and you’ll see a secret little line hiding in the debug output:</p>
+<p><img src="images/29.png" /></p>
+<pre><code>Total number of schools is 1640
+127.0.0.1 - - [13/Jun/2019 23:41:07] &quot;GET / HTTP/1.1&quot; 200 -</code></pre>
+<p>When you use <code>print</code> in the Flask app, it <em>doesn’t print to the web page</em>. That’s the <code>render_template</code> part. Instead, <code>print</code> prints to the command line. It’s totally useless for showing things to the user, but a nice cheat to check things and help us debug.</p>
+<p>Where’d that 1640 come from? <code>School.query.count()</code>! We used our model - <code>School</code> - to visit the database, build a new query, and count the number of rows in the table.</p>
+<p>That’s not SQL, right? The SQL would be something like this:</p>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> `geoceoded<span class="op">-</span>schools`</code></pre>
+<p>But because we’re using an SQLAlchemy, <em>we write Python, not SQL</em>. SQLAlchemy takes care of the translation to SQL and just gives us the result.</p>
+<p>For example, we can do a <code>WHERE</code> query - filtering our data - by using <code>filter_by</code>. It might like this:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="op">&gt;&gt;&gt;</span> peter <span class="op">=</span> User.query.filter_by(username<span class="op">=</span><span class="st">&#39;peter&#39;</span>).first()
+<span class="op">&gt;&gt;&gt;</span> peter.<span class="bu">id</span>
+<span class="dv">2</span>
+<span class="op">&gt;&gt;&gt;</span> peter.email
+<span class="co">&#39;peter@example.org&#39;</span></code></pre>
+<p>You can find more examples <a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/#querying-records">in the documentation</a>. To play around a little, let’s try to find a specific school and print out its name.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    <span class="bu">print</span>(<span class="st">&quot;Total number of schools is&quot;</span>, School.query.count())
+
+    school <span class="op">=</span> School.query.filter_by(LOC_CODE<span class="op">=</span><span class="st">&#39;X270&#39;</span>).first()
+    <span class="bu">print</span>(<span class="st">&quot;School&#39;s name is&quot;</span>, school.SCHOOLNAME)
+
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>)</code></pre>
+<p>Refresh the page, check the terminal to see the output of your <code>print</code> statements. Should look something like this:</p>
+<p><img src="images/28.png" /></p>
+<pre><code> * Debugger PIN: 897-623-853
+Total number of schools is 1640
+School&#39;s name is ACADEMY FOR SCHOLARSHIP AND ENTREPRENEURSHIP: A CO
+127.0.0.1 - - [13/Jun/2019 23:50:07] &quot;GET / HTTP/1.1&quot; 200 -</code></pre>
+<p>What comes back from the database is that one row where <code>LOC_CODE='X270'</code> - we only got one because we asked for <code>.first()</code>. It works just like a normal variable, kind of like a dictionary that you don’t need <code>['whatever']</code> for. Instead, you can just ask for each column with a period.</p>
+<p>Since <code>SCHOOLNAME</code> is the column with the school’s name in it, we can just ask for <code>school.SCHOOLNAME</code> and it will print right out.</p>
+<p>If we want to get fancier, we can also select multiple rows with <code>.all()</code>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="at">@app.route</span>(<span class="st">&quot;/&quot;</span>)
+<span class="kw">def</span> hello():
+    <span class="bu">print</span>(<span class="st">&quot;Total number of schools is&quot;</span>, School.query.count())
+
+    school <span class="op">=</span> School.query.filter_by(LOC_CODE<span class="op">=</span><span class="st">&#39;X270&#39;</span>).first()
+    <span class="bu">print</span>(<span class="st">&quot;School&#39;s name is&quot;</span>, school.SCHOOLNAME)
+
+    zip_schools <span class="op">=</span> School.query.filter_by(ZIP<span class="op">=</span><span class="st">&#39;10466&#39;</span>).<span class="bu">all</span>()
+    <span class="cf">for</span> zip_school <span class="kw">in</span> zip_schools:
+      <span class="bu">print</span>(zip_school.SCHOOLNAME)
+
+    <span class="cf">return</span> render_template(<span class="st">&quot;index.html&quot;</span>)</code></pre>
+<p>Since we asked for <code>.all()</code> what comes back is similar to a list. That means we need to use a loop if we want to print all their names out, with the same <code>.SCHOOLNAME</code> technique to get the value from the <code>SCHOOLNAME</code> column.</p>
+<p>The results are nice and long:</p>
+<p><img src="images/27.png" /></p>
+<pre><code>Total number of schools is 1640
+School&#39;s name is ACADEMY FOR SCHOLARSHIP AND ENTREPRENEURSHIP: A CO
+P.S. 087 BRONX
+P.S. 103 HECTOR FONTANEZ
+P.S. 068 BRONX
+ACADEMY FOR SCHOLARSHIP AND ENTREPRENEURSHIP: A CO
+NEW WORLD HIGH SCHOOL
+SPORTS PROFESSIONS HIGH SCHOOL
+P.S. 021 PHILLIP H. SHERIDAN
+J.H.S. 142 JOHN PHILIP SOUSA
+Baychester Middle School
+One World Middle School at Edenwald
+P.S. 111 SETON FALLS
+BRONX CHARTER SCHOOL FOR BETTER LEARNING
+P.S. 112 BRONXWOOD
+BAYCHESTER ACADEMY
+127.0.0.1 - - [13/Jun/2019 23:53:23] &quot;GET / HTTP/1.1&quot; 200 -</code></pre>
+<p>And that’s how an ORM works! Kind of, partially, somewhat, anyway.</p>
+<p>Yes, we have to memorize a new weird set of ways to do things (why did <code>WHERE</code> become <code>filter_by</code>?), but I promise working with SQL in Python is a tiny pile of ashes we don’t want to play in.</p>
+<div id="ready-to-go" class="section level4">
+<h4><span class="header-section-number">4.3.0.1</span> Ready to go?</h4>
+<p>We’ve been flexing our sweet new SQLAlchemy ORM, testing our skills at querying and counting and <code>WHERE</code>ing without <code>WHERE</code>s, but how about we actually make this useful? In the next section we’ll take a look at how we can put this data on the actual web page.</p>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="setting-up-our-database.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="putting-data-on-the-page.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection",
+"scroll_highlight": true
+}
+});
+});
+</script>
+
+</body>
+
+</html>

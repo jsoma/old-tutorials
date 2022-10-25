@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>ASCII and Character Encodings</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/international-data/ascii-and-character-encodings/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="ASCII and Character Encodings">
+  <meta property="twitter:title" content="ASCII and Character Encodings">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">International Data Journalism</a> &gt;  ASCII and Character Encodings</p>
+
+
+
+                      <h1 id="ascii-and-character-encodings">ASCII and character encodings</h1>
+
+<blockquote>
+  <p>This is <strong>part 2</strong> of a <strong>5-part series</strong> on character encodings in international data journalism. <a href="/tutorials/international-data/utf8-unicode-character-encodings/">Check out the other pieces</a>.</p>
+</blockquote>
+
+<p>Once you know <a href="../binary/">the basics of bits and binary</a>, now we can move on to representing characters on a screen.</p>
+
+<h2 id="review-from-how-binary-worksbinary">Review from <a href="../binary/">How binary works</a></h2>
+
+<p>Binary is a way of counting that only uses <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code>! It looks kind of like this:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary number</th>
+      <th>No. of 2s</th>
+      <th>No. of 1s</th>
+      <th>Represents</th>
+      <th>Decimal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">00</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 + 0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">01</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>0 + 1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">10</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>2 + 0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">11</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>2 + 1</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Every one of those <strong>bi</strong>nary digi<strong>t</strong>s are called a <strong>bit</strong>.</p>
+
+<h2 id="enter-ascii">Enter ASCII</h2>
+
+<p>Except for very boring theoretical physicists, humans generally communicate using characters, not numbers. But since computers only understand numbers, we’re going to need a system to <strong>convert numbers to typed characters</strong>. Luckily, this has already been done for us.</p>
+
+<p>Once upon a time <a href="https://en.wikipedia.org/wiki/American_National_Standards_Institute">a bunch of Americans</a> got together and decided on a system that represented all of the important stuff.</p>
+
+<ul>
+  <li>Uppercase A-Z</li>
+  <li>Lowercase a-z</li>
+  <li>Basic punctuation (commas, parenthesis, etc)</li>
+  <li>The numbers 0-9</li>
+  <li>A few other tidbits</li>
+</ul>
+
+<p>The people in charge were very excited to have created this system, which is odd because they had just copied it right from telegraph codes. Everything’s got to come from somewhere, I guess? This system they created was called <strong>ASCII</strong> (ASS-kee), the American Standard Code for Information Interchange, and here are two true facts about it:</p>
+
+<ol>
+  <li>It is very simple</li>
+  <li>It is nothing but trouble</li>
+</ol>
+
+<p>This mapping of numbers to letters is called a <strong>character set</strong>, and you’ll see that ASCII caused the creation of quite a handful. Let’s see what happened!</p>
+
+<h3 id="ascii-fact-1-it-is-very-simple">ASCII Fact #1: It is very simple</h3>
+
+<p>ASCII is very simple because it only uses the numbers 0-127 to represent its entire character set (that’s 128 different numbers, remember to count the 0). Here are a few sample sections:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Binary</th>
+      <th>Decimal</th>
+      <th>ASCII character</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">010 1001</code></td>
+      <td>41</td>
+      <td>)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">010 1010</code></td>
+      <td>42</td>
+      <td>*</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">010 1011</code></td>
+      <td>43</td>
+      <td>+</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">100 0001</code></td>
+      <td>65</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">100 0010</code></td>
+      <td>66</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">100 0011</code></td>
+      <td>67</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">110 0111</code></td>
+      <td>103</td>
+      <td>g</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">110 1000</code></td>
+      <td>104</td>
+      <td>h</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">110 1001</code></td>
+      <td>105</td>
+      <td>i</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Why 128? In binary, 0 through 127 is <code class="highlighter-rouge">000 0000</code> to <code class="highlighter-rouge">111 1111</code>, a nice set of 7 bits. It seemed to fit all the characters you’d ever need - lowercase, uppercase, numbers, punctuation - and didn’t waste any space in the process. The more bits you take up, the larger files and programs would be, so keeping it at <strong>7 bits</strong> meant everything was nice and small.</p>
+
+<p>ASCII was, above all else, <em>efficient</em>.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> Why does ASCII wait until 65 to get to <code class="highlighter-rouge">A</code>? The first 32 are “non-printable control characters,” things like “this is a new line” which need a character to be expressed just the same way a member of the alphabet does.</p>
+</blockquote>
+
+<p>Great, fantastic, problem solved! What could ever go wrong? Who on earth would ever use anything other than just those English letters? Let’s just all get married to ASCII and be done with it.</p>
+
+<h3 id="ascii-fact-2-it-is-nothing-but-trouble">ASCII Fact #2: It is nothing but trouble</h3>
+
+<p>Unfortunately the rest of the world existed (still does), and it hadn’t planned on leaving anytime soon (still hasn’t). This was to prove problematic.</p>
+
+<p>The big issue was that <strong>ASCII couldn’t add any new characters</strong>. It had its non-accented English alphabet, and that was all it could fit. Each of those 128 numbers were spoken for, assigned to uppercase letters or punctuation or spaces or whatever else. Nothing new. No way, no how. Not possible.</p>
+
+<p><em>But how would the French wish you bon appétit?</em> Could Icelanders ever talk about <a href="https://en.wikipedia.org/wiki/Hákarl">hákarl</a> again? Would the Japanese just have to type out “konnichiwa” instead of the delightful-looking こんにちは? <strong>Only having plain English letters was trouble</strong>.</p>
+
+<p>And if — god forbid — you wanted to count above 127 to make a little room for more letters, you’d have to upgrade from a maximum of <code class="highlighter-rouge">111 1111</code> (127, 7 bits) to <code class="highlighter-rouge">1111 111</code> (255, 8 bits). That meant adding a <em>whole extra bit,</em> and changing the standard from being 7 bits to 8 bits. And that was out of the question, since standards just can’t change.</p>
+
+<p>European nations made it work for them by <strong>personalizing ASCII</strong>, replacing a few symbols here and there with the characters they’d need.</p>
+
+<p>Every one of these numbers, 0-127, is called a <em>code point</em>. Code points are the map between numbers and symbols, and Europe was about to <em>change them all about</em></p>
+
+<p>In ASCII, the code point 92 was <code class="highlighter-rouge">\</code>, which Sweden didn’t think they needed, so they changed 92 to mean the <code class="highlighter-rouge">Ö</code> character. Germans threw out the <code class="highlighter-rouge"><span class="p">{</span></code> in favor of an <code class="highlighter-rouge">ä</code>, France replaced the <code class="highlighter-rouge">@</code> with an <code class="highlighter-rouge">à</code>, and eventually there were <a href="http://www.aivosto.com/vbtips/charsets-7bit.html">dozens</a> of <a href="https://en.wikipedia.org/wiki/ISO/IEC_646#National_variants">variants</a>. Canada had <em>two</em> to itself!</p>
+
+<p>Russia, which uses the Cyrillic alphabet instead of the Latin alphabet, went ahead and <a href="https://en.wikipedia.org/wiki/KOI7">replaced all of the code points for lowercase Latin characters with uppercase Cyrillic</a><sup>†</sup>. I’d like to think this permanent capslock was a major factor in the Cold War (“ЗДРАВСТВУЙТЕ, KENNEDY!”).</p>
+
+<p>Let’s take an example from Wikipedia: say you typed “No, I have sandwiches” in Swedish, but your message was read by people using other regional variants of ASCII.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Official Character Set Code</th>
+      <th>Name</th>
+      <th>Text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ISO646-SE</td>
+      <td>Swedish ASCII</td>
+      <td>Nä jag har smörgåsar</td>
+    </tr>
+    <tr>
+      <td>ISO646</td>
+      <td>US ASCII</td>
+      <td>N{ jag har sm|rg}sar</td>
+    </tr>
+    <tr>
+      <td>ISO646-ES</td>
+      <td>Spanish ASCII</td>
+      <td>N° jag har smñrgçsar</td>
+    </tr>
+    <tr>
+      <td>ISO646-NO</td>
+      <td>Norwegian ASCII</td>
+      <td>Næ jag har smørgåsar</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This meant that every time you sent a message or a file to someone in another country you didn’t only have to worry about the language barrier, but also make sure the encoding was exactly correct. Otherwise your code points would get all mixed up! That’s a lot of trouble, right?</p>
+
+<p>Don’t get too depressed yet, because <em>it only gets worse</em> (…kind of).</p>
+
+<blockquote>
+  <p>Despite all of the other digital ink we’ll spill, <em>this is still a problem</em>. When you open a file, if you don’t have the character set (a.k.a. <strong>charset</strong> right), you’ll end up with all sorts of weird characters substituting for the more uncommon ones. Slashes, pipes, accent marks, and special kinds of spaces are all especially prone to this.</p>
+</blockquote>
+
+<p><em><sup>†</sup> Russia only using capital letters is a bit of an exaggeration. Although they didn’t have lowercase and uppercase, they replaced another two codes to mean “the text after this point is lowercase” and “the text after this point is uppercase.”</em></p>
+
+<h2 id="extended-ascii">Extended ASCII</h2>
+
+<p>Eventually ANSI - they’re the ones in charge of this - <em>did</em> add in that other binary digit to make a new standard called <strong>Extended ASCII</strong>, an 8-bit character encoding. Now that we could count up to <code class="highlighter-rouge">1111 1111</code> the range upgrade from 0-127 to 0-255, which meant you include include another 127 brand new code points (and s a result, 127 brand new characters).</p>
+
+<p>What characters? It wasn’t quite the same for everyone, as there still wasn’t quite enough space to cover all the world’s languages. In the same way that ASCII had fragmented into <strong>a million regional versions,</strong> the trend continued with extended ASCII.</p>
+
+<p>Typically the initial 127 code points were the same or similar to US-ASCII, but the extended region of the new 127 characters split off into variant scripts.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code Point</th>
+      <th>ISO 8859-1 (Latin 1)</th>
+      <th>ISO 8859-2 (Latin 2)</th>
+      <th>ISO 8859-5 (Latin/Cyrillic)</th>
+      <th>JIS X 0201 (Japanese)</th>
+      <th>TSCII (Tamil)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>70</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+    </tr>
+    <tr>
+      <td>71</td>
+      <td>G</td>
+      <td>G</td>
+      <td>G</td>
+      <td>G</td>
+      <td>G</td>
+    </tr>
+    <tr>
+      <td>72</td>
+      <td>H</td>
+      <td>H</td>
+      <td>H</td>
+      <td>H</td>
+      <td>H</td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+      <td>…</td>
+    </tr>
+    <tr>
+      <td>216</td>
+      <td>Ø</td>
+      <td>Ř</td>
+      <td>и</td>
+      <td>ﾘ</td>
+      <td>ழு</td>
+    </tr>
+    <tr>
+      <td>217</td>
+      <td>Ù</td>
+      <td>Ů</td>
+      <td>й</td>
+      <td>ﾙ</td>
+      <td>ளு</td>
+    </tr>
+    <tr>
+      <td>218</td>
+      <td>Ú</td>
+      <td>Ú</td>
+      <td>к</td>
+      <td>ﾚ</td>
+      <td>று</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Even for those who tried to adapt, the new system caused problems: Japanese has three alphabets*, each with at least 46 characters apiece. Since there was no way all of that could fit into Extended ASCII’s 127 new spots, in the beginning Japan just <a href="https://en.wikipedia.org/wiki/JIS_X_0201">completely gave up two of their alphabets</a> and only included one in the character set.</p>
+
+<p>Chinese is an even bigger issue: to read a newspaper in Chinese you need to know about <em>2,000 different characters</em>. Overall the language has more than <em>fifty thousand possible characters</em>. So yes, that’s not fitting in the 127 (or even 255).</p>
+
+<p>And with modern-day 20/20 hindsight: on top of all of this, <strong>where do we put the emoji?</strong></p>
+
+<p>This extra space to play around in led to many, many years of many, many language-specific versions of ASCII. When you opened a file, you needed to know <em>exactly what encoding it is</em>. Whereas before there were only a few characters that might conflict (see the Swedish example above), this time you had a whole <em>half of the character set</em> that might not match up.</p>
+
+<p>If you got your character set wrong, the first 127 ASCII characters might all look fine, but your <code class="highlighter-rouge">ｶ</code>s might be <code class="highlighter-rouge">¶</code>s and your <code class="highlighter-rouge">ň</code>s might be <code class="highlighter-rouge">ò</code>s and you’d never ever get any real work done.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Encoding</th>
+      <th>Input</th>
+      <th>US-ASCII Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Shift-JIS (Japanese)</td>
+      <td>それはあなたの鉛筆ですか</td>
+      <td>????͂??Ȃ??̉??M?ł???</td>
+    </tr>
+    <tr>
+      <td>KOI8-R (Russian)</td>
+      <td>Здравствуйте, я медведь</td>
+      <td>????????????, ? ???????</td>
+    </tr>
+    <tr>
+      <td>ISO 8859-15 (Latin 9, Swedish)</td>
+      <td>Jag förstår inte</td>
+      <td>Jag f?rst?r inte</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>It’s a wreck, right? Take a look at <a href="https://en.wikipedia.org/wiki/ISO/IEC_8859#The_Parts_of_ISO.2FIEC_8859">16 different versionf the ISO 8859 standard</a>, to see what kind of terrifying variations are in there. If you open a file and see gibberish, I guarantee this is what’s happening.</p>
+
+<p>This definitely still happens today, but there’s a light at the end of the tunnel. If 7 bits isn’t enough, and 8 bits isn’t enough, is 9 the next step? No ma’am, we’re going to conquer the Tower of Babel with <strong>thirty-two bits</strong>.</p>
+
+<p>* Yes, technically speaking Japanese doesn’t have three alphabets, it has two syllabaries and one set of logograms.</p>
+
+<h2 id="tldr">TL;DR</h2>
+
+<p>Once upon a time some Americans though 128 characters would be enough for everyone, and made a list of what numbers meant what characters. This was called ASCII.</p>
+
+<p>Other countries found <code class="highlighter-rouge">ö</code> much more useful than <code class="highlighter-rouge">|</code>, so they shuffled around the US version of ASCII to create their own encodings. As a result, if you guess the wrong encoding for a file you’ll end up looking at all sorts of weird characters.</p>
+
+<p>Then a new version of ASCII was made with a whole <em>255</em> characters. Every country took those extra 127 and ran with them, creating dozens of different character sets with even more changes for perilous textual conflicts.</p>
+
+<h2 id="comprehension-quiz">Comprehension Quiz</h2>
+
+<p>Think you’ve got it? Here’s a tiny quiz:</p>
+
+<ol>
+  <li>How many characters does ASCII support?</li>
+  <li>How did European nations cope with ASCII not having accented letters?</li>
+  <li>What is <code class="highlighter-rouge">ISO 8859-1</code> better known as?</li>
+  <li>How many characters does Extended ASCII support?</li>
+  <li>What country gave up two of their alphabets to have a good time with Extended ASCII?</li>
+</ol>
+
+<p>Answers are below</p>
+
+<ol class="answer-key">
+  <li>One hundred and twenty eight (0-127)</li>
+  <li>They customized ASCII, replacing some of its characters with their own characters (i.e. <code class="highlighter-rouge">\</code> became <code class="highlighter-rouge">Ö</code>)</li>
+  <li>Latin 1 (that one was tough!)</li>
+  <li>Two hundred and fifty-six. (0-255)</li>
+  <li>Japan</li>
+</ol>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Now you can back to <a href="../utf8-unicode-character-encodings/">UTF-8, Unicode, Character Encoding, and International Data Journalism →</a> to learn about the 32-bit power of Unicode.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

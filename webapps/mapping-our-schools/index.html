@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Adding maps to our Flask webapp</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/webapps/mapping-our-schools/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Adding maps to our Flask webapp">
+  <meta property="twitter:title" content="Adding maps to our Flask webapp">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Web Applications for You and Me</a> &gt;  Adding maps to our Flask webapp</p>
+
+
+
+                      <p><strong>This tutorial is out of date!</strong> <a href="http://jonathansoma.com/tutorials/flask-sqlalchemy-mapbox/">Try my longer, updated Flask-SQLite webapp tutorial here</a></p>
+
+<h1 id="adding-maps-to-our-flask-webapp">Adding maps to our Flask webapp</h1>
+
+<p>Now that we’ve <a href="../sidequest-extending-database-and-geocoding/">geocoded our schools</a>, time to make some maps! We’ll start by making a map on the school page, then level up to a map on the main page.</p>
+
+<h2 id="slippy-maps-and-leafletjs">Slippy maps and Leaflet.js</h2>
+
+<p>The kind of map we’re using is a <em>slippy map</em>, which means it’s a map that works like Google Maps. You can drag and zoom, mainly, which makes it unlike most d3 maps.</p>
+
+<p>Since we aren’t going to code a slippy map from scratch, the best library is (I’d say) <a href="http://leafletjs.com/">Leaflet.js</a>. It’s simple to use and works with a lot of different other… map things.</p>
+
+<p>To use leaflet, we need to <strong>add two lines to our <code class="highlighter-rouge">layout.html</code></strong>. The first is the CSS, and the second is the JavaScript.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"> <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></figure>
+
+<p>We’ll put both of those somewhere before the end of our <code class="highlighter-rouge">&lt;head&gt;</code> element.</p>
+
+<h2 id="creating-our-map">Creating our map</h2>
+
+<p>Now that every page it charged up with Leaflet, it’s time to put it to use! We’re going to edit our <code class="highlighter-rouge">show.html</code>.</p>
+
+<p>First we need to give Leaflet a place to put the map, and give that map a height (you <em>always</em> need a height). We’ll just make a div with the <code class="highlighter-rouge">id</code> of <code class="highlighter-rouge">map</code>, and give it a <code class="highlighter-rouge">height</code> with inline style.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"map"</span> <span class="na">style=</span><span class="s">"height: 250px;"</span><span class="nt">&gt;&lt;/div&gt;</span></code></pre></figure>
+
+<p>Now we need to <strong>create a map</strong>. This takes two steps: first, initialize the map, and then to draw the <strong>basemap</strong>.</p>
+
+<p>We’re going to use a <a href="https://cartodb.com/basemaps/">CartoDB basemap</a>, because CartoDB is the best thing since <a href="http://www.food.com/recipe/soft-snickerdoodle-cookies-97496">snickerdoodles</a>.</p>
+
+<p>This goes in <strong>show.html</strong> underneath your map <code class="highlighter-rouge">div</code>.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="c1">// The first parameter are the coordinates of the center of the map</span>
+  <span class="c1">// The second parameter is the zoom level</span>
+  <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="s1">'map'</span><span class="p">).</span><span class="nx">setView</span><span class="p">([</span><span class="mf">40.712</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.006</span><span class="p">],</span> <span class="mi">11</span><span class="p">);</span>
+  
+  <span class="c1">// {s}, {z}, {x} and {y} are placeholders for map tiles</span>
+  <span class="c1">// {x} and {y} are the x/y of where you are on the map</span>
+  <span class="c1">// {z} is the zoom level</span>
+  <span class="c1">// {s} is the subdomain of cartodb</span>
+    <span class="kd">var</span> <span class="nx">layer</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">tileLayer</span><span class="p">(</span><span class="s1">'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">attribution</span><span class="p">:</span> <span class="s1">'&amp;copy; &lt;a href="http://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors, &amp;copy; &lt;a href="http://cartodb.com/attributions"&gt;CartoDB&lt;/a&gt;'</span>
+  <span class="p">});</span>
+  
+  <span class="c1">// Now add the layer onto the map</span>
+  <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">layer</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+
+<h2 id="customizing-our-map">Customizing our map</h2>
+
+<p>Let’s say we want to add a <strong>marker</strong> where our school is. If we wanted to add it to, I dunno, <code class="highlighter-rouge">[40.712, -74.006]</code>, we could add something like this</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// It even opens up a popup when you click it!</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">marker</span><span class="p">([</span><span class="mf">40.712</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.006</span><span class="p">]).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">bindPopup</span><span class="p">(</span><span class="s2">"&lt;strong&gt;Henry Street School&lt;/strong&gt;"</span><span class="p">).</span><span class="nx">openPopup</span><span class="p">();</span></code></pre></figure>
+
+<p>Notice how both the <code class="highlighter-rouge">layer</code> before was added to the map - <code class="highlighter-rouge">map.addLayer(layer)</code> - while this marker was added with <code class="highlighter-rouge">.addTo(map)</code>. This is what we call “flexibility that might sometimes be confusing.” You can use either.</p>
+
+<p>But back to the topic at hand: hey, where’s our school? Not <em>there</em>. That’s just the center of New York City!</p>
+
+<p>Since we <a href="../sidequest-extending-database-and-geocoding/">geocoded our schools</a> and added latitude and longitude columns, we can now access that using <code class="highlighter-rouge">school.latitude</code> and <code class="highlighter-rouge">school.longitude</code>. And since we’re inside of our template, we just wrap them in `` tags and it will plop them right now.</p>
+
+<p>Let’s replace the marker’s latitude and longitude with our own.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">L</span><span class="p">.</span><span class="nx">marker</span><span class="p">([{{</span> <span class="nx">school</span><span class="p">.</span><span class="nx">latitude</span> <span class="p">}},</span> <span class="p">{{</span> <span class="nx">school</span><span class="p">.</span><span class="nx">longitude</span> <span class="p">}}]).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">bindPopup</span><span class="p">(</span><span class="s2">"&lt;strong&gt;Henry Street School&lt;/strong&gt;"</span><span class="p">).</span><span class="nx">openPopup</span><span class="p">();</span></code></pre></figure>
+
+<p>You might initially scream <strong>“but that isn’t JavaScript!”</strong> and you’d be <em>completely right</em>. What’s happening takes a couple steps</p>
+
+<ol>
+  <li>First, in the backend, all of the template blanks (i.e. <code class="highlighter-rouge"><span class="p">{</span><span class="err">{</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code>) are filled in. After this happens, <code class="highlighter-rouge"><span class="p">{</span><span class="err">{</span><span class="w"> </span><span class="err">school.latitude</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code> becomes something like <code class="highlighter-rouge">40.701</code>.</li>
+  <li>The page is <em>sent to the browser, and *then</em> the JavaScript is run. So by the time Chrome sees it, all of those <code class="highlighter-rouge"><span class="p">{</span><span class="err">{</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code> have been replaced with actual values. Only Flask sees the <code class="highlighter-rouge"><span class="p">{</span><span class="err">{</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code> pieces!</li>
+</ol>
+
+<p>Now, if we want to be rather insecure about this, we could do the following.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">L</span><span class="p">.</span><span class="nx">marker</span><span class="p">([{{</span> <span class="nx">school</span><span class="p">.</span><span class="nx">latitude</span> <span class="p">}},</span> <span class="p">{{</span> <span class="nx">school</span><span class="p">.</span><span class="nx">longitude</span> <span class="p">}}]).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">bindPopup</span><span class="p">(</span><span class="s2">"&lt;strong&gt;{{ school.school_name }}&lt;/strong&gt;"</span><span class="p">).</span><span class="nx">openPopup</span><span class="p">();</span></code></pre></figure>
+
+<p>Why is this bad? Why is this not bad? Why is this <em>possibly</em> bad?</p>
+
+<p>To find out, play Google’s <a href="https://xss-game.appspot.com/">cross-site scripting game</a>.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

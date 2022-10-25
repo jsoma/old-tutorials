@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using scales</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-scales/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using scales">
+  <meta property="twitter:title" content="Using scales">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using scales</p>
+
+
+
+                      <h1 id="using-d3scale">Using <code class="highlighter-rouge">d3.scale</code></h1>
+
+<p><strong>Scales!</strong> They aren’t just for playing recorder in music class, they’re <em>an integral part to becoming a d3 master</em>.</p>
+
+<p>They also make life a heck of a lot easier.</p>
+
+<h2 id="why-we-need-scales">Why we need scales</h2>
+
+<p>Okay, so let’s say we’re making a bar graph. We have:</p>
+
+<p><strong>HTML</strong></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"120"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span></code></pre></figure>
+
+<p><strong>Data</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span></code></pre></figure>
+
+<p>So our <code class="highlighter-rouge">svg</code> is 120 pixels wide, and our largest data value is <code class="highlighter-rouge">5</code>. I think it makes sense to have every bar be <code class="highlighter-rouge">d * 20</code> pixels wide, since that way the largest bar is <strong>100 pixels long!</strong></p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-67b5664a7e8ed09a67d5b9dd8743926d.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-67b5664a7e8ed09a67d5b9dd8743926d.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"150"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">d</span> <span class="o">*</span> <span class="mi">20</span><span class="p">;</span>    <span class="c1">// and now the width</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-67b5664a7e8ed09a67d5b9dd8743926d.html">Open example in new window</a></p>
+
+<h3 id="round-2">Round 2</h3>
+
+<p><strong>Oh but wait!</strong> We got a new data point.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">];</span></code></pre></figure>
+
+<p>Okay, cool. That’s fine, no big deal! Our biggest value is <code class="highlighter-rouge">50</code> now, so if we’re trying to make the biggest bar 100 pixels, then that’s going to be <code class="highlighter-rouge">d * 2</code>. Since, of course, <code class="highlighter-rouge">50 * 2</code> is <code class="highlighter-rouge">100</code>.</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-5d1e8e9ed36f0f280c9c47563ac8fd1c.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-5d1e8e9ed36f0f280c9c47563ac8fd1c.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"150"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">50</span><span class="p">];</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">d</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>    <span class="c1">// and now the width</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-5d1e8e9ed36f0f280c9c47563ac8fd1c.html">Open example in new window</a></p>
+
+<h3 id="round-3">Round 3</h3>
+
+<p><strong>Oh but wait!</strong> Our editor called, she said that we got a <em>new</em> <code class="highlighter-rouge">svg</code> that’s 410 pixels wide, and one of our data points changed!</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"410"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">560</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">];</span></code></pre></figure>
+
+<p>Okay, so now our equation is… I don’t know. <em>Something something math?</em> Maybe it we aim for 400 pixels wide, we’ll use…  <code class="highlighter-rouge">400 / 560</code> which is <code class="highlighter-rouge">0.72</code>, so the equation will be <code class="highlighter-rouge">d * 0.72</code>. I guess? Maybe?</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-fff57ad806e0e0278634a7e68a01a1ad.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-fff57ad806e0e0278634a7e68a01a1ad.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"410"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">560</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">];</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">d</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>    <span class="c1">// and now the width</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-fff57ad806e0e0278634a7e68a01a1ad.html">Open example in new window</a></p>
+
+<h3 id="round-4">Round 4</h3>
+
+<p><strong>Oh but wait!</strong> Now apparently we need to label the left-hand side, so we need to start like 20 pixels in, so we now only have <code class="highlighter-rouge">400 - 20 = 380</code> pixels to work with. And we apparently are supposed to start the bars from <code class="highlighter-rouge">10</code> instead of <code class="highlighter-rouge">0</code> which means some other sort of math I can’t think about right now and <em>oh god why is everything so bad</em>.</p>
+
+<p>The reason is: <strong>because we haven’t been using scales</strong></p>
+
+<h2 id="the-magic-of-scales">The magic of scales</h2>
+
+<p><code class="highlighter-rouge">d3.scale()</code> take one range of numbers and convert them into another range. Technically it’s a method that creates a function, but <em>who cares about that?</em></p>
+
+<p><strong>!!!FOR EXAMPLE!!!</strong></p>
+
+<p>Let’s go back to our first example. Biggest data point of <code class="highlighter-rouge">5</code>, trying to take up <code class="highlighter-rouge">100</code> or so pixels with the bar.</p>
+
+<p><strong>HTML</strong></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"120"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span></code></pre></figure>
+
+<p><strong>Data</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span></code></pre></figure>
+
+<p>Here’s how we use <code class="highlighter-rouge">d3.scale</code> to switch between the two. It takes the <em>input</em> of <code class="highlighter-rouge">0</code>-<code class="highlighter-rouge">5</code> (a.k.a. the domain) and maps it to the <em>output</em> of <code class="highlighter-rouge">0</code>-<code class="highlighter-rouge">100</code> (a.k.a. the range). Any value you send it is converted between those two number ranges.</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-bd32ed1da543339f2048360b6329f1c0.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-bd32ed1da543339f2048360b6329f1c0.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">]);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"Using the scale...&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"1 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"2 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"3.5 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mf">3.5</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"4.75 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mf">4.75</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"5 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-bd32ed1da543339f2048360b6329f1c0.html">Open example in new window</a></p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> <code class="highlighter-rouge">document.writeln</code> is how you print to the screen in JavaScript. <code class="highlighter-rouge">console.log</code> is its infinitely more useful older, cooler sibling.</p>
+</blockquote>
+
+<p>Let’s say you wanted a bar that was <code class="highlighter-rouge">410</code> pixels long, but your largest value is <code class="highlighter-rouge">560</code>. No need to do math, just rely on <code class="highlighter-rouge">d3.scale</code>! It will convert 0 through 560 into the appropriate values between 0 and 410 pixels.</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-32f5eb7122e708714518859fec0d9d67.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-32f5eb7122e708714518859fec0d9d67.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">560</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">410</span><span class="p">]);</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"Using the scale...&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"10 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"20 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"35 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">35</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"475 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">475</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="s2">"560 becomes "</span><span class="p">,</span> <span class="nx">scale</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="s2">"&lt;br&gt;"</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-32f5eb7122e708714518859fec0d9d67.html">Open example in new window</a></p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> Don’t forget the square brackets inside of <code class="highlighter-rouge">.domain</code> and <code class="highlighter-rouge">.range</code>! It isn’t <code class="highlighter-rouge">.domain(0, 20)</code>, it’s <code class="highlighter-rouge">.domain([0, 20])</code>. Don’t ask me why.</p>
+</blockquote>
+
+<h3 id="using-d3scale-in-practice">Using d3.scale in practice</h3>
+
+<p>You set up your <code class="highlighter-rouge">d3.scale</code> up top, and then you use it inside of your function.</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-11532b90d5201b5571a5e163a3b5a8e1.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-11532b90d5201b5571a5e163a3b5a8e1.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span> <span class="na">width=</span><span class="s">"410"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">560</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">];</span>
+  <span class="c1">// Create a scale to take 0-560 as input and return 0-400 as output</span>
+  <span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">560</span><span class="p">]).</span><span class="nx">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>    <span class="c1">// USE THE SCALE!!!</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-11532b90d5201b5571a5e163a3b5a8e1.html">Open example in new window</a></p>
+
+<h2 id="examples">Examples</h2>
+
+<h3 id="example-round-1">Example: Round 1</h3>
+
+<p>We’re going to do <strong>three things</strong> to make this especially awesome.</p>
+
+<ol>
+  <li>Use <code class="highlighter-rouge">d3.max</code> to get the largest value being graphed</li>
+  <li>Set the width of your <code class="highlighter-rouge">svg</code> through d3</li>
+  <li>Set up your scale automatically using 1. and 2.</li>
+</ol>
+
+<iframe class="iframe-demo" src="/demos/using-scales-d40dc6d18bda931d3c2dd626c1843807.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-d40dc6d18bda931d3c2dd626c1843807.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span>  <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span> 	<span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">},</span> 
+               <span class="p">];</span>
+
+  <span class="c1">// LOOK AT THIS</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span>
+  
+  <span class="c1">// LOOK AT THIS</span>
+  <span class="c1">// Set up the SVG</span>
+  <span class="c1">// Set the height and width via d3!</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+  <span class="c1">// LOOK AT THIS</span>
+  <span class="c1">// Get the largest area</span>
+  <span class="c1">// d3.max is usually taught as d3.max([10, 2, 3, 4]) =&gt; 10</span>
+  <span class="c1">// but frankly you're always using it with lists of dictionaries</span>
+  <span class="c1">// so why not start now?</span>
+  <span class="kd">var</span> <span class="nx">largest_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">states</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">]</span> <span class="p">});</span>
+
+  <span class="c1">// LOOK AT THIS</span>
+  <span class="c1">// Create a scale to take 0-max area as input, return 0-svg's width as output</span>
+  <span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">largest_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+  
+  <span class="c1">// Now no matter how the data changes or the width of the svg changes,</span>
+  <span class="c1">// it'll always adjust automatically! THAT IS CRAZY.</span>
+  
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// LOOK AT THIS</span>
+                    <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">]);</span>    <span class="c1">// USE THE SCALE!!!</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-d40dc6d18bda931d3c2dd626c1843807.html">Open example in new window</a></p>
+
+<h3 id="example-round-2">Example: Round 2</h3>
+
+<p>Now I’m just going to cut and paste the same code, but change <code class="highlighter-rouge">var width = 400</code> to be <code class="highlighter-rouge">var width = 80</code>. I’m also going to remove the state with the largest area.</p>
+
+<p>Bask in the gentle glow of its adaptability!</p>
+
+<iframe class="iframe-demo" src="/demos/using-scales-bdc4c391ec499a5c8615efe12f9f7746.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-bdc4c391ec499a5c8615efe12f9f7746.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span>  <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span> 
+                <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span> 	<span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">},</span> 
+               <span class="p">];</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span>
+  
+  <span class="c1">// Set up the SVG</span>
+  <span class="c1">// Set the height and width via d3!</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+  <span class="c1">// Get the largest area</span>
+  <span class="c1">// d3.max is usually taught as d3.max([10, 2, 3, 4]) =&gt; 10</span>
+  <span class="c1">// but frankly you're always using it with lists of dictionaries</span>
+  <span class="c1">// so why not start now?</span>
+  <span class="kd">var</span> <span class="nx">largest_area</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">states</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">]</span> <span class="p">});</span>
+
+  <span class="c1">// Create a scale to take 0-max area as input, return 0-svg's width as output</span>
+  <span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">largest_area</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+  
+  <span class="c1">// Now no matter how the data changes or the width of the svg changes,</span>
+  <span class="c1">// it'll always adjust automatically! THAT IS CRAZY.</span>
+  
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span>    <span class="c1">// space them 15 pixels apart</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">]);</span>    <span class="c1">// USE THE SCALE!!!</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-scales-bdc4c391ec499a5c8615efe12f9f7746.html">Open example in new window</a></p>
+
+<p>See how it got all small and appropriate? Jeez that is <em>so neat</em>.</p>
+
+<h2 id="non-numeric-scales">Non-numeric scales</h2>
+
+<p>…I’ll get to this one. TODO.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

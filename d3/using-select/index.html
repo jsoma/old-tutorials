@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using select to section off your SVG</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-select/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using select to section off your SVG">
+  <meta property="twitter:title" content="Using select to section off your SVG">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using select to section off your SVG</p>
+
+
+
+                      <h1 id="using-select-to-section-off-your-svg">Using .select to section off your SVG</h1>
+
+<p>When you’re working in D3, a <em>lot</em> of stuff is going to be broken a <em>lot</em> of the time. Instead of sitting there moaning and randomly changing numbers and symbols in your code, you really need to use the <strong>Web Inspector</strong> and <strong>Console</strong>.</p>
+
+<p>The <strong>Web Inspector</strong> lets you view the HTML that’s on the page. Big whoop! You wrote that HTML, right? No surprises there?</p>
+
+<p><strong>Bzzt</strong> - wrong! The D3 code you wrote actively changes the code on the page - adding elements, changing attributes, and generally mixing things around.</p>
+
+<p>By using the web spector you can see what exactly your D3 code has been up to and where your mistakes might have come from (e.g. you’ve moved an element off of the page).</p>
+
+<h2 id="finding-the-trouble">Finding the trouble</h2>
+
+<p>So you open up the Web Inspector and see some HTML like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;svg&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+&lt;/svg&gt;
+
+&lt;svg&gt;
+  &lt;circle&gt;&lt;/circle&gt;
+  &lt;circle&gt;&lt;/circle&gt;
+  &lt;circle&gt;&lt;/circle&gt;
+&lt;/svg&gt;
+</code></pre>
+</div>
+
+<p>Seems sensible enough, but there’s a <em>big big big problem</em> in its future. While your homework display fine and all, <strong>let’s think about what might happen.</strong></p>
+
+<p>You did something like the following to make your rectangles and circles:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var circles = d3.selectAll("circles");
+circles.data(some_data);
+
+var rectangles = d3.selectAll("rect");
+rectangles.data(other_data);
+</code></pre>
+</div>
+
+<p>And it worked fine, but… what if instead of a bar graph and some circles I asked you to make <em>two bar graphs?</em> Your HTML might look like this</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;svg&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+&lt;/svg&gt;
+
+&lt;svg&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+&lt;/svg&gt;
+</code></pre>
+</div>
+
+<p>And your JavaScript might look like this</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var rectangles1 = d3.selectAll("rect");
+rectangles1.data(some_data);
+
+var rectangles2 = d3.selectAll("rect");
+rectangles2.data(other_data);
+</code></pre>
+</div>
+
+<p>Spend like <em>four seconds</em> trying to figure out what the problem is going to be with that JavaScript. What’s the difference between the first <code class="highlighter-rouge">d3.selectAll</code> and the second one?</p>
+
+<p>…absolutely nothing! <strong>They <em>both</em> grab <em>all</em> the rectangles on the page.</strong> And that’s <em>trouble</em>.</p>
+
+<p>You wanted the first <code class="highlighter-rouge">selectAll</code> to grab the ones inside of the first <code class="highlighter-rouge">svg</code>, and the second <code class="highlighter-rouge">selectAll</code> to grab the ones inside the second <code class="highlighter-rouge">svg</code>, but nope! Because d3 is willy-nilly grabbing all of the <code class="highlighter-rouge">rect</code> elements on the page, the first set of rectangles and the second set of rectangles are now <strong>all tangled together.</strong></p>
+
+<p>As a result, <strong>you won’t be able to manipulate the two charts separately</strong>, even though they’re in separate <code class="highlighter-rouge">svg</code> elements!</p>
+
+<p>You’ll accidentally be binding data to <em>both</em> of your bar graphs at the same time, and everything will go crazy and break. Don’t worry too much, though, there are a few ways to deal with this.</p>
+
+<h2 id="fixing-the-problem">Fixing the problem</h2>
+
+<p>There are two methods to solve the problem - one involves pre-writing a little bit of HTML, the other involves adding your <code class="highlighter-rouge">svg</code> element on the fly.</p>
+
+<h3 id="method-1-separate-your-svg-elements-with-classes">Method 1. Separate your <code class="highlighter-rouge">svg</code> elements with classes</h3>
+
+<p>How can d3 tell your <code class="highlighter-rouge">svg</code> elements apart? Same as CSS - you’ll need to use <em>classes</em> or <em>ids</em> and the appropriate selector.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;svg class='cat-graph'&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+&lt;/svg&gt;
+
+&lt;svg class='dog-graph'&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+  &lt;rect&gt;&lt;/rect&gt;
+&lt;/svg&gt;
+</code></pre>
+</div>
+
+<p>D3 isn’t greedy - along with <code class="highlighter-rouge">selectAll</code> it also has a plain old <code class="highlighter-rouge">select</code>. Luckily for us D3 is cool and uses the exact same selectors as CSS - a period for a class.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var cat_svg = d3.select(".cat-graph");
+var dog_svg = d3.select(".dog-graph");
+</code></pre>
+</div>
+
+<p>You’ll use <code class="highlighter-rouge">select</code> to grab the specific <code class="highlighter-rouge">svg</code> you’re looking for, then <code class="highlighter-rouge">selectAll</code> to grab the elements inside of it.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var cat_rectangles = cat_svg.selectAll('rect');
+cat_rectangles.data(some_data);
+
+var dog_rectangles = dog_svg.selectAll('rect');
+dog_rectangles.data(other_data);
+</code></pre>
+</div>
+
+<p>And now your <code class="highlighter-rouge">cat_rectangles</code> and your <code class="highlighter-rouge">dog_rectangles</code> are separate and never the twain shall meet!</p>
+
+<h3 id="method-2-manually-append-your-svg-inside-of-a-specific-div">Method 2. Manually append your SVG inside of a specific div</h3>
+
+<p>A more advanced way of doing this involves <em>manually appending the SVG</em>. This method is actually a little more popular, but I think in class we’ll be using Method 1.</p>
+
+<p><strong>Step 1:</strong> In HTML you make the <code class="highlighter-rouge">div</code> (or <code class="highlighter-rouge">div</code>s) that is going to hold your graphic.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;div class="cat-holder"&gt;&lt;/div&gt;
+&lt;div class="dog-holder"&gt;&lt;/div&gt;
+</code></pre>
+</div>
+
+<p><strong>Step 2:</strong> Then you <code class="highlighter-rouge">select</code> that <code class="highlighter-rouge">div</code>, and manually append your <code class="highlighter-rouge">svg</code> to the HTML using <code class="highlighter-rouge">.append</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var cat_svg = d3.select('.cat-holder').append('svg');
+var dog_svg = d3.select('.dog-holder').append('svg');
+</code></pre>
+</div>
+
+<p><strong>Step 3:</strong> Then you bind your data and <code class="highlighter-rouge">.enter().append('rect')</code> to put a rectangles into the svg for every data point. I don’t think we’ve talked about <code class="highlighter-rouge">enter</code> and <code class="highlighter-rouge">append</code> yet, so this will make more sense later on!</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var cat_rectangles = cat_svg.selectAll('rect')
+                              .data(some_dat)
+                              .enter()
+                              .append('rect');
+                              
+var dog_rectangles = dog_svg.selectAll('rect')
+                            .data(other_data)
+                            .enter()
+                            .append('rect');
+</code></pre>
+</div>
+
+<p>You can do this even when you <em>don’t</em> have a million graphs on a page (it’s considered good practice). In practice, it might look like this:</p>
+
+<p><strong>HTML:</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;div class="chart"&gt;&lt;/div&gt;
+</code></pre>
+</div>
+
+<p><strong>JavaScript:</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var datapoints = [1, 2, 3];
+
+// Add an svg inside of .chart,
+// set it to be sized 400x400
+var svg = d3.select('.chart')
+            .append('svg')
+            .attr('height', 400)
+            .attr('width', 400);                
+
+// Space the circles out inside of the
+// circle, 100 pixels apart
+var circles = svg.selectAll('circle')
+                  .data(datapoints)
+                  .enter()
+                  .append('circle')
+                  .attr('r', 3)
+                  .attr('cy' 40)
+                  .attr('cx', function(d) { d * 100 });
+</code></pre>
+</div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

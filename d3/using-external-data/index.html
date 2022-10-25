@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using CSVs and other external data</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-external-data/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using CSVs and other external data">
+  <meta property="twitter:title" content="Using CSVs and other external data">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using CSVs and other external data</p>
+
+
+
+                      <h1 id="using-csvs-and-other-external-data">Using CSVs and other external data</h1>
+
+<p>So far we’ve just used datasets that have been sitting inside of our HTML. Let’s say we were studying animal longetivity:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">animal_data</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="s1">'animal'</span><span class="p">:</span> <span class="s1">'elephant'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="mi">70</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'animal'</span><span class="p">:</span> <span class="s1">'camel'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="mi">50</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'animal'</span><span class="p">:</span> <span class="s1">'sheep'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="mi">15</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'animal'</span><span class="p">:</span> <span class="s1">'macaw'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="mi">50</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'animal'</span><span class="p">:</span> <span class="s1">'ant (queen)'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="mi">3</span> <span class="p">}</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>But what if we had like <em>eighty</em> animals? We’d be in t-r-o-u-b-l-e. That’s why d3 has a pleasant thing called <code class="highlighter-rouge">d3.csv</code>. As you might be able to tell, it can read in a CSV.</p>
+
+<p><code class="highlighter-rouge">d3.csv</code> takes two parameters - the name of the file to read, and a function to execute when you’re done. It can be done in one of two ways.</p>
+
+<p><strong>Passing d3 the function name</strong></p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ready</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// do something with your data</span>
+<span class="p">}</span>
+
+<span class="nx">d3</span><span class="p">.</span><span class="nx">csv</span><span class="p">(</span><span class="s1">'data.csv'</span><span class="p">,</span> <span class="nx">ready</span><span class="p">)</span></code></pre></figure>
+
+<p><strong>Passing d3 an anonymous function</strong></p>
+
+<p>d3.csv(‘data.csv’, function(datapoints) {
+  // do something with your data
+})</p>
+
+<p>Whichever one you pick is really up to you! When you get into the world of <a href="https://github.com/mbostock/queue">loading multiple files</a> (let’s not talk about it just yet) you really lean toward the the separate-named-function thing, so maybe we should try using <code class="highlighter-rouge">ready</code> from here on out?</p>
+
+<h3 id="animalscsv">animals.csv</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>  animal,age
+  elephant,70
+  camel,50
+  sheep,15
+  macaw,50
+  ant (queen),3
+</code></pre>
+</div>
+
+<h3 id="animalshtml">animals.html</h3>
+
+<iframe class="iframe-demo" src="/demos/using-external-data-78e115de882e24754e6ef708d5acdb13.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-external-data-78e115de882e24754e6ef708d5acdb13.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script&gt;</span>
+<span class="kd">function</span> <span class="nx">ready</span><span class="p">(</span><span class="nx">animal_data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">animal_data</span><span class="p">);</span>
+
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"body"</span><span class="p">).</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">animal_data</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">text</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="k">return</span> <span class="s2">"A "</span> <span class="o">+</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'animal'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">' can live for up to '</span> <span class="o">+</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'age'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">' years!'</span><span class="p">;</span>
+                    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">d3</span><span class="p">.</span><span class="nx">csv</span><span class="p">(</span><span class="s2">"/tutorials/assets/data/animals.csv"</span><span class="p">,</span> <span class="nx">ready</span><span class="p">)</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-external-data-78e115de882e24754e6ef708d5acdb13.html">Open example in new window</a></p>
+
+<h2 id="a-complicating-factor">A complicating factor</h2>
+
+<p>There’s <em>one problem</em>, though, and that’s <strong>if you use external data, we can’t just open the <code class="highlighter-rouge">.html</code> file in a browser</strong>. If you try, you’ll get an error message like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>XMLHttpRequest cannot load file:///blah/blah/blah/blah.csv. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https, chrome-extension-resource.
+</code></pre>
+</div>
+
+<p>It’s a security thing! If any ol’ file on your computer could jump around and read <em>other</em> files on your computer, it might end up causing some trouble. As a result, we need to run a little web server in order to open the file.</p>
+
+<p>Open Terminal and browse to the directory that has your file in it, let’s call it <code class="highlighter-rouge">animals.html</code>. Then run the following command:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>python -m SimpleHTTPServer
+</code></pre>
+</div>
+
+<p>You’ll see a note come up saying</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Serving HTTP on 0.0.0.0 port 8000 ...
+</code></pre>
+</div>
+
+<p>And then you can open up <a href="http://localhost:8000">http://localhost:8000</a> to find and view your D3.</p>
+
+<h2 id="other-file-formats">Other file formats</h2>
+
+<p>D3 can natively read a ton of different data types: <code class="highlighter-rouge">d3.csv</code> has other buddies like <code class="highlighter-rouge">d3.json</code>, <code class="highlighter-rouge">d3.xml</code>, and <code class="highlighter-rouge">d3.tsv</code>. Read more <a href="https://github.com/mbostock/d3/wiki/Requests">over here</a>.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

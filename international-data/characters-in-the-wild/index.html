@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Characters in the wild</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/international-data/characters-in-the-wild/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Characters in the wild">
+  <meta property="twitter:title" content="Characters in the wild">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">International Data Journalism</a> &gt;  Characters in the wild</p>
+
+
+
+                      <h1 id="characters-in-the-wild">Characters in the wild</h1>
+
+<blockquote>
+  <p>This is <strong>part 4</strong> of a <strong>5-part series</strong> on character encodings in international data journalism. <a href="/tutorials/international-data/utf8-unicode-character-encodings/">Check out the other pieces</a>.</p>
+</blockquote>
+
+<p>When I was making my friend proofread the Unicode one, she wrote in all caps halfway through: <strong>WHY DOESN’T EVERYONE JUST USE UNICODE??</strong> Good question!</p>
+
+<p>This piece won’t necessarily answer the question, but it will help you get around the problems that you encounter <em>because</em> not everyone uses Unicode and UTF-8.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> We talk about specific character encodings a lot in this one! Just a reminder, <code class="highlighter-rouge">ISO 8859</code> is the Extended ASCII standard, and all of the variations <code class="highlighter-rouge">ISO 8859-1</code>, <code class="highlighter-rouge">ISO 8859-6</code>, <code class="highlighter-rouge">ISO 8859-15</code>, etc, are all national adaptations.</p>
+</blockquote>
+
+<h2 id="review-from-unicode-and-utf-8-save-the-dayunicode-and-utf-8">Review from <a href="../unicode-and-utf-8/">Unicode and UTF-8 save the day</a></h2>
+
+<p>ASCII is a very simple 7-bit for representing characters (or 8-bit, if you’re counting Extended ASCII). It’s absolutely fantastic until you leave the continental United States, at which point everything goes wrong: it can’t support accents without terrible amounts of hacking, and is probably the #1 impediment to modern cross-cultural exchange.</p>
+
+<p>Then Unicode showed up on a scene, a wonderful 32-bit system for mapping numbers to up to over a million characters. UTF-xx are methods for saving those 32 bits, with UTF-16 and UTF-8 using secret tricks to save space. UTF-8 is pretty normal outside of Asian languages, which use UTF-16.</p>
+
+<h2 id="character-encodings-on-the-web">Character Encodings on the Web</h2>
+
+<p>Back in the olden days before HTML5 (pre-2012), web pages defaulted to the Extended ASCII character set known as <code class="highlighter-rouge">ISO 8859-1</code>. This is also known as “Latin 1,” and is focused on English and Western European languages.</p>
+
+<p>That meant if you were viewing a Czech site written in a <em>different</em> version of Extended ASCII they had to specify it was <code class="highlighter-rouge">ISO 8859-2</code>. Japanese sites had to specify that they were <code class="highlighter-rouge">Shift JIS</code>, and Finns had to note <code class="highlighter-rouge">ISO-8859-15</code>. Some people used UTF-8 encoding to easily support universal text, but those people were few and far between.</p>
+
+<p>You could specify an encoding with a line in the HTML code like:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-8"&gt;
+</code></pre>
+</div>
+
+<p>or for HTML5 you use:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;meta charset="UTF-8"&gt;
+</code></pre>
+</div>
+
+<p>That way your browser knows what encoding to display. The problem shows up when <strong>you don’t specify an encoding, and the browser computer has to guess</strong>. If it guesses wrong, the <code class="highlighter-rouge">\</code>s become <code class="highlighter-rouge">Ö</code>s and the <code class="highlighter-rouge">ｶ</code>s become <code class="highlighter-rouge">¶</code>s and everything looks terrible.</p>
+
+<p>People didn’t specify encodings because they always lived on the same part of the web - Americans stayed on American sites, Koreans stayed on the Korean web, etc. If your computer defaults to Latin 1 and all of the sites you view are Latin 1, that usually won’t cause a problem.</p>
+
+<p><strong>But</strong> say you had a Hebrew computer which defaulted to <code class="highlighter-rouge">ISO-8859-8</code> for your encoding. All your documents, all your spreadsheets, etc are all in <code class="highlighter-rouge">ISO-8859-8</code> encoding. You upload a web page and don’t specify an encoding, but it looks perfectly fine to you because your computer <em>always assumes things are <code class="highlighter-rouge">ISO-8859-8</code></em>.</p>
+
+<p>When a Swede visits your site, though, <strong>their computer would assume your site was Swedish</strong>, show it as <code class="highlighter-rouge">ISO-8859-15</code>, and everyone’s characters would get mixed up.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> While you’re browsing the web, you can always change the encoding you’re looking at a site through! In Chrome, go to the <code class="highlighter-rouge">View</code> menu, then <code class="highlighter-rouge">Encoding</code>, and pick something else. Maybe change it a few times for this page to see characters switch up, but make sure you switch back to <code class="highlighter-rouge">Auto Detect</code> at the end.</p>
+</blockquote>
+
+<p>In 2012 HTML5 officially came out, which decreed that the default encoding for the web was now UTF-8. Now a single page can have <code class="highlighter-rouge">Ö</code> and <code class="highlighter-rouge">ｶ</code> and <code class="highlighter-rouge">¶</code> all live together in peace and harmony, and it was the <em>default</em> (see: <a href="http://neilbendle.com/defaults-matter/">Defaults matter</a>).</p>
+
+<p>You’ll still have problems, though - not everyone is using the new standard, and plenty of sites are from the HTML4 era. If you’re scraping the web, this is especially important: if you download a (for example) <code class="highlighter-rouge">ISO-8859-3</code> file, be sure you <strong>open it as <code class="highlighter-rouge">ISO-8859-3</code></strong>.</p>
+
+<h3 id="special-characters">Special Characters</h3>
+
+<p>Even before UTF-8, special characters abounded: ♥ and ™ and → were all over the place. If your text editor only supported ASCII or your site was in Latin-1 (ISO 8859-1), how’d you get them? Through the magic of <strong>HTML entities</strong>!</p>
+
+<p>HTML entities are special codes in the text of your web page prefixed by an ampersand <code class="highlighter-rouge">&amp;</code> and post-fixed by a <code class="highlighter-rouge">;</code>. They let you display symbols your character encoding wouldn’t normally allow.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>HTML Entity Code</th>
+      <th>Displays as</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">&amp;hearts;</code></td>
+      <td>♥</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">&amp;copy;</code></td>
+      <td>©</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">&amp;Dagger;</code></td>
+      <td>‡</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">&amp;#28608;</code></td>
+      <td>激</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">&amp;agrave;</code></td>
+      <td>à</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>There are <a href="https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references">a lot of them</a>!</p>
+
+<p>Sometimes they have special names, and sometimes you just type in the (hex) number of the Unicode codepoint you were looking for. Even though on a UTF-8 page you can just type ♥ instead of <code class="highlighter-rouge">&amp;hearts;</code>, HTML entites are still a common way of representing symbols that are difficult to type. You’d never know unless you viewed the source of a page, though!</p>
+
+<p><strong>HTML entites are a pain when you’re scraping</strong>, since every à might actually show up as a <code class="highlighter-rouge">&amp;agrave;</code>. You’ll usually want to find a way to convert them before you start working on your text (Here’s a <a href="http://stackoverflow.com/questions/10088318/decode-html-entities-using-beautifulsoup">simple BeautifulSoup example</a> from StackOverflow).</p>
+
+<h2 id="spreadsheets-and-other-files">Spreadsheets and other files</h2>
+
+<p>Sometimes you open up a file and you’re presented with a string of ?????s or little boxes or other nonsense. This is, as you now know, a <strong>character encoding problem</strong>. Typically you’re opening a file from some bureaucratic arm of a government or business that isn’t cool enough to use UTF-8 yet.</p>
+
+<p><strong>Word/Excel/other Microsoft products:</strong> <a href="https://support.office.com/en-ca/article/Choose-text-encoding-when-you-open-and-save-files-60d59c21-88b5-4006-831c-d536d42fd861">Choose text encoding when you open and save files</a></p>
+
+<p><strong>Sublime Text:</strong> Open your file then select <code class="highlighter-rouge">File</code> &gt; <code class="highlighter-rouge">Reopen with Encoding</code> and select the appropriate encoding. You can then do <code class="highlighter-rouge">File</code> &gt; <code class="highlighter-rouge">Save with Encoding</code> and pick UTF-8 to help save the world. It mentions something called BOM a few times, you can <a href="http://stackoverflow.com/questions/2223882/whats-different-between-utf-8-and-utf-8-without-bom">read up on that here</a>.</p>
+
+<h2 id="programming-languages">Programming Languages</h2>
+
+<p>We’ll cover Python in-depth in the next piece, but <strong>character encodings when programming can be a huge huge headache</strong>.</p>
+
+<h3 id="under-the-hood">Under the hood</h3>
+
+<p>When you’re coding, a series of characters like <code class="highlighter-rouge">"Cat"</code> is called a string. The way <code class="highlighter-rouge">"Cat"</code> is treated by different programming languages varies widely.</p>
+
+<p><strong>Sometimes they’re just strings of bits and bytes.</strong></p>
+
+<p><code class="highlighter-rouge">"Cat"</code> might be <code class="highlighter-rouge">0100 0100 0110 0100 0111 0100</code>. The computer could read this as two UTF-8 characters, or two <code class="highlighter-rouge">ISO 8859-15</code> characters, or two <code class="highlighter-rouge">ISO 8859-1</code> Latin 1 characters, or maybe one UTF-16 character! It’s up to you as the programmer to keep track of what your text is.</p>
+
+<p>Possible problems:</p>
+
+<ol>
+  <li>What’s the length of the string? If you read in UTF-16 Chinese, but it’s assuming it’s UTF-8, then you’re going to have a bad time.</li>
+  <li>Maybe you’re using <code class="highlighter-rouge">ISO 8859-15</code>, save it, and then try to open it up as UTF-8. Is it going to display correctly?</li>
+  <li>You feed a bunch of strings into some sort of analysis function. Does the function care about the encoding? Does it expect a different encoding?</li>
+</ol>
+
+<p>An example of a language that treats strings like this is Ruby 1.8.</p>
+
+<p><strong>Sometimes UTF-8 is special</strong></p>
+
+<p>Python 2 is <em>insane.</em> They do the above for most strings, but then <em>also</em> have special versions of strings just for UTF-8. You’ll learn more about that later.</p>
+
+<p><strong>Sometimes they remember their encoding</strong></p>
+
+<p>Some languages keep a little wrapper around them to tell you what the encoding is. Cat is still <code class="highlighter-rouge">0100 0100 0110 0100 0111 0100</code>, but there’s a note that says “this is Swedish Extended ASCII” or “this is encoded with UTF-8.”</p>
+
+<p>Ruby 1.9 and later does this.</p>
+
+<p><strong>Sometimes they are UTF-16</strong></p>
+
+<p>Java apparently loves the world because it defaults to using UTF-16 for its strings.</p>
+
+<h3 id="when-do-you-know">When do you know?</h3>
+
+<p>You know you’re working with UTF-8 (and other fancier encodings than ASCII) because you see a ton of <code class="highlighter-rouge">\</code> in your output paired with weird numbers and letters.</p>
+
+<p>For example, if we try to look at 你好世界 in Python 2, it displays as this:</p>
+
+<p><code class="highlighter-rouge">\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c</code></p>
+
+<blockquote>
+  <p><strong>NOTE:</strong>  he <code class="highlighter-rouge">\x</code> means “this is <a href="https://learn.sparkfun.com/tutorials/hexadecimal">hexadecimal</a>,” which counts from 0-F instead of from 0-9. 
+Hex counts from 0-F (a.k.a. 0-15) because that’s what you can do with 1 byte (a.k.a. 4 bits). <code class="highlighter-rouge">0000</code> through <code class="highlighter-rouge">1111</code> = <code class="highlighter-rouge">15</code> = <code class="highlighter-rouge">F</code>.</p>
+</blockquote>
+
+<p>Seeing this weirdness <em>doesn’t mean something is wrong</em>, it’s not the like seeing question marks and empty boxes in Word. It just means your code isn’t printing the actual characters to your screen, instead it’s printing the <em>numbers that represent the characters</em>. When you save it to a file you’ll probably be fine.</p>
+
+<p>I unfortunately don’t have a good answer to “when do you know something is wrong” other than “something eventually breaks.” I’m open to suggestions!</p>
+
+<h2 id="running-scripts">Running scripts</h2>
+
+<p>Sometimes (but not always) you have to specify your encoding for the Python or Ruby scripts you’re running.</p>
+
+<p>If you don’t, the interpreter (the <code class="highlighter-rouge">python</code> or <code class="highlighter-rouge">ruby</code> command) will think you wrote your code in ASCII, and then freak out when it encounters something non-ASCII. You can put <strong>one of the following lines at the top of your <code class="highlighter-rouge">.py</code> or <code class="highlighter-rouge">.rb</code> file</strong> to force it to read your script using a specific encoding.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># -*- coding: utf-8 -*-
+# coding: utf-8
+# encoding: UTF-8
+</code></pre>
+</div>
+
+<p>They’ll work for <strong>both Python and Ruby</strong>. The interpreter just looks for something that says ‘coding: blahblahblah’, the capitalization and fancy <code class="highlighter-rouge">-*-</code> marks are simply convention.</p>
+
+<h2 id="opening-and-saving-files-when-programming">Opening and saving files (when programming)</h2>
+
+<p>When you’re opening and saving files in a programming language, <strong>try to specify an encoding if you can</strong>. Your computer likes to guess, which is fine, but as we saw up above with HTML sometimes it can guess incorrectly and cause problems.</p>
+
+<p><strong>Python 2</strong> Use the <code class="highlighter-rouge">codecs</code> library to specify an encoding. The third argument you pass is the encoding (utf-8, utf-16, ISO-8859-1, etc)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import codecs
+opened = codecs.open("filename.txt", "r", "ISO-8859-8")
+</code></pre>
+</div>
+
+<p><strong>Python 3</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>opened = open("filename.txt", encoding="utf-8")
+</code></pre>
+</div>
+
+<p><strong>Ruby</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>opened = File.read('filename.txt', encoding: 'iso-8859-1')
+</code></pre>
+</div>
+
+<p><a href="http://nuclearsquid.com/writings/ruby-1-9-encodings/">More details for Ruby 1.9</a></p>
+
+<h2 id="databases">Databases</h2>
+
+<p>Sometimes your database uses one encoding and your programming language is in another, so <em>you need to be sure they’re in agreement</em>.</p>
+
+<p>When creating your database, you use a line like the following to set the character set.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>CREATE DATABASE mydatabasename
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+</code></pre>
+</div>
+
+<p>I know my MySQL frontend always tries to default to Latin-1 and I have to strong-arm it into UTF-8.</p>
+
+<h2 id="comprehension-quiz">Comprehension Quiz</h2>
+
+<p>Think you’ve got it? Here’s a tiny quiz:</p>
+
+<ol>
+  <li>Do you have to specify an encoding for a web page? How can you change it?</li>
+  <li>When I’m programming and I see <code class="highlighter-rouge">\xe4\xbd\xa0\xe5</code>, what am I probably dealing with?</li>
+  <li>Do a programming languages know what encoding a string is in?</li>
+  <li>How can I specify an encoding for a Python or Ruby script I’ve written?</li>
+  <li>What’s the Python 2 library that helps me read/write files written in specific encodings?</li>
+</ol>
+
+<p>Answers are below.</p>
+
+<ol class="answer-key">
+  <li>No, you don’t! As the web page maker you can use a <meta /> tag, as the viewer you can change it through a menu in your browser.</li>
+  <li>UTF-8/Unicode characters that won’t display via ASCII (Chinese characters, in that case)</li>
+  <li>Generally not, although Python 2 has a special type for Unicode..</li>
+  <li>Using a <code class="highlighter-rouge"># encoding: utf-8</code> line up at the top</li>
+  <li><code class="highlighter-rouge">codecs</code></li>
+</ol>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Head back to <a href="../utf8-unicode-character-encodings/">UTF-8, Unicode, Character Encoding, and International Data Journalism →</a> to grab the next section!</p>
+
+<!--
+## Further reading
+
+**General:**
+
+* http://www.joelonsoftware.com/articles/Unicode.html
+* http://kunststube.net/encoding/
+* http://www.w3.org/International/articles/definitions-characters/
+* http://blog.gatunka.com/2014/04/25/character-encodings-for-modern-programmers/
+
+**Ruby:** 
+
+* http://yehudakatz.com/2010/05/05/ruby-1-9-encodings-a-primer-and-the-solution-for-rails/
+* http://andre.arko.net/2013/12/01/strings-in-ruby-are-utf-8-now/
+* http://mortoray.com/2013/11/27/the-string-type-is-broken/
+-->
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

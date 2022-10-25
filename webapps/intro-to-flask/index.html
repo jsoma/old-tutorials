@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Building a Flask App</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/webapps/intro-to-flask/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Building a Flask App">
+  <meta property="twitter:title" content="Building a Flask App">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Web Applications for You and Me</a> &gt;  Building a Flask App</p>
+
+
+
+                      <p><strong>This tutorial is out of date!</strong> <a href="http://jonathansoma.com/tutorials/flask-sqlalchemy-mapbox/">Try my longer, updated Flask-SQLite webapp tutorial here</a></p>
+
+<h1 id="building-a-flask-webapp">Building a Flask webapp</h1>
+
+<h2 id="why-flask-is-the-hero-that-we-need">Why Flask is the hero that we need</h2>
+
+<h3 id="the-problem">The Problem</h3>
+
+<p>If we were normal people, going to make a normal website, we might start off our website with a real big header proclaiming how great it is. The HTML we’d write might look like this:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Cool Website about Stuff<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+
+<p>But since we’re <em>professionals</em>, and we’re <em>data wranglers</em>, and we’re specifically <em>data wrangling school data</em>, we’ll probably start it off with the name of a school.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>PS 15 Roberto Clemente<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+
+<p>But then eventually we’ll have to make one about a <em>different</em> school, which will have a completely <em>different</em> headline associated with it</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>The Urban Assembly School of Business for Young Women<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+
+<p>and if we have several hundred high schools in NYC it is going to take a very long time, much less if we want to expand to the <em>thousands and thousands</em> of schools across America.</p>
+
+<h3 id="welcome-to-the-backend">Welcome to the backend</h3>
+
+<p>Luckily, we don’t have to write that HTML. Instead, <strong>we write Python code that writes the HTML.</strong></p>
+
+<p>That Python code looks into a database, finds the name of the school we’re looking at, and slaps the <code class="highlighter-rouge">&lt;h1&gt;PS 15 Roberto Clemente&lt;/h1&gt;</code> right there on the page. If we’re looking at a different school, it gets a different name from the database, and the HTML gets a different name inside of the <code class="highlighter-rouge">&lt;h1&gt;</code> tag.</p>
+
+<p>This is called the <strong>backend</strong> of a site. The <strong>frontend</strong> is all of the HTML and CSS and JavaScript that the user interacts with, while the backend is the hard work that puts that HTML &amp; co. together.</p>
+
+<p>The backend can be <em>any</em> sort of programming language, and can be more or less complicated based on what it’s intended to do. Today we’ve decided we’re going with <strong>Python</strong>, and we’re using a rather simple framework called <strong>Flask</strong></p>
+
+<h3 id="introducing-flask">Introducing Flask</h3>
+
+<p><a href="http://flask.pocoo.org/">Flask</a> is a web microframework built in Python.</p>
+
+<ol>
+  <li>A <strong>framework</strong> is more or less similar to a library (<a href="http://stackoverflow.com/questions/148747/what-is-the-difference-between-a-framework-and-a-library">just read this</a>) in that it gives you a barrelful of tools to get a task done. The particular barrel we’re being given helps us build web sites.</li>
+  <li>A <strong>microframework</strong> is just a small, lightweight framework. An example of a Python site-building framework that pulls zero punches and packs in the functionality would be <a href="https://www.djangoproject.com/">Django</a>. Our site isn’t going to be terribly complicated, so we’re going to stick with Flask.</li>
+</ol>
+
+<p>Another popular web framework you might have heard of is Ruby on Rails (which, of course, uses Ruby).</p>
+
+<h1 id="a-flask-hello-world">A Flask Hello World</h1>
+
+<p>While you can put everything in your Flask project into a single file, it’s most always better to organize it into multiple files - put your Python code over here, put your HTML templates over there, some other stuff somewhere else.</p>
+
+<p>Our project is going to be called <code class="highlighter-rouge">nyc-schools</code>. Add a folder called <code class="highlighter-rouge">static</code> and another one called <code class="highlighter-rouge">templates</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>nyc-schools/
+  app.py
+  static/
+  templates/
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">static</code> is for files that aren’t dynamically generated, like images and JavaScript files and the like.</p>
+
+<p><code class="highlighter-rouge">templates</code> is the templated versions of the dynamically generated web pages (i.e., the previously-mentioned <code class="highlighter-rouge">&lt;h1&gt;</code> with a placeholder inside of it).</p>
+
+<p><code class="highlighter-rouge">app.py</code> is our application file. It should contain the following code:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'&lt;h1&gt;Hello world!&lt;/h1&gt;'</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></code></pre></figure>
+
+<p>From terminal, in the <code class="highlighter-rouge">nyc-schools</code> directory, run the command</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">python app.py</code></pre></figure>
+
+<p>And then do me the favor of visiting <a href="http://127.0.0.1:5000">http://127.0.0.1:5000</a> to check out your <em>freshly minted web application</em>.</p>
+
+<h1 id="templates-and-databases-and-routing-oh-my">Templates and Databases and Routing, Oh My</h1>
+
+<h2 id="starting-with-templates">Starting with Templates</h2>
+
+<p>So you know how we mashed up a bunch of HTML in the “Hello world” section? That’s horrid, and we should be drawn and quartered for it. HTML belongs in an <code class="highlighter-rouge">.html</code> file, and we’re going to put it there before anyone notices.</p>
+
+<p>Add a file called <code class="highlighter-rouge">index.html</code> into your <code class="highlighter-rouge">templates</code> folder and have it contain the text <code class="highlighter-rouge">&lt;h1&gt;Hello world&lt;/h1&gt;</code>. We’re going to render that page instead of just sending back some text, which takes two changes:</p>
+
+<p>Alter <code class="highlighter-rouge">app.py</code>’s index function to read as follows</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span></code></pre></figure>
+
+<p>Add a new import line to the top of <code class="highlighter-rouge">app.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span></code></pre></figure>
+
+<p><strong>Now refresh.</strong> Cool, right? How nothing changes? <code class="highlighter-rouge">render_template</code> is just reaching down into the <code class="highlighter-rouge">templates/</code> directory, grabbing <code class="highlighter-rouge">index.html</code>, and rendering it instead of the text we had there before.</p>
+
+<p>To make use of this (kind of), let’s edit the code in index.html just to make a list of a few schools.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>NYC High Schools<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Henry Street School for International Studies<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>University Neighborhood High School<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>East Side Community School<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Marta Valle High School<span class="nt">&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span></code></pre></figure>
+
+<p>Refresh, rejoice.</p>
+
+<h2 id="communicating-with-the-template">Communicating with the template</h2>
+
+<p>Let’s say you have a cool variable in our application, like what we think the number of schools is in NYC.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">school_count</span> <span class="o">=</span> <span class="mi">350</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span></code></pre></figure>
+
+<p>You can actually send that value to <code class="highlighter-rouge">index.html</code>, and then use it there to fill in empty spots in the template.</p>
+
+<p>First we’ll edit our <code class="highlighter-rouge">render_template</code> to send the information to the template.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">school_count</span> <span class="o">=</span> <span class="mi">350</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">school_count</span><span class="p">)</span></code></pre></figure>
+
+<p>Then we’ll edit our <code class="highlighter-rouge">index.html</code> to use the variable, by using `` as a placeholder, with the variable name inside.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>NYC High Schools<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>There are  high schools in NYC<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Henry Street School for International Studies<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>University Neighborhood High School<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>East Side Community School<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Marta Valle High School<span class="nt">&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span></code></pre></figure>
+
+<p>But that number doesn’t seem <em>quite right</em>. How are we going to change it?</p>
+
+<h2 id="adding-in-a-database">Adding in a Database</h2>
+
+<p>A database is going to be the saving grace of this project - by pulling information out of the database, we don’t have to guess at the number of schools, nor do we have to type each and every one of their names out. It’s a paradise!</p>
+
+<p>We’re going to use our <code class="highlighter-rouge">models.py</code> file from the <a href="../intro-to-peewee/">peewee tutorial</a> - go ahead and copy it into the <code class="highlighter-rouge">nyc-schools/</code> directory, along with <code class="highlighter-rouge">schools.db</code>.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> If you don’t have the files, you can download them here: <a href="/assets/data/models.py">models.py</a> and <a href="/assets/data/schools.db">schools.db</a>.</p>
+</blockquote>
+
+<p>Using our database in <code class="highlighter-rouge">app.py</code> is the same as when we imported it to learn how peewee works. Add another import to the top of the file:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="o">*</span></code></pre></figure>
+
+<p>Now we can use <code class="highlighter-rouge">School</code> and <code class="highlighter-rouge">Score</code> just like we did before! In order to get an accurate count of the number of schools, we’re going to use <code class="highlighter-rouge">School.select().count()</code>. It selects all of the schools, then laboriously counts them.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">school_count</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">school_count</span><span class="p">)</span></code></pre></figure>
+
+<p><strong>Refresh!</strong> Rejoice! 437, right?</p>
+
+<h3 id="leveling-up">Leveling up</h3>
+
+<p>I’m still angry about typing out all of those school names in the <code class="highlighter-rouge">index.html</code> - peewee can help with that, as well. Instead of just sending boring variables like integers to the template, we can send <em>an entire selection of schools</em>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">school_count</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+  <span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">school_name</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">school_count</span><span class="p">,</span> <span class="n">schools</span><span class="o">=</span><span class="n">schools</span><span class="p">)</span></code></pre></figure>
+
+<p>Then in our <code class="highlighter-rouge">index.html</code>, we can loop through them all and display the <code class="highlighter-rouge">school_name</code>s.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>NYC High Schools<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>There are {{ count }} high schools in NYC<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+  {% for school in schools %}
+    <span class="nt">&lt;p&gt;</span>{{ school.school_name }}<span class="nt">&lt;/p&gt;</span>
+  {% endfor %}
+<span class="nt">&lt;/ul&gt;</span></code></pre></figure>
+
+<p>Then edit our <code class="highlighter-rouge">index()</code> to pull all of the schools out of the database. We’ll pull them down in alphabetical order.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">school_name</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span></code></pre></figure>
+
+<p><strong>Step three: Send them to the template</strong></p>
+
+<p>Now we have all the schools, we just need to <em>send them to the template</em>, and then <em>use them in the template</em>. Edit <code class="highlighter-rouge">index</code> one more time to send them to the template:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">school_name</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">,</span> <span class="n">schools</span><span class="o">=</span><span class="n">schools</span><span class="p">)</span></code></pre></figure>
+
+<h2 id="routing-around">Routing around</h2>
+
+<p>Cool, ‘eh? But it just isn’t enough, I know. If we’re going to win a Pulitzer we need <strong>individual school pages</strong>.</p>
+
+<p>If we take a look at our <code class="highlighter-rouge">index</code>, there’s a suspicious line right about it:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+  <span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">school_name</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span></code></pre></figure>
+
+<p><code class="highlighter-rouge">@app.route('/')</code> is a <strong>route</strong> - a URL you can type in to get to a specific function in the Flask app. That one defines <code class="highlighter-rouge">/</code> and tells Flask to execute <code class="highlighter-rouge">index()</code> whenever someone runs across it. Let’s make another one!</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/schools/clemente'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">school</span><span class="p">():</span>
+  <span class="k">return</span> <span class="s">'You are looking at PS15 Roberto Clemente'</span></code></pre></figure>
+
+<p>And now you should be able to visit <a href="http://127.0.0.1:5000/schools/clemente">http://127.0.0.1:5000/schools/clemente</a> and see that route run!</p>
+
+<p>Of course, we should probably set up a template for it. Let’s call it <code class="highlighter-rouge">school.html</code> and put it into <code class="highlighter-rouge">templates/</code>.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>PS15 Roberto Clemente<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>Phone number: 212-555-5555<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+
+<p>And edit <code class="highlighter-rouge">app.py</code> to point to the template:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="nd">@app.route</span><span class="p">(</span><span class="s">'/schools/clemente'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">school</span><span class="p">():</span>
+  <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">'school.html'</span><span class="p">)</span></code></pre></figure>
+
+<p><a href="http://127.0.0.1:5000/schools/clemente">Refresh</a> to double-check it worked, and we’re on our way to the next step!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

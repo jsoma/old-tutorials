@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using attr and style</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-attr-and-style/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using attr and style">
+  <meta property="twitter:title" content="Using attr and style">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using attr and style</p>
+
+
+
+                      <h1 id="using-attr-and-style">Using <code class="highlighter-rouge">.attr</code> and <code class="highlighter-rouge">.style</code></h1>
+
+<p>Once upon a time there were <code class="highlighter-rouge">&lt;rect&gt;</code>s, and <code class="highlighter-rouge">&lt;rect&gt;</code>s were good.</p>
+
+<iframe class="iframe-demo" src="/demos/using-attr-and-style-1387bf972042cd3fff488f5fc9143eee.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-1387bf972042cd3fff488f5fc9143eee.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-1387bf972042cd3fff488f5fc9143eee.html">Open example in new window</a></p>
+
+<p>All of these <code class="highlighter-rouge">rect</code>s are very very very boring, though. So boring, in fact, that <em>you can’t even see them</em>.</p>
+
+<h2 id="the-joys-of-attributes">The Joys of Attributes</h2>
+
+<p>The three <code class="highlighter-rouge">rect</code>s above <em>exist</em>, but in the kind of way that your Aunt Mary’s baby exists in the months before it’s born. It’s <em>kind of</em> there, but you can’t see it and it sure as hell can’t do anything.</p>
+
+<p>Babies need to be born and grow hair and get jobs and wear button-up shirts and stuff, and so does a <code class="highlighter-rouge">rect</code>! A <code class="highlighter-rouge">rect</code> can do that by getting an <code class="highlighter-rouge">x</code> and a <code class="highlighter-rouge">y</code> and <code class="highlighter-rouge">width</code> and a <code class="highlighter-rouge">height</code>.</p>
+
+<iframe class="iframe-demo" src="/demos/using-attr-and-style-41e11abff68f677f2398259e15411577.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-41e11abff68f677f2398259e15411577.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"100"</span> <span class="na">height=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"5"</span> <span class="na">y=</span><span class="s">"5"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">x=</span><span class="s">"25"</span> <span class="na">y=</span><span class="s">"25"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">height=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"95"</span> <span class="na">y=</span><span class="s">"25"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-41e11abff68f677f2398259e15411577.html">Open example in new window</a></p>
+
+<p>These are all called <strong>attributes</strong>. Clothes make the manatee, and attributes make the shape! The <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> attributes position the <code class="highlighter-rouge">rect</code> inside of the <code class="highlighter-rouge">svg</code>, and the <code class="highlighter-rouge">width</code> and <code class="highlighter-rouge">height</code> give it a size.</p>
+
+<p><strong>Attributes</strong> are anything that gets an equals sign in the HTML. <code class="highlighter-rouge">class</code> can be an attribute, <code class="highlighter-rouge">id</code> can be an attribute. <code class="highlighter-rouge">height</code> and <code class="highlighter-rouge">width</code> are also attributes for <code class="highlighter-rouge">svg</code>, in case you didn’t notice!</p>
+
+<p>Every kind of svg element has its own set of attributes. Sometimes they overlap, sometimes they don’t.</p>
+
+<ul>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><code class="highlighter-rouge">circle</code></a> gets <code class="highlighter-rouge">cx</code> and <code class="highlighter-rouge">cy</code> for position, and <code class="highlighter-rouge">r</code> for radius</li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect"><code class="highlighter-rouge">rect</code></a> gets <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> for the top left, and <code class="highlighter-rouge">width</code> and <code class="highlighter-rouge">height</code> for its size</li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text"><code class="highlighter-rouge">text</code></a> gets <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> to position it and <code class="highlighter-rouge">text-anchor</code> to figure out how it gets aligned (centered, left-aligned, etc)</li>
+</ul>
+
+<p>Those are just a few common ones, follow the links above to learn about other attributes. You can also check out <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element">a ton of other SVG elements</a>.</p>
+
+<p>By adding attributes to a <code class="highlighter-rouge">rect</code> or any other SVG element, you bring it to life. Two big things that attributes are for are</p>
+
+<ul>
+  <li>Position your element</li>
+  <li>Set your element’s size</li>
+</ul>
+
+<h3 id="attributes-in-d3">Attributes in d3</h3>
+
+<p>Attributes in d3 are edited using <code class="highlighter-rouge">.attr()</code>. Let’s say we had the following svg:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"10"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"40"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"70"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+
+<p>It would look a lot like this:</p>
+
+<svg height="60" width="120">
+  <rect width="10" x="10"></rect>
+  <rect width="10" x="40"></rect>
+  <rect width="10" x="70"></rect>
+</svg>
+
+<p>Which is to say, <em>like nothing</em>, but it has no <code class="highlighter-rouge">height</code> or <code class="highlighter-rouge">y</code>! Don’t worry, though we can salvage the situation with d3.</p>
+
+<p>After you select your elements, <strong>using <code class="highlighter-rouge">.attr</code> allows you to set an attribute to a specific value.</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">20</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span></code></pre></figure>
+
+<p>That code will set all of the rectangles to have a <code class="highlighter-rouge">height</code> of 20 and a <code class="highlighter-rouge">y</code> of 30.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> <code class="highlighter-rouge">x</code>, <code class="highlighter-rouge">y</code>, <code class="highlighter-rouge">cx</code>, and <code class="highlighter-rouge">cy</code> all position the elements <em>inside of their parent SVG</em>. The <code class="highlighter-rouge">y</code> is how far from the top, the <code class="highlighter-rouge">x</code> is how far from the left.</p>
+</blockquote>
+
+<p>For the full example of not setting all of the attributes and then setting them later with d3, see below.</p>
+
+<iframe class="iframe-demo" src="/demos/using-attr-and-style-395579b6ff2505f5a3c5325ad74e1c19.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-395579b6ff2505f5a3c5325ad74e1c19.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"10"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"40"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"70"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">20</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-395579b6ff2505f5a3c5325ad74e1c19.html">Open example in new window</a></p>
+
+<p>But those are ugly, right? How about we spice them up?</p>
+
+<h2 id="the-joys-of-styling">The Joys of Styling</h2>
+
+<p>There’s another attribute we haven’t talked about, and it’s called <code class="highlighter-rouge">style</code>. It’s a way of writing CSS, all crammed into one line. For example:</p>
+
+<iframe class="iframe-demo" src="/demos/using-attr-and-style-afbb738ac1927d9ff477833cda5073d4.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-afbb738ac1927d9ff477833cda5073d4.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"10"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: red;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: green;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"70"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: blue;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-afbb738ac1927d9ff477833cda5073d4.html">Open example in new window</a></p>
+
+<p>You can even add <strong>multiple CSS rules</strong> inside of the <code class="highlighter-rouge">style</code> attribute! You might even need to scroll to the right inside of the box below.</p>
+
+<iframe class="iframe-demo" src="/demos/using-attr-and-style-54b56cd52f3eebf2a6497b66281b174d.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-54b56cd52f3eebf2a6497b66281b174d.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"10"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: red; stroke-width: 2; opacity: 0.5;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: green; stroke-width: 3; opacity: 0.75;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"70"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"15"</span> <span class="na">style=</span><span class="s">"fill: blue; stroke-width: 0.5; opacity: 0.2;"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-attr-and-style-54b56cd52f3eebf2a6497b66281b174d.html">Open example in new window</a></p>
+
+<p>The thing is, you’ll never do that. It’s <strong>pure garbage</strong>. It’s practically illegal. <em>Never</em> do that. If you want to write your own CSS, do it the Real Way, up in a <code class="highlighter-rouge">&lt;style&gt;</code> tag.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+  <span class="nt">rect</span> <span class="p">{</span>
+    <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span>
+    <span class="nl">opacity</span><span class="p">:</span> <span class="m">0.5</span><span class="p">;</span>
+    <span class="py">stroke-width</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span></code></pre></figure>
+
+<p>But yeah, come on, <strong>we’re here to write d3!</strong> And because styling is very very very connected to the data you’re displaying (high danger? red!), we’re going to use d3 to edit the style tag. But there’s a catch.</p>
+
+<h3 id="styling-in-d3">Styling in d3</h3>
+
+<p><strong>Even though <code class="highlighter-rouge">style</code> is an attribute, you don’t edit <code class="highlighter-rouge">style</code> using <code class="highlighter-rouge">attr</code>!</strong> Because so many different things can be hiding inside of <code class="highlighter-rouge">style</code> - maybe the stroke width, or the fill, or the opacity, etc - it gets its very own method, <code class="highlighter-rouge">.style()</code>.</p>
+
+<p>When you use <code class="highlighter-rouge">style</code>, the first parameter is the attribute you want to edit, and the second parameter is the value you’d like it to be. Sometimes the second parameter is a function!</p>
+
+<p><strong>HTML</strong></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"60"</span> <span class="na">width=</span><span class="s">"120"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"10"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"30"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"30"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"10"</span> <span class="na">x=</span><span class="s">"70"</span> <span class="na">height=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"30"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+
+<p><strong>JavaScript</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">).</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">);</span></code></pre></figure>
+
+<p><strong>Result</strong></p>
+
+<svg height="60" width="120">
+  <rect width="10" x="10" height="20" y="15" style="fill: red;"></rect>
+  <rect width="10" x="40" height="20" y="15" style="fill: red;"></rect>
+  <rect width="10" x="70" height="20" y="15" style="fill: red;"></rect>
+</svg>
+
+<p>Chances are you’ll be spending a lot of time changing the fill color using a function instead. That sets it piece by piece, looking at the associated piece of data.</p>
+
+<p><strong>JavaScript</strong></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">d</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s1">'red'</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s1">'green'</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">});</span></code></pre></figure>
+
+<p><strong>Result</strong></p>
+
+<svg height="60" width="120">
+  <rect width="10" x="10" height="20" y="15" style="fill: green;"></rect>
+  <rect width="10" x="40" height="20" y="15" style="fill: red;"></rect>
+  <rect width="10" x="70" height="20" y="15" style="fill: red;"></rect>
+</svg>
+
+<p>And there you have it!</p>
+
+<h2 id="overlap-between-attr-and-style">Overlap between <code class="highlighter-rouge">.attr</code> and <code class="highlighter-rouge">.style</code></h2>
+
+<p>Sometimes you have attributes that can <em>also</em> be styles. For example, <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor"><code class="highlighter-rouge">text-anchor</code></a> is used to align svg text, and you can use either <code class="highlighter-rouge">.attr()</code> or <code class="highlighter-rouge">.style()</code> with it!</p>
+
+<p>Generally, though - <strong>position and size are <code class="highlighter-rouge">.attr</code>, and all other decoration is <code class="highlighter-rouge">.style</code>.</strong> But hey, that’s probably a lie, too.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

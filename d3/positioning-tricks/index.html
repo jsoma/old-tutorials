@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Positioning tricks</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/positioning-tricks/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Positioning tricks">
+  <meta property="twitter:title" content="Positioning tricks">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Positioning tricks</p>
+
+
+
+                      <h1 id="positioning-tricks">Positioning Tricks</h1>
+
+<p>Having a nice, well-spaced graph is important, but <em>it can sometimes be a little tricky</em>.</p>
+
+<p>A lot of d3 (and programmatic graphics work in general) is figuring out how position coordinates, canvas sizes and height/width relate. It’s simple algebra, but it can be tough to wrap your head around.</p>
+
+<h2 id="the-case-of-the-too-small-canvas">The Case of the Too Small Canvas</h2>
+
+<p>Let’s say we have a nice simple bar chart that spans the width of the container SVG. I’ve outlined the SVG to help us see where its bounds are.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-fe9350a8ed8cb4555f132bc48888e1cb.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-fe9350a8ed8cb4555f132bc48888e1cb.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'fruits'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;style&gt;</span> <span class="nc">.fruits</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Apples'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">40</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Oranges'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Bananas'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">80</span> <span class="p">}];</span>
+
+<span class="c1">// We'll manually set the height/width of the svg</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.fruits'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+
+<span class="c1">// building our scale</span>
+<span class="c1">// our largest input is 80 (bananas), and our largest output</span>
+<span class="c1">// should be the width of the svg</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span> <span class="c1">// bind your data</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span> <span class="c1">// grab the "new" ones (all of them)</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span> <span class="c1">// and add in rectangles</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">})</span> <span class="c1">// space them evenly vertically</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> <span class="p">})</span> <span class="c1">// use the scale!</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-fe9350a8ed8cb4555f132bc48888e1cb.html">Open example in new window</a></p>
+
+<p>But hey! We live in the future, and in the future we have <em>labeled charts</em>. So first thing we have to do is make a little room on the left hand side, by <strong>increasing the x value</strong>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span></code></pre></figure>
+
+<p>It <em>seems</em> like it’s okay, but it’s <em>really not</em>.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-57e0f3da683bf4246a7f173d68806f58.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-57e0f3da683bf4246a7f173d68806f58.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'fruits'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;style&gt;</span> <span class="nc">.fruits</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Apples'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">40</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Oranges'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Bananas'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">80</span> <span class="p">}];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.fruits'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">})</span> <span class="c1">// space them evenly vertically</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> <span class="p">})</span> <span class="c1">// use the scale!</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-57e0f3da683bf4246a7f173d68806f58.html">Open example in new window</a></p>
+
+<p>You can see the ‘Bananas’ bar go all the way to the right, and you just assume it ends at the end. <strong>Wrong!</strong> If you open up the <strong>web inspector</strong>…</p>
+
+<p><img src="/tutorials/assets/images/overflow.png" alt="Bar overflowing the bounds of the canvas" /></p>
+
+<p>Hey, look at that! It’s going over the edge, right off the svg canvas!</p>
+
+<p>But let’s think about it: We <strong>added 60 pixels of padding to the left, but our bar still wants to be <code class="highlighter-rouge">svg_width</code> pixels wide</strong>. If the bar is starting 60 pixels in, it needs to be 60 pixels shorter than the width of the SVG. You can make that happen by adjusting the <code class="highlighter-rouge">.range</code> of the scale.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span> <span class="o">-</span> <span class="mi">60</span><span class="p">]);</span></code></pre></figure>
+
+<p>You could also create a variable called <code class="highlighter-rouge">left_padding</code> and use it in the scale <em>and</em> in the <code class="highlighter-rouge">.attr('x', 60)</code> section, but we’ll stick with that for now.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-fb37e084b8dd5d3ba6c9c70ef2543039.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-fb37e084b8dd5d3ba6c9c70ef2543039.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'fruits'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;style&gt;</span> <span class="nc">.fruits</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Apples'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">40</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Oranges'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Bananas'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">80</span> <span class="p">}];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.fruits'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span> <span class="o">-</span> <span class="mi">60</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">})</span> <span class="c1">// space them evenly vertically</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> <span class="p">})</span> <span class="c1">// use the scale!</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-fb37e084b8dd5d3ba6c9c70ef2543039.html">Open example in new window</a></p>
+
+<p>And if you go on and open up the web inspector to check it out…</p>
+
+<p><img src="/tutorials/assets/images/no-overflow.png" alt="No more overflow" /></p>
+
+<p>Success! No longer runs over the edge.</p>
+
+<h2 id="the-case-of-axis-overflow">The Case Of Axis Overflow</h2>
+
+<p>Let’s say we’re working with the same thing as above, but we’re also adding in an axis. Most of the time the labels are going to go riiiight off the end of the page.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-1ed5405336e82ad65929580e84383d58.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-1ed5405336e82ad65929580e84383d58.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'fruits'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;style&gt;</span> <span class="nc">.fruits</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span> <span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span> <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span> <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span> <span class="p">}</span> <span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span> <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span> <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Apples'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">40</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Oranges'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Bananas'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">80</span> <span class="p">}];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">75</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.fruits'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span> <span class="o">-</span> <span class="mi">60</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">})</span> <span class="c1">// space them evenly vertically</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> <span class="p">})</span> <span class="c1">// use the scale!</span>
+
+<span class="kd">var</span> <span class="nx">axis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">().</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">).</span><span class="nx">scale</span><span class="p">(</span><span class="nx">scale</span><span class="p">);</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'transform'</span><span class="p">,</span> <span class="s1">'translate(60, 50)'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="nx">axis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-1ed5405336e82ad65929580e84383d58.html">Open example in new window</a></p>
+
+<p>We gotta get rid of that clipped <code class="highlighter-rouge">80</code>! It’s <em>super easy,</em> though.</p>
+
+<p>So, the length of the bar and the length of the axis are <em>both</em> determined by the same variable - <code class="highlighter-rouge">scale</code>. It’s going to stretch the banana bar and the axis out to the maximum range (<code class="highlighter-rouge">80</code> sales, <code class="highlighter-rouge">svg_width - 60</code> pixels).</p>
+
+<p>All we gotta do is <strong>shorten the range to shorten the bar!</strong> Let’s chop another 20 pixels off.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span> <span class="o">-</span> <span class="mi">60</span> <span class="o">-</span> <span class="mi">20</span><span class="p">]);</span></code></pre></figure>
+
+<p>Yes, <code class="highlighter-rouge">svg_width - 60 - 20</code> is the same thing as <code class="highlighter-rouge">svg_width - 80</code>, but keeping them separate helps me remember what both numers are for! The <code class="highlighter-rouge">60</code> is to keep the bar from going off of the svg canvas from when we shifted the x, and the <code class="highlighter-rouge">20</code> is to pull it back a little from the right hand side.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-f6884f32d8c7947c9419ad58cd02d849.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-f6884f32d8c7947c9419ad58cd02d849.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'fruits'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;style&gt;</span> <span class="nc">.fruits</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span> <span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span> <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span> <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span> <span class="p">}</span> <span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span> <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span> <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Apples'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">40</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Oranges'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span> <span class="p">{</span> <span class="s1">'product'</span><span class="p">:</span> <span class="s1">'Bananas'</span><span class="p">,</span> <span class="s1">'sales'</span><span class="p">:</span> <span class="mi">80</span> <span class="p">}];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">75</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.fruits'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_width</span> <span class="o">-</span> <span class="mi">60</span> <span class="o">-</span> <span class="mi">20</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">})</span> <span class="c1">// space them evenly vertically</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'sales'</span><span class="p">]);</span> <span class="p">})</span> <span class="c1">// use the scale!</span>
+
+<span class="kd">var</span> <span class="nx">axis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">().</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">).</span><span class="nx">scale</span><span class="p">(</span><span class="nx">scale</span><span class="p">);</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'transform'</span><span class="p">,</span> <span class="s1">'translate(60, 50)'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="nx">axis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-f6884f32d8c7947c9419ad58cd02d849.html">Open example in new window</a></p>
+
+<p>Looking good!</p>
+
+<h2 id="the-magic-of-vertical-bars">The magic of vertical bars</h2>
+
+<p>Horizontal bars are easy! Your <code class="highlighter-rouge">x</code> stays at 0 (left hand side), and your <code class="highlighter-rouge">y</code> hops down the page to space the bars out, and your <code class="highlighter-rouge">width</code> is how big the bar is.</p>
+
+<p><strong>Vertical bars are another story!</strong> It isn’t <em>tough</em>, it’s just one of those things you need to realize before you Get It.</p>
+
+<p>Let’s start with two bars. At the very least we know they need to be spaced out evenly left-to-right using <code class="highlighter-rouge">x</code> and their <code class="highlighter-rouge">height</code> is going to be how long they are.</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-37b28d16f4f59b32444676b9be1a070c.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-37b28d16f4f59b32444676b9be1a070c.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span> <span class="nc">.vertical-bars</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'vertical-bars'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> 
+    <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="c1">// Set the size of the svg through D3</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.vertical-bars'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+      <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-37b28d16f4f59b32444676b9be1a070c.html">Open example in new window</a></p>
+
+<style> .vertical-bars { border: 1px solid #333; display: block; margin: 10px auto;} .vertical-bars rect { fill: red; }</style>
+
+<p>As we know, we can <strong>only change the top left of the <code class="highlighter-rouge">rect</code> using <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code></strong>. For example, maybe we keep pushing it down until the first bar is grounded on the bottom of the svg.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span></code></pre></figure>
+
+<svg class="vertical-bars" height="80" width="100"><rect y="20" x="0" width="15" height="60"></rect><rect y="20" x="20" width="15" height="20"></rect><rect y="20" x="40" width="15" height="40"></rect></svg>
+
+<p>Which lines up <em>one</em> of them, but not the others. In order to get the next bar down, we need to increase the <code class="highlighter-rouge">y</code> even further…</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span></code></pre></figure>
+
+<svg class="vertical-bars" height="80" width="100"><rect y="40" x="0" width="15" height="60"></rect><rect y="40" x="20" width="15" height="20"></rect><rect y="40" x="40" width="15" height="40"></rect></svg>
+
+<p>Which seems passable until you use the web inspector, and notice the longest bar is going outside of the canvas.</p>
+
+<p><img src="/tutorials/assets/images/vertical-overflow.png" alt="Bar overflowing the bounds of the canvas" /></p>
+
+<p>You probably already knew this, but it looks like you have to set <strong>each bar’s <code class="highlighter-rouge">y</code> individually</strong> to make things work. Every time you have to do something to each and every unit in a visualization, <em>there’s always a formula waiting for you</em>.</p>
+
+<p>We just found out that a 60-pixel-long bar needs an offset of <code class="highlighter-rouge">20</code>, and a 40-pixel-long bar needs <code class="highlighter-rouge">40</code>. Let’s look at this for a second!</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>bar height</th>
+      <th>required <code class="highlighter-rouge">y</code> offset</th>
+      <th>added together</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>60</td>
+      <td>20</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td>40</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>60</td>
+      <td>80</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Hmmm… looks like “bar height” + “required <code class="highlighter-rouge">y</code> offset” always equals <code class="highlighter-rouge">80</code> (I cheated when I added that third column). If we take a closer look, <strong>80 is the height of our svg!</strong></p>
+
+<p>It makes sense when you think about it - in order to draw a rectangles that touches the bottom of the svg, you need to start drawing from the height of the rectangle. If we want to get mathy, this means</p>
+
+<p><code class="highlighter-rouge">bar height + required y offset = svg_size</code></p>
+
+<p>which, since we’re looking to set <code class="highlighter-rouge">y</code>, means</p>
+
+<p><code class="highlighter-rouge">required y offset = svg_size - bar height</code></p>
+
+<p>which means *we need to <strong>use the formula for <code class="highlighter-rouge">height</code> in the formula for the <code class="highlighter-rouge">y</code> offset</strong>. If we cut out just that part…</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">svg_height</span> <span class="o">-</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>And to see it all together…</p>
+
+<iframe class="iframe-demo" src="/demos/positioning-tricks-7f93c2aaf4041412ea972a656480589c.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-7f93c2aaf4041412ea972a656480589c.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span> <span class="nc">.vertical-bars</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#333</span><span class="p">;</span> <span class="p">}</span> <span class="nt">rect</span> <span class="p">{</span> <span class="py">fill</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">'vertical-bars'</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">svg_height</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> 
+    <span class="nx">svg_width</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="c1">// Set the size of the svg through D3</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.vertical-bars'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">svg_width</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">svg_height</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">svg_height</span> <span class="o">-</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+      <span class="k">return</span> <span class="nx">scale</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/positioning-tricks-7f93c2aaf4041412ea972a656480589c.html">Open example in new window</a></p>
+
+<p>And there we have it! Sometime we’ll need to size elements based on elements other than the containing SVG - maybe other elements or groupings or whatnot - so keep your eye out for these things!</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

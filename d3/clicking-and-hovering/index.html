@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Clicking and hovering</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/clicking-and-hovering/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Clicking and hovering">
+  <meta property="twitter:title" content="Clicking and hovering">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Clicking and hovering</p>
+
+
+
+                      <h1 id="clicking-and-hovering">Clicking and hovering</h1>
+
+<p>D3 was probably sold to you under the banner of <em>interactive visualization!</em> And yet, hiding somewhere in the back of your head, you’re saying to yourself <em>come on dude, we haven’t done a single goddamn interactive thing.</em> So today we’re going to do those goddamn interactive things.</p>
+
+<h2 id="mouse-events">Mouse events</h2>
+
+<p>When your mouse does something to an element on the page - hovers over it, clicks it, etc etc etc - these are called <strong>mouse events</strong>. D3 supports mouse events just the same as it supports everything else!</p>
+
+<p><strong>Clicking on a data point</strong> works like this:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">rectangles</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"You clicked"</span><span class="p">,</span> <span class="nx">d</span><span class="p">),</span> <span class="nx">i</span><span class="p">;</span>
+<span class="p">})</span></code></pre></figure>
+
+<p>And <strong>hovering onto a data point</strong> works like this:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">rectangles</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseover'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Your mouse went over"</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+<span class="p">})</span></code></pre></figure>
+
+<p><code class="highlighter-rouge">d</code> is (as always) the data point, and <code class="highlighter-rouge">i</code> is (as always) the index of the element you’re looking at.</p>
+
+<p>Not so bad, right? Take a look at the following code, then <strong>open up the JS console to see what’s happening</strong> as you move your mouse over the circles.</p>
+
+<iframe class="iframe-demo" src="/demos/clicking-and-hovering-7cd1bceccb72c725ff1a79d9ad4586e4.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-7cd1bceccb72c725ff1a79d9ad4586e4.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Pride and Prejudice'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Jane Austen'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">120000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1813</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Cryptonomicon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Neal Stephenson'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">415000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1999</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Great Gatsby'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'F. Scott Fitzgerald'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">47094</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1925</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Song of Solomon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Toni Morrison'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">92400</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1977</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'White Teeth'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Zadie Smith'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">169000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">2000</span> <span class="p">}</span>
+<span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">max_words</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">];</span> <span class="p">});</span>
+<span class="kd">var</span> <span class="nx">x_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">1800</span><span class="p">,</span> <span class="mi">2015</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">y_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="nx">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cx'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'published'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cy'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"click"</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseover'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"mouseover"</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseout'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"mouseout"</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
+    <span class="p">})</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-7cd1bceccb72c725ff1a79d9ad4586e4.html">Open example in new window</a></p>
+
+<p>But that stuff’s not so fun, what’s fun is when you <strong>can change the element you’re clicking or hovering on</strong>.</p>
+
+<p>In order to make a <em>change</em>, you need to use this thing called <code class="highlighter-rouge">this</code>. Don’t ask me what it is or anything, just be a good kid and use <code class="highlighter-rouge">console.log(this);</code> and <em>look at it</em>.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> You could I guess <a href="http://javascriptissexy.com/understand-javascripts-this-with-clarity-and-master-it/">read something like this</a> if you wanted.</p>
+</blockquote>
+
+<p><code class="highlighter-rouge">this</code> in this particular instance is the <em>circle you’re clicking</em> or the <em>rectangle you’re hovering</em> or whatever random element you’re interacting with. As a result, you can use d3 to select is and then change its attributes, just like anything else</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseover'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#ff0000'</span><span class="p">);</span>
+<span class="p">})</span></code></pre></figure>
+
+<p>Try clicking and hovering on the elements below.</p>
+
+<iframe class="iframe-demo" src="/demos/clicking-and-hovering-daab724f0082a67b30ed278b237870ad.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-daab724f0082a67b30ed278b237870ad.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Pride and Prejudice'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Jane Austen'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">120000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1813</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Cryptonomicon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Neal Stephenson'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">415000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1999</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Great Gatsby'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'F. Scott Fitzgerald'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">47094</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1925</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Song of Solomon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Toni Morrison'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">92400</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1977</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'White Teeth'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Zadie Smith'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">169000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">2000</span> <span class="p">}</span>
+<span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">max_words</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">];</span> <span class="p">});</span>
+<span class="kd">var</span> <span class="nx">x_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">1800</span><span class="p">,</span> <span class="mi">2015</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">y_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="nx">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cx'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'published'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cy'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"clicking on"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+      <span class="c1">// transition the clicked element</span>
+      <span class="c1">// to have a radius of 20</span>
+      <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseover'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"mouseover on"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+      <span class="c1">// transition the mouseover'd element</span>
+      <span class="c1">// to having a red fill</span>
+      <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#ff0000'</span><span class="p">);</span>
+    <span class="p">})</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-daab724f0082a67b30ed278b237870ad.html">Open example in new window</a></p>
+
+<p>Notice how <strong>the circles stay red after you stop hovering?</strong> That’s because <code class="highlighter-rouge">mouseover</code> isn’t exactly the same as what you’d think “hover” means - instead, it’s <strong>what should happen when you mouse moves on top of the element.</strong> It doesn’t care at all about when you move <em>off</em>.</p>
+
+<p>Of course, another event does - <code class="highlighter-rouge">mouseout</code>! Easy enough to remember, right? To do a hover, more or less you need to have <code class="highlighter-rouge">mouseover</code> make the hover effect and then have <code class="highlighter-rouge">mouseout</code> remove it.</p>
+
+<p>Let’s add a hover effect that goes away when you <code class="highlighter-rouge">mouseout</code> the element.</p>
+
+<iframe class="iframe-demo" src="/demos/clicking-and-hovering-6df3cabd3def3a82e204a9410b5062a8.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-6df3cabd3def3a82e204a9410b5062a8.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Pride and Prejudice'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Jane Austen'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">120000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1813</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Cryptonomicon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Neal Stephenson'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">415000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1999</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Great Gatsby'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'F. Scott Fitzgerald'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">47094</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1925</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'Song of Solomon'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Toni Morrison'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">92400</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">1977</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="s1">'title'</span><span class="p">:</span> <span class="s1">'White Teeth'</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span> <span class="s1">'Zadie Smith'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">:</span> <span class="mi">169000</span><span class="p">,</span> <span class="s1">'published'</span><span class="p">:</span> <span class="mi">2000</span> <span class="p">}</span>
+<span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">"svg"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">max_words</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">];</span> <span class="p">});</span>
+<span class="kd">var</span> <span class="nx">x_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">1800</span><span class="p">,</span> <span class="mi">2015</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">y_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="nx">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">]);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'circle'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cx'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'published'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'cy'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'words'</span><span class="p">])</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseover'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"mouseover on"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+      <span class="c1">// make the mouseover'd element</span>
+      <span class="c1">// bigger and red</span>
+      <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#ff0000'</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'mouseout'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"mouseout"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+      <span class="c1">// return the mouseover'd element</span>
+      <span class="c1">// to being smaller and black</span>
+      <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#000000'</span><span class="p">);</span>
+    <span class="p">})</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/clicking-and-hovering-6df3cabd3def3a82e204a9410b5062a8.html">Open example in new window</a></p>
+
+<p>Not so bad!</p>
+
+<h3 id="ideas-for-interaction">Ideas for interaction</h3>
+
+<p>For a little inspiration, check out there two talks on making videogames more exciting: <a href="https://www.youtube.com/watch?v=Fy0aCDmgnxg">juice it or lose it</a> and <a href="https://www.youtube.com/watch?v=AJdEqssNZ-U">the art of screenshake</a>.</p>
+
+<ul>
+  <li>Display a tooltip on hover or click</li>
+  <li>Add a little color to hovered elements to engage the user</li>
+  <li>Sorting</li>
+  <li>Filtering</li>
+  <li>Going deeper into multi-level into the data</li>
+</ul>
+
+<p>You get the idea.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

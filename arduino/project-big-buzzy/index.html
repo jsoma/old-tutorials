@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Project - Big Buzzy</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/arduino/project-big-buzzy/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Project - Big Buzzy">
+  <meta property="twitter:title" content="Project - Big Buzzy">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Arduno Tutorials</a> &gt;  Project - Big Buzzy</p>
+
+
+
+                      <h1 id="arduino-basics-big-buzzy">Arduino Basics: Big Buzzy</h1>
+
+<p><em>Now that we’ve made a LED blink, let’s learn to use digital input and a piezo buzzer, along with multiple routes to ground.</em></p>
+
+<p>If you did the extra challenges in <a href="../big-blinkie/">Big Blinkie</a>, you used a switch to interrupt the circuit and turn a light off and on. This time we’re going to monitor the switch <em>in the program</em> and have the program decide to turn a buzzer off and on.</p>
+
+<p>This one has a lot of steps, I think.</p>
+
+<p>If you happen to have a four-leg switch (lucky you!) you should definitely check out <a href="https://www.arduino.cc/en/Tutorial/Button">this tutorial</a>, and maybe even <a href="https://www.arduino.cc/en/Tutorial/KnockSensor">this</a> and <a href="https://www.arduino.cc/en/Tutorial/PlayMelody">this</a> to learn about the piezo.</p>
+
+<h2 id="your-code">Your code</h2>
+
+<p>We’re going to be changing our code around a lot, but let’s start with this:</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="c1">// You'll install the switch on pin 2:
+</span><span class="kt">int</span> <span class="n">switchPin</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// initialize serial communication at 9600 bits per second:
+</span>  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">switchPin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">switchValue</span> <span class="o">=</span> <span class="n">digitalRead</span><span class="p">(</span><span class="n">switchPin</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">switchValue</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p><code class="highlighter-rouge">Serial</code> is a way of communicating between the Arduino and your computer. <code class="highlighter-rouge">Serial.begin</code> tells the Arduino to create a connection during setup, and <code class="highlighter-rouge">Serial.println</code> is used to print to the little screen at the bottom of the Arduino app.</p>
+
+<p>Because we have weird switches, we need to do <code class="highlighter-rouge">pinMode(switchPin, INPUT_PULLUP)</code>. We’ll explain a little bit more later.</p>
+
+<p><code class="highlighter-rouge">digitalRead</code> is just like <code class="highlighter-rouge">digitalWrite</code>, except we’re reading <code class="highlighter-rouge">HIGH</code> and <code class="highlighter-rouge">LOW</code> from the pin instead of writing it.</p>
+
+<h2 id="your-setup">Your setup</h2>
+
+<p>You’ll need the following:</p>
+
+<ul>
+  <li>A <strong>momentary switch</strong> is a button that can be used to turn the flow of electricity off and on inside of a circuit. The ones we’re using today have <strong>two legs</strong> which are a little different than the ones you usually get with Arduino (<strong>4 pins</strong>), so other guides might not work out.</li>
+  <li>A <strong>piezo</strong> is a little buzzer that you’ll find incredibly delightful and everyone around you will find incredibly annoying.</li>
+</ul>
+
+<p>First, set up a connection like this:</p>
+
+<p>pin 2 ——&gt; switch ——&gt; GND</p>
+
+<div class="image-holder">
+  <div class="image">
+  <img src="../images/buzzy-1_bb.png" />
+  <caption></caption>
+  </div>
+</div>
+
+<p>If you’d like to go step by step, you can use the following. And remember the row numbers don’t matter as long as you keep things that need to be connected in the same row.</p>
+
+<ol>
+  <li>Connect a wire from <strong>pin 2</strong> into row 1.</li>
+  <li>Have a switch join row 1 with row 3.</li>
+  <li>Connect a black wire between row 3 and GND.</li>
+</ol>
+
+<p>So voltage will always be coming out of the 5V, going to the switch, and if you push the button it jumps on ahead to the GND.</p>
+
+<h2 id="the-serial-monitor">The Serial monitor</h2>
+
+<p>Run your code. Nothing seems to happen, right? Turns out in order to see the output of <code class="highlighter-rouge">Serial.println</code> we need to open the <strong>Serial Monitor</strong>.</p>
+
+<p>You can open it by clicking the little magnifying glass icon in the upper right-hand side, or by going to <code class="highlighter-rouge">Tools &gt; Serial Monitor</code>.</p>
+
+<p>Try pushing the button <strong>off and on</strong> a little bit, you should see it change between a stream of <code class="highlighter-rouge">1</code>s and a stream of <code class="highlighter-rouge">0</code>s.</p>
+
+<h2 id="inputpullup">INPUT_PULLUP</h2>
+
+<p>Okay, so.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">pinMode</span><span class="p">(</span><span class="n">switchPin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span></code></pre></figure>
+
+<p>You’ll practically <strong>never use INPUT_PULLUP</strong>, it’s just because of our weird two-leg switches. Normal four-leg switches measure electricity’s ability to get to ground, giving you <code class="highlighter-rouge">1</code> a.k.a. <code class="highlighter-rouge">HIGH</code> if something is pushed down, and <code class="highlighter-rouge">0</code> a.k.a. <code class="highlighter-rouge">LOW</code> if it isn’t. You’ll notice our switch is the opposite - <code class="highlighter-rouge">0</code> if you’re pushed down, and <code class="highlighter-rouge">1</code> otherwise.</p>
+
+<p>It uses something built into the Arduino called a <em>pull-up resistor</em> which I’m not going to try to explain because I don’t think I really understand it, myself.</p>
+
+<p>What you need to know you can tell by reading the serial monitor - when it’s pushed down, it’s <code class="highlighter-rouge">0</code>, and when it’s not pushed down, it’s <code class="highlighter-rouge">1</code>.</p>
+
+<h2 id="buzzing-off">Buzzing off</h2>
+
+<p>Now it’s time to get annoying!</p>
+
+<p>Add a new set of connections to your board,</p>
+
+<p>pin 7 ——&gt; piezo ——&gt; GND</p>
+
+<div class="image-holder">
+  <div class="image">
+  <img src="../images/buzzy-2_bb.png" />
+  <caption></caption>
+  </div>
+</div>
+
+<p>You’ll need to add <strong>three lines</strong> to your code.</p>
+
+<p>First, up top you’ll define what pin you’re using for the speaker.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">int</span> <span class="n">speakerPin</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span></code></pre></figure>
+
+<p>Then in <code class="highlighter-rouge">setup()</code> you’ll want to set it to have <code class="highlighter-rouge">OUTPUT</code> mode.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="n">pinMode</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span></code></pre></figure>
+
+<p>And in <code class="highlighter-rouge">loop()</code> you’ll want to send it <code class="highlighter-rouge">HIGH</code> when <code class="highlighter-rouge">switchValue</code> is <code class="highlighter-rouge">HIGH</code> a.k.a. <code class="highlighter-rouge">1</code></p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">if</span><span class="p">(</span><span class="n">switchValue</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Push the button. Annoy everyone.</p>
+
+<h2 id="using-tone">Using tone</h2>
+
+<p>That buzzing sound is god-awful. It’s so bad. It’s what happens when you just send a <code class="highlighter-rouge">HIGH</code> straight on through the buzzer.</p>
+
+<p><strong>First,</strong> let’s add a little resistor between pin 7 and the speaker to quiet it down. You’ll need to move the speaker and the ground wire down a few rows. Try a resistor that’s somewhere between 100 and 400 ohms.</p>
+
+<div class="image-holder">
+  <div class="image">
+  <img src="../images/buzzy-3_bb.png" />
+  <caption></caption>
+  </div>
+</div>
+
+<p><strong>Next,</strong> turns out you can use a function called <a href="https://www.arduino.cc/en/reference/tone">tone</a> to send specific tones to your arduino instead of just the buzzy noise.</p>
+
+<p>Try editing your code to match this</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">if</span><span class="p">(</span><span class="n">switchValue</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">noTone</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="n">tone</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="mi">117</span><span class="p">);</span>
+<span class="p">}</span> </code></pre></figure>
+
+<p>Try changing <code class="highlighter-rouge">117</code> around a little - maybe some numbers between about 31 and 4978?</p>
+
+<p>Turns out you’re sending a <strong>frequency</strong> to the piezo buzzer, making it buzz at a certain rate and creating musical notes! Every musical note has its own frequency, and you could use a <a href="http://www.phy.mtu.edu/~suits/notefreqs.html">chart like this</a> to pick the ones you’re interested in.</p>
+
+<h2 id="looking-to-the-past">Looking to the past</h2>
+
+<p>Let’s try a couple changes. I’m just going to give you all the code at once.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">int</span> <span class="n">switchPin</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">speakerPin</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">lastSwitchValue</span> <span class="o">=</span> <span class="n">HIGH</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">frequency</span> <span class="o">=</span> <span class="mi">31</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">switchPin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// read from switchPin to see if it was successful
+</span>  <span class="kt">int</span> <span class="n">switchValue</span> <span class="o">=</span> <span class="n">digitalRead</span><span class="p">(</span><span class="n">switchPin</span><span class="p">);</span>
+  
+  <span class="k">if</span><span class="p">(</span><span class="n">switchValue</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// button is up
+</span>    <span class="n">noTone</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// button is down
+</span>
+    <span class="c1">// if last loop it was HIGH, but now it's
+</span>    <span class="c1">// LOW, it was just pressed, so double the
+</span>    <span class="c1">// frequency
+</span>    <span class="k">if</span><span class="p">(</span><span class="n">lastSwitchValue</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// write the current frequency to the serial monitor
+</span>    <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">frequency</span><span class="p">);</span>
+  
+    <span class="n">tone</span><span class="p">(</span><span class="n">speakerPin</span><span class="p">,</span> <span class="n">frequency</span><span class="p">);</span>
+  <span class="p">}</span> 
+  <span class="c1">// store the last switch value
+</span>  <span class="n">lastSwitchValue</span> <span class="o">=</span> <span class="n">switchValue</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2 id="looking-to-the-past-v2">Looking to the Past v2</h2>
+
+<p>Add <code class="highlighter-rouge">long start</code> up to the very very top.</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">if</span><span class="p">(</span><span class="n">lastSwitchValue</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// store the time (in ms) that we started
+</span>  <span class="c1">// pushing the button
+</span>  <span class="n">start</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// compute how long we've held it down
+</span><span class="kt">int</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+<span class="n">frequency</span> <span class="o">=</span> <span class="n">duration</span><span class="p">;</span></code></pre></figure>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>Now let’s make some cooler input - try out <a href="../project-lil-lightie/">Lil’ Lightie</a></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

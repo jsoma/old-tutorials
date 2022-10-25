@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>How to change the CRS of your shapefile with QGIS</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/mapping/change-crs-with-qgis/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="How to change the CRS of your shapefile with QGIS">
+  <meta property="twitter:title" content="How to change the CRS of your shapefile with QGIS">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Mapping for Journalists (and everyone else)</a> &gt;  How to change the CRS of your shapefile with QGIS</p>
+
+
+
+                      <h1 id="changing-your-crs-with-qgis">Changing your CRS with QGIS</h1>
+
+<p>Not sure what a CRS is? Check out <a href="what-is-a-crs">What is a CRS?</a>.</p>
+
+<p>Need to change NY State Plane to WGS 84 (a.k.a. latitude/longitude)? It’s called reprojecting your data, and <strong>you’ve come to the right place.</strong></p>
+
+<h2 id="step-one-open-up-your-shapefile-or-other-gis-y-file">Step One: Open up your shapefile (or other GIS-y file)</h2>
+
+<p>Whether you do this through <code class="highlighter-rouge">Layer &gt; Add Layer &gt; Add Vector Layer</code> or <code class="highlighter-rouge">Layer &gt; Add Layer &gt; Add Delimited Text Layer</code> or <em>however</em>, you just want to end up with your successfully-imported geographic stuff sitting pretty on the <strong>Layers</strong> list, and your content viewable on the right-hand side.</p>
+
+<p><img src="/tutorials/assets/images/qgis-imported-layer.png" alt="" /></p>
+
+<p>If you can’t see your shapes or dots or whatnot, right-click your layer and select <code class="highlighter-rouge">Zoom to Layer</code>. It should take you right there.</p>
+
+<p><img src="/tutorials/assets/images/qgis-zoom-to-layer.png" alt="" /></p>
+
+<h2 id="step-two-double-check-the-crs-with-on-the-fly-reprojection">Step Two: Double-check the CRS with On-The-Fly Reprojection</h2>
+
+<p>I’ve been guilty of inputting the wrong CRS when importing, which means that exporting is a pain in the neck as well.</p>
+
+<p><img src="/tutorials/assets/images/qgis-check-crs.png" alt="" /></p>
+
+<p>You can see in the image above I appear to be using the <code class="highlighter-rouge">USER:100000</code> projection (the note in the bottom right-hand corner). QGIS didn’t know what to name the NY State Plane projection when I imported the shapefile, so it gave us that confusing result. What if it’s wrong!!!</p>
+
+<p>We’re going to enable <strong>on-the-fly reprojection</strong> so we can take a look at what the shapefile will look like when we project it into another CRS (hence reproject).</p>
+
+<p>First, we’re going to edit the <strong>Project CRS</strong>. You could simply <strong>click the little square on the bottom right-hand corner</strong> that lists the current projection (see below), or you can use the top menu and select <code class="highlighter-rouge">Project &gt; Project Properties</code>.</p>
+
+<p><img src="/tutorials/assets/images/qgis-crs-button.png" alt="" /></p>
+
+<p>Now you’ll have open a page that sets the CRS of your entire project (a.k.a. all of the layers).</p>
+
+<ol>
+  <li>Click “Enable on-the-fly reprojection” from the top</li>
+  <li>Then pick <code class="highlighter-rouge">WGS 84</code>/<code class="highlighter-rouge">EPSG:4326</code> from either the top or bottom panel. If it isn’t there automatically, just type <code class="highlighter-rouge">4326</code> into the <strong>Filter</strong> field.</li>
+  <li>Click <strong>OK</strong>.</li>
+</ol>
+
+<p><img src="/tutorials/assets/images/qgis-on-the-fly.png" alt="" /></p>
+
+<p>Your view might shift a little bit! Mine sure did.</p>
+
+<p>To check that reprojection is going to work, wiggle your mouse around in an area you’re familiar with. At the bottom of the screen, there’s a box marked <strong>Coordinate</strong> - take a look and see if those numbers make sense. I’m wiggling around in New York City, which is definitely around <code class="highlighter-rouge">-74.2, 40.6</code>, so I’m going to be okay.</p>
+
+<p><img src="/tutorials/assets/images/qgis-check-coords.png" alt="" /></p>
+
+<h2 id="step-three-export-your-shapefile-as-wgs-84">Step Three: Export your shapefile as <code class="highlighter-rouge">WGS 84</code></h2>
+
+<p>Right-click your layer, then select <code class="highlighter-rouge">Save As...</code>.</p>
+
+<p><img src="/tutorials/assets/images/qgis-save-as.png" alt="" /></p>
+
+<p>It will open up a window that allows you to set all sorts of options for the new shapefile. I have a picture below of what your finished screen should look like.</p>
+
+<ol>
+  <li><strong>Set a format:</strong> I’m assuming you want a shapefile, so pick <code class="highlighter-rouge">ESRI Shapefile</code> under <code class="highlighter-rouge">Format</code>. If you want GeoJSON or anything else, you can pick that, too.</li>
+  <li><strong>Set a filename:</strong> Click <code class="highlighter-rouge">Browse</code> and select where it’s going to live. I always name mine the original filename + <code class="highlighter-rouge">wgs84</code>, just so I can keep track.</li>
+  <li><strong>Set the CRS:</strong> Now it’s time to pick your target CRS, which I’m assuming is <code class="highlighter-rouge">WGS 84</code>. If <code class="highlighter-rouge">WGS 84</code> doesn’t show up in the CRS dropdown, click the little icon <em>next to the dropdown</em>. It will open up a screen where you can search through all of the CRSes that QGIS knows about.</li>
+  <li>Click <strong>OK</strong></li>
+</ol>
+
+<p><img src="/tutorials/assets/images/qgis-save-as-screen.png" alt="" /></p>
+
+<h2 id="step-four-relax-bask-in-the-comfort-of-a-job-well-done">Step Four: Relax, bask in the comfort of a job well done</h2>
+
+<p>Your new shapefile will probably be automatically added to your list of Layers. It’ll look like your old shapefile just changed color, but you’ll notice a new item in the list to the left.</p>
+
+<p>You’ll also notice that you have not <em>one</em> but <em>many</em> new files. An <code class="highlighter-rouge">.shp</code>, but also a <code class="highlighter-rouge">.prj</code> to hold the projection, a <code class="highlighter-rouge">.dbf</code> to hold the attribute data, and a handful more. Read more at <a href="../parts-of-a-shapefile/">parts of a shapefile</a></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

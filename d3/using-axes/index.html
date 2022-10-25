@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using axes</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-axes/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using axes">
+  <meta property="twitter:title" content="Using axes">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using axes</p>
+
+
+
+                      <h1 id="using-axes-d3svgaxis">Using axes (<code class="highlighter-rouge">d3.svg.axis</code>)</h1>
+
+<p>We aren’t here to chop wood! Axes is the plural of <em>axis</em>, which we’ll say are those little lines that tell you what’s what on a graph.</p>
+
+<h2 id="toolset-checkin">Toolset checkin</h2>
+
+<p>First, we need to make sure you understand the following not-absolutely-beginner techniques:</p>
+
+<ul>
+  <li>How to <a href="../using-select/">use select</a> to select smaller pieces of your page (or svg), using <code class="highlighter-rouge">d3.select('.bar-graph').selectAll('rect')</code> instead of <code class="highlighter-rouge">d3.selectAll('rect')</code>.</li>
+  <li><a href="../using-enter-and-append/">Enter and append</a> so you don’t have to type everything out a thousand times</li>
+  <li><a href="../using-scales/">Scales</a> because axes are 150% bff with scales</li>
+</ul>
+
+<h2 id="lets-get-to-it">Let’s get to it</h2>
+
+<p>Okay, so let’s say we have our nice chart from before. Wouldn’t it be nice if we knew what the heck those lengths meant?</p>
+
+<iframe class="iframe-demo" src="/demos/using-axes-15cbca584ce6aacb5e9aafc32fffbde1.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-15cbca584ce6aacb5e9aafc32fffbde1.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-15cbca584ce6aacb5e9aafc32fffbde1.html">Open example in new window</a></p>
+
+<p>The answer is <em>yes</em>, and the answer is <em>axes</em>.</p>
+
+<p>The first thing we need to do is create our axis using <code class="highlighter-rouge">d3.svg.axis()</code>. We chain it with two common methods - <code class="highlighter-rouge">.orient</code> to say which side the numbers should go on, and <code class="highlighter-rouge">.scale(bar_scale)</code> to tell it to listen to our bar scale.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">);</span></code></pre></figure>
+
+<p>After you create it, you need to append it to your svg. For god knows what reason you do this using a method called <code class="highlighter-rouge">.call</code>:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span></code></pre></figure>
+
+<p>That <code class="highlighter-rouge">g</code> we’re appending is the <code class="highlighter-rouge">div</code> of the SVG world - just a random container to hold stuff and keep it separate.</p>
+
+<p>To see <em>why</em> we’d do that, use the Web Inspector to try to grab one of the numbers chart below, then poke around in the HTML. You’ll notice there’s a <em>lot of stuff floating around in there</em>.</p>
+
+<iframe class="iframe-demo" src="/demos/using-axes-6afa2658022377b589313fd80ce9c6dc.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-6afa2658022377b589313fd80ce9c6dc.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+
+  <span class="c1">// CREATING THE AXIS</span>
+  <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">);</span>
+
+  <span class="c1">// ADDING A G ELEMENT, PUTTING THE AXIS IN THE G</span>
+  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-6afa2658022377b589313fd80ce9c6dc.html">Open example in new window</a></p>
+
+<p>The big problem right now is that <strong>our axis is all up in our chart</strong>. Somehow we need to move the <code class="highlighter-rouge">g</code> element to be further down the page!</p>
+
+<p>While you’d <strong>assume</strong> you’d use <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> to position it, it sure isn’t the case. This next thing is so important I’m putting it on a line by itself:</p>
+
+<p><strong>When positioning a <code class="highlighter-rouge">g</code> element, you use the <code class="highlighter-rouge">transform</code> attribute. Set it to <code class="highlighter-rouge">translate(x, y)</code>,</strong> with <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> being the coordinates you’d like to position it at.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0, 90)"</span><span class="p">);</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">)</span></code></pre></figure>
+
+<p>They sound pretty similar, right? Don’t worry, I always forget which is which. Let’s try it out:</p>
+
+<iframe class="iframe-demo" src="/demos/using-axes-af7a884c3bea95a3be3eae68a1f7d0c5.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-af7a884c3bea95a3be3eae68a1f7d0c5.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+
+  <span class="c1">// CREATING THE AXIS</span>
+  <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">);</span>
+
+  <span class="c1">// ADDING A G ELEMENT, PUTTING THE AXIS IN THE G</span>
+  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0, 90)"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-af7a884c3bea95a3be3eae68a1f7d0c5.html">Open example in new window</a></p>
+
+<p>The thing is, <em>it’s really ugly</em>. It’s really ugly, it’s running off the side of the page, and there are probably more things going on, too.</p>
+
+<h3 id="styling-the-axis">Styling the axis</h3>
+
+<p>First, we need to give the <code class="highlighter-rouge">g</code> a class of <code class="highlighter-rouge">axis</code> so we can style it.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0, 90)"</span><span class="p">);</span>
+      <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">)</span></code></pre></figure>
+
+<p>Then we need to create a <code class="highlighter-rouge">&lt;style&gt;</code> block and add some styling for the <code class="highlighter-rouge">axis</code> class.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span>
+<span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+    <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+    <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span>
+    <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span>
+    <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span></code></pre></figure>
+
+<p>Even though the styling looks a little bit better now, we need to push it in from the edges so the numbers don’t overlap so much.</p>
+
+<iframe class="iframe-demo" src="/demos/using-axes-4f995c2e4deb7326a1a9ce01090373d7.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-4f995c2e4deb7326a1a9ce01090373d7.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span>
+<span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+    <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+    <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span>
+    <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span>
+    <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+
+  <span class="c1">// CREATING THE AXIS</span>
+  <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">);</span>
+
+  <span class="c1">// ADDING A G ELEMENT, PUTTING THE AXIS IN THE G</span>
+  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0, 90)"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-4f995c2e4deb7326a1a9ce01090373d7.html">Open example in new window</a></p>
+
+<p>In order to push it in from the edges and give it a little padding, we need to think about it in two steps</p>
+
+<ol>
+  <li>Moving it away from the left-hand side</li>
+  <li>Keeping it away from the right-hand side</li>
+</ol>
+
+<p>We keep it away from the <strong>left-hand side</strong> by changing the <code class="highlighter-rouge">x</code> coordinates of everything - the <code class="highlighter-rouge">rects</code> can be positioned at <code class="highlighter-rouge">x=20</code> instead of <code class="highlighter-rouge">x=0</code>…</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>       <span class="c1">// set the left hand side to 0</span></code></pre></figure>
+
+<p>And we’ll adjust <code class="highlighter-rouge">translate()</code> with the <code class="highlighter-rouge">g</code> to start 20 pixels in as well.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(0, 90)"</span><span class="p">)</span></code></pre></figure>
+
+<p>To keep it away from the <strong>right-hand side</strong> we’ll need to adjust the length of the bars and the length of the axis. Luckily, it’s all tied into the scale! Let’s just change the <code class="highlighter-rouge">.range</code> on the scale to be 0-360 instead of 0-400.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">]);</span></code></pre></figure>
+
+<p>Okay, let’s check in again and see our <strong>beautiful, beautiful axis!</strong></p>
+
+<iframe class="iframe-demo" src="/demos/using-axes-fc320a8959b2f2464b554b8d5d17d67a.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-fc320a8959b2f2464b554b8d5d17d67a.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span>
+<span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+    <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+    <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span>
+    <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span>
+    <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="c1">// don't let it take up all of the svg's space</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>       <span class="c1">// push the bars 20 pixels from the left</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+
+  <span class="c1">// CREATING THE AXIS</span>
+  <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'bottom'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">);</span>
+
+  <span class="c1">// ADDING A G ELEMENT, PUTTING THE AXIS IN THE G</span>
+  <span class="c1">// push it 20 pixels to the left, and 90 pixels down</span>
+  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(20, 90)"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-fc320a8959b2f2464b554b8d5d17d67a.html">Open example in new window</a></p>
+
+<h3 id="more-editing">More editing</h3>
+
+<p>You can also do a lot more with an axis.</p>
+
+<ol>
+  <li>Try changing <code class="highlighter-rouge">.orient</code> around a little bit - <code class="highlighter-rouge">.orient('top')</code>, <code class="highlighter-rouge">.orient('left')</code>, <code class="highlighter-rouge">.orient('right')</code>.</li>
+  <li>Chain something new on the axis - <code class="highlighter-rouge">.ticks</code>. What does <code class="highlighter-rouge">.ticks(2)</code> do?</li>
+  <li><code class="highlighter-rouge">.tickValues</code> is for when you really want to get picky. Try passing <code class="highlighter-rouge">.tickValues(1000, 10000, 100000)</code> and see what happens! (make sure you do it after <code class="highlighter-rouge">.scale</code> in the chain, though, otherwise it won’t work.)</li>
+</ol>
+
+<iframe class="iframe-demo" src="/demos/using-axes-efbfd6052e3527456d579eaba6cb2002.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-efbfd6052e3527456d579eaba6cb2002.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span>
+<span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+    <span class="py">fill</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+    <span class="py">stroke</span><span class="p">:</span> <span class="no">black</span><span class="p">;</span>
+    <span class="py">shape-rendering</span><span class="p">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.axis</span> <span class="nt">text</span> <span class="p">{</span>
+    <span class="nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">11px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;svg</span> <span class="na">class=</span><span class="s">"bar"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">states</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">54555</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">47126</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.136</span><span class="p">},</span> <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">268596</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">261232</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.027</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Arizona'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">113990</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">113594</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">163695</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">155779</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.048</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'Mississippi'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">48432</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">46923</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">},</span>  <span class="p">{</span><span class="s1">'name'</span> <span class="p">:</span> <span class="s1">'New Jersey'</span><span class="p">,</span> <span class="s1">'total_area'</span><span class="p">:</span> <span class="mi">8723</span><span class="p">,</span> <span class="s1">'land_area'</span><span class="p">:</span> <span class="mi">7354</span><span class="p">,</span> <span class="s1">'p_water'</span><span class="p">:</span> <span class="mf">0.157</span><span class="p">}</span> <span class="p">];</span>
+
+  <span class="c1">// How wide and tall do we want the svg?</span>
+  <span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  
+  <span class="c1">// Set the height and width of the svg through d3</span>
+  <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'.bar'</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="nx">height</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="nx">width</span><span class="p">);</span>
+  
+  <span class="c1">// Create a scale</span>
+  <span class="c1">// don't let it take up all of the svg's space</span>
+  <span class="kd">var</span> <span class="nx">bar_scale</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">]);</span>
+  
+  <span class="c1">// Draw the rectangles</span>
+  <span class="kd">var</span> <span class="nx">rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">states</span><span class="p">)</span>   <span class="c1">// bind our data</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>            <span class="c1">// grab the 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>     <span class="c1">// append the bars</span>
+                  <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s1">'fill'</span><span class="p">,</span> <span class="s1">'#FF0000'</span><span class="p">)</span> <span class="c1">// make them red</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>       <span class="c1">// push the bars 20 pixels from the left</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">25</span><span class="p">;</span> <span class="p">})</span> <span class="c1">// 15 pixels apart</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1">// each bar is 10 pixels tall</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">return</span> <span class="nx">bar_scale</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="s1">'total_area'</span><span class="p">])</span> <span class="c1">// width = total area</span>
+                  <span class="p">});</span>
+
+  <span class="c1">// CREATING THE AXIS</span>
+  <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">'top'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">bar_scale</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">tickValues</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="mi">100000</span><span class="p">,</span> <span class="mi">200000</span><span class="p">,</span> <span class="mi">300000</span><span class="p">]);</span>
+
+  <span class="c1">// ADDING A G ELEMENT, PUTTING THE AXIS IN THE G</span>
+  <span class="c1">// push it 20 pixels to the left, and 90 pixels down</span>
+  <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'g'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'class'</span><span class="p">,</span> <span class="s1">'axis'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">"transform"</span><span class="p">,</span> <span class="s2">"translate(20, 20)"</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-axes-efbfd6052e3527456d579eaba6cb2002.html">Open example in new window</a></p>
+
+<p>Cool, right? For more info on axes:</p>
+
+<ul>
+  <li><a href="http://alignedleft.com/tutorials/d3/axes">Scott Murray 1</a></li>
+  <li><a href="http://chimera.labs.oreilly.com/books/1230000000345/ch08.html">Scott Murray 2</a></li>
+  <li><a href="https://github.com/mbostock/d3/wiki/SVG-Axes">Mike Bostock</a></li>
+  <li><a href="https://www.dashingd3js.com/d3js-axes">Dashing D3</a></li>
+</ul>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

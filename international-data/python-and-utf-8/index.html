@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Python and UTF-8</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/international-data/python-and-utf-8/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Python and UTF-8">
+  <meta property="twitter:title" content="Python and UTF-8">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">International Data Journalism</a> &gt;  Python and UTF-8</p>
+
+
+
+                      <h1 id="python-2-python-3-and-utf-8">Python 2, Python 3 and UTF-8</h1>
+
+<blockquote>
+  <p>This is <strong>part 5</strong> of a <strong>5-part series</strong> on character encodings in international data journalism. <a href="/tutorials/international-data/utf8-unicode-character-encodings/">Check out the other pieces</a>.</p>
+</blockquote>
+
+<p>Once upon a time there was Python 2, and then there was Python 3. Unlike a lot of upgrades, you couldn’t run Python 2 code using the new version of Python! Because a lot of popular libraries were written in Python 2, people have been very very slow to adopt Python 3.</p>
+
+<p>People who learn Python <em>to this day</em> are still learing Python 2, because hey, why not? Who cares? The answer is <strong>you care, and UTF-8 cares, and Unicode cares, and this article is going to force you to use Python 3.</strong></p>
+
+<h2 id="review-from-character-sets-and-encoding-in-the-wildcharacters-in-the-wild">Review from <a href="../characters-in-the-wild/">Character sets and encoding in the wild</a></h2>
+
+<p>UTF-8 is pretty great, but not all programming languages love it.</p>
+
+<h2 id="python-and-character-encodings">Python and character encodings</h2>
+
+<p><strong>Python 2</strong> doesn’t give a damn what your strings are encoded as. Latin 1, Latin 2, Shift-JIS, everything is fine. Doesn’t keep track of them, either, that’s up to you!</p>
+
+<p>Python 2 also has a <strong>special Unicode string</strong>, where <code class="highlighter-rouge">'Cat'</code> would be the normal string and <code class="highlighter-rouge">u'Cat'</code> would be the Unicode version.</p>
+
+<p>For <strong>Python 3</strong>, by default every string is UTF-8. This doesn’t seem like that big of a change, but it makes a lot of things Just Work that used to be problematic.</p>
+
+<h3 id="compare-and-contrast">Compare and Contrast</h3>
+
+<p>I put this together as two IPython notebooks, too: <a href="https://github.com/jsoma/lede-notes/blob/master/UTF-8%20in%20Python%202.ipynb">Python 2</a>, <a href="https://github.com/jsoma/lede-notes/blob/master/UTF-8%20in%20Python%203.ipynb">Python 3</a>.</p>
+
+<p>Let’s compare what happens if you run the following code in an IPython notebook with Python 2 and Python 3.</p>
+
+<table class="with-code">
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Python 3</th>
+      <th>Python 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">print 'hello world'</code></td>
+      <td><code class="highlighter-rouge">hello world</code></td>
+      <td><code class="highlighter-rouge">hello world</code></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">'hello world'</code></td>
+      <td><code class="highlighter-rouge">'hello world'</code></td>
+      <td><code class="highlighter-rouge">'hello world'</code></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">print '你好世界'</code></td>
+      <td><code class="highlighter-rouge">你好世界</code></td>
+      <td><code class="highlighter-rouge">你好世界</code></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">'你好世界'</code></td>
+      <td><code class="highlighter-rouge">'你好世界'</code></td>
+      <td><code class="highlighter-rouge">'\xe4\xbd\xa0\xe5</code><br /><code class="highlighter-rouge">\xa5\xbd\xe4\xb8</code><br /><code class="highlighter-rouge">\x96\xe7\x95\x8c'</code></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">requests</code><br /><code class="highlighter-rouge">.get("http://djchina.org")</code><br /><code class="highlighter-rouge">.text</code></td>
+      <td><code class="highlighter-rouge">&lt;h2&gt;资源&lt;/h2&gt;</code></td>
+      <td><code class="highlighter-rouge">&lt;h2&gt;\u8d44\u6e90&lt;/h2&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">import pandas as pd</code><br /><code class="highlighter-rouge">utf8_df.to_csv("../output.csv")</code></td>
+      <td>Works fine</td>
+      <td><code class="highlighter-rouge">UnicodeEncodeError:</code><br /><code class="highlighter-rouge">'ascii' codec can't encode characters</code></td>
+    </tr>
+    <tr>
+      <td>Opening a UTF-8 file with accented characters</td>
+      <td>Works fine</td>
+      <td>Horrible errors</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>So more or less, <strong>Python 3 does everything right</strong>. It opens, saves, and looks at Unicode/UTF-8 perfectly, while Python 2 keeps forgetting it doesn’t care about what your strings are and tries to treat them as ASCII (and throws an error in the process).</p>
+
+<h2 id="working-with-python-2">Working with Python 2</h2>
+
+<p>If you can’t use Python 3, you can try to make things work with Python 2. You have two main saviors in Python 2:</p>
+
+<h3 id="the-codecs-library">1. The <code class="highlighter-rouge">codecs</code> library</h3>
+
+<p><code class="highlighter-rouge">codecs</code> allows you to specify and encoding when opening files for reading and writing. You can open a UTF-8 file for reading like so:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import codecs
+opened = codecs.open("filename.txt", "r", "utf-8")
+</code></pre>
+</div>
+
+<h3 id="hacking-sys">2. Hacking <code class="highlighter-rouge">sys</code></h3>
+
+<p>The following code forces Python 2 to use UTF-8. It’s very discouraged, but <em>it totally works better than anything else</em>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+</code></pre>
+</div>
+
+<p>The big issue that comes up is that you can’t use <code class="highlighter-rouge">print</code> from IPython Notebook any more (it prints to the command line, not to your notebook). There <em>are</em> other issues, but</p>
+
+<h3 id="encode-and-decode">4. <code class="highlighter-rouge">.encode</code> and <code class="highlighter-rouge">.decode</code></h3>
+
+<p>Come on, don’t do this to yourself. Just move to Python 3! You could also <a href="http://pythoncentral.io/python-unicode-encode-decode-strings-python-2x/">try to read this summary</a> if you are especially masochistic.</p>
+
+<h3 id="more-links">More links</h3>
+
+<p><a href="http://nedbatchelder.com/text/unipain.html">A video</a></p>
+
+<h2 id="working-with-python-3">Working with Python 3</h2>
+
+<p>The thing is about Python 3, is <em>you can have Python 2 and Python 3 running on the same system</em>. You have no good reason to only use Python 2!</p>
+
+<h3 id="differences-between-python-2-and-python-3">Differences between Python 2 and Python 3</h3>
+
+<ol>
+  <li>You have to use <code class="highlighter-rouge">print("Hello world")</code> instead of <code class="highlighter-rouge">print "Hello world"</code></li>
+  <li>UTF-8 works easily and flawlessly</li>
+</ol>
+
+<p>That is, more or less, the difference.</p>
+
+<h3 id="how-to-install-python-3-if-you-used-anacondahttpsstorecontinuumiocshopanaconda-to-install-python-2ipython-notebook">How to install Python 3 if you used <a href="https://store.continuum.io/cshop/anaconda/">Anaconda</a> to install Python 2/IPython Notebook</h3>
+
+<blockquote>
+  <p><strong>NOTE:</strong> If you didn’t use Anaconda to install Python, you <a href="https://store.continuum.io/cshop/anaconda/">should think about it</a>. It’s a complete install that comes with all of the fun packages - numpy, scikit-learn, matplotlib, NLTK, IPython Notebook, etc - and none of the hassle.</p>
+</blockquote>
+
+<p>After you do the following steps, your default Python will still be Python 2, but you’ll be able to run Python 3 using <code class="highlighter-rouge">python3</code>. Python 3 will <em>also</em> be available as an option in your IPython Notebook.</p>
+
+<p>Run the following commands from the command line.</p>
+
+<p><strong>1. Check and see if there will be a problem.</strong></p>
+
+<p>First, you’ll need to look at your <code class="highlighter-rouge">PYTHONPATH</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>echo $PYTHONPATH
+</code></pre>
+</div>
+
+<p>Did it display something like <code class="highlighter-rouge">/usr/local/lib/python2.7/site-packages:</code>? Then you’re in trouble, and you should <a href="jonathan.soma@gmail.com">email me</a> for a longer explanation. If it didn’t display anything, then you’re good to go with the rest of this.</p>
+
+<p><strong>2. Save a copy of the Python 2 kernel</strong></p>
+
+<p>The Python 2 kernel is the thing that runs Python 2 code (…kind of). We want to save a copy of it so that IPython Notebooks will always be able to use it.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ipython kernelspec install-self --user
+</code></pre>
+</div>
+
+<p><strong>3. Create a new environment that supports Python 3. This will cause Python 3 to be installed.</strong></p>
+
+<p>An ‘environment’ is just a specific version of Python with a bunch of libraries. By default you’re running everything on your system in one Python 2 environment. Anaconda can create a new environment that will install Python 3 for you.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>conda create -n python3 python=3 anaconda
+</code></pre>
+</div>
+
+<blockquote>
+  <p><strong>NOTE:</strong> You can also create environments for all sorts of other stuff, like maybe you have code that relies on Python 2.0.5 or a special matplotlib or something. If you’re especially responsible every project you create has its own environment! If you hear about <code class="highlighter-rouge">venv</code> or <code class="highlighter-rouge">virtualenv</code> that’s what people are talking about.</p>
+</blockquote>
+
+<p><strong>4. Switch to the Python 3 environment.</strong></p>
+
+<p>Even though you created the environment, you aren’t using it yet. Use the following command to switch to the Python 3 environment.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>source activate python3
+</code></pre>
+</div>
+
+<p><strong>5. Save the the Python 3 kernel.</strong></p>
+
+<p>Now, just like we did before with Python 2, we’re going to save the Python 3 kernel so IPython Notebook can use it.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ipython kernelspec install-self --user
+</code></pre>
+</div>
+
+<p><strong>6. Switch away from the Python 3 environment, so you’re back to your default Python 2 environment.</strong></p>
+
+<p>And since we don’t want to default to Python 3 (…do we?), let’s just get out of the environment for right now.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>source deactivate
+</code></pre>
+</div>
+
+<p><strong>7. Start up a new Terminal window</strong></p>
+
+<p>In order to have the changes take effect, you’ll need to close your terminal window and open up a new one. And then if you want to run some IPython Notebooks it’s the same old command:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>ipython notebook
+</code></pre>
+</div>
+
+<p>When you click <code class="highlighter-rouge">New</code> it will give you the option of Python 3.</p>
+
+<p>Additionally, if you want to run a Python 3 script from the commandline, use</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>python3 your_script.py
+</code></pre>
+</div>
+
+<p>And you should be good to go!</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> If you’re having problems with your kernel starting up, make sure you opened a new Terminal. You can also try restarting your computer.</p>
+</blockquote>
+
+<p><strong>8. Installing new packages</strong></p>
+
+<p><strong>But!!!</strong> Let’s say you need a library like <code class="highlighter-rouge">nameparser</code> that doesn’t come with Anaconda? You’ll need to hop into your Python 3 environment and install the libray:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>source activate python3
+pip install nameparser
+source deactivate python3
+</code></pre>
+</div>
+
+<p>It pops you into the Python 3 environment and uses the <em>Python 3 version of <code class="highlighter-rouge">pip</code></em> to install <code class="highlighter-rouge">nameparser</code>. And then you should be good to go.</p>
+
+<h2 id="comprehension-quiz">Comprehension Quiz</h2>
+
+<p>Think you’ve got it? Here’s a tiny quiz:</p>
+
+<ol>
+  <li>Are you going to use Python 2 any more?</li>
+  <li>What’s different about the <code class="highlighter-rouge">print</code> statement between Python 2 and Python 3?</li>
+  <li>What’s different about Python 2 and Python 3 in regards to string handling/Unicode/UTF-8?</li>
+  <li>When using Python, what is an environment?</li>
+  <li>If you update to Python 3 using the directions above, can you run it without activating the Python 3 environment? What’s the command to run a script using Python 3?</li>
+  <li>Are you going to use Python 2 any more????</li>
+</ol>
+
+<p>Answers are below. I’ve typed out the numbers so it’s a little harder to accidentally cheat.</p>
+
+<ol class="answer-key">
+  <li>NO.</li>
+  <li>Python 3 does <code class="highlighter-rouge">print("hello world")</code> while Python 2 does <code class="highlighter-rouge">print "hello world"</code></li>
+  <li>Strings are UTF-8 by default in Python 3.</li>
+  <li>A specific version of Python + a set of libraries.</li>
+  <li><code class="highlighter-rouge">python3</code></li>
+  <li>NO!!!!</li>
+</ol>
+
+<h2 id="mission-complete">Mission complete</h2>
+
+<p>You’ve finished learning <strong>absolutely everything about character encodings</strong> and hopefully you’re now an A+ expert international Python programmer.</p>
+
+<p>Head back to the <a href="/tutorials/international-data">international data journalism homepage</a> and <em>maybe</em> there are some other goodies there for you.</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

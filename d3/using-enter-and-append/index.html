@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using enter and append</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/d3/using-enter-and-append/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Using enter and append">
+  <meta property="twitter:title" content="Using enter and append">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">D3 Tutorials</a> &gt;  Using enter and append</p>
+
+
+
+                      <h1 id="using-enter-and-append">Using <code class="highlighter-rouge">.enter</code> and <code class="highlighter-rouge">.append</code></h1>
+
+<h2 id="why-do-we-need-enter">Why do we need <code class="highlighter-rouge">.enter</code>?</h2>
+
+<p>When we first started learning about SVGs, we thought we knew everything!</p>
+
+<p>We’d make a chart using <code class="highlighter-rouge">rect</code> elements, designing <strong>each and every data point manually</strong>.</p>
+
+<iframe class="iframe-demo" src="/demos/using-enter-and-append-837fc3ba52a7c02077fff04ebd7fcae5.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-837fc3ba52a7c02077fff04ebd7fcae5.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">"420"</span> <span class="na">height=</span><span class="s">"80"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"0"</span> <span class="na">height=</span><span class="s">"15"</span> <span class="na">width=</span><span class="s">"300"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"20"</span> <span class="na">height=</span><span class="s">"15"</span> <span class="na">width=</span><span class="s">"50"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"15"</span> <span class="na">width=</span><span class="s">"150"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"60"</span> <span class="na">height=</span><span class="s">"15"</span> <span class="na">width=</span><span class="s">"355"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-837fc3ba52a7c02077fff04ebd7fcae5.html">Open example in new window</a></p>
+
+<p>We could have rested there, but we were bigger! We were badder! We were <em>programmers!</em></p>
+
+<p>Instead of going into each and every <code class="highlighter-rouge">rect</code> to manually set the width, we decided to use <strong>d3</strong>. We’d <strong>bind our data</strong>, and then <strong>use that data to set the width</strong>.</p>
+
+<p>Let’s <strong>use d3 to automatically set the <code class="highlighter-rouge">rect</code> width using data</strong>.</p>
+
+<iframe class="iframe-demo" src="/demos/using-enter-and-append-e7f0ac4f31ae6164aaf87c1b5f5e1530.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-e7f0ac4f31ae6164aaf87c1b5f5e1530.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">"420"</span> <span class="na">height=</span><span class="s">"80"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"0"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"20"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"60"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">355</span> <span class="p">];</span>
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">d</span><span class="p">;</span>
+    <span class="p">})</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-e7f0ac4f31ae6164aaf87c1b5f5e1530.html">Open example in new window</a></p>
+
+<p>That way we could <strong>change the data</strong> from being <code class="highlighter-rouge">[ 300, 50, 150, 355 ]</code> to being <code class="highlighter-rouge">[ 20, 80, 1, 9 ]</code> to being <code class="highlighter-rouge">[ 1, 0, 0, 400 ]</code> and the chart would just update automatically!</p>
+
+<p>So cool! So fun!</p>
+
+<p><em>…..until we get more data!</em></p>
+
+<h3 id="the-problem">The Problem</h3>
+
+<p>If you have <strong>four</strong> <code class="highlighter-rouge">rect</code> elements but <strong>five</strong> data points, what happens?</p>
+
+<p>Even after you bind, <strong>you still only have four rectangles.</strong></p>
+
+<iframe class="iframe-demo" src="/demos/using-enter-and-append-3b7668d1e74a59bc85d90f49e46b08f8.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-3b7668d1e74a59bc85d90f49e46b08f8.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">"420"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"0"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"20"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"40"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect</span> <span class="na">x=</span><span class="s">"0"</span> <span class="na">y=</span><span class="s">"60"</span> <span class="na">height=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">150</span> <span class="p">];</span>
+  <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">d</span><span class="p">;</span>
+    <span class="p">})</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-3b7668d1e74a59bc85d90f49e46b08f8.html">Open example in new window</a></p>
+
+<p>So the four data points that have corresponding <code class="highlighter-rouge">rect</code>s work out, but the fifth data point without a <code class="highlighter-rouge">rect</code> just plain doesn’t! Now we have two options</p>
+
+<ol>
+  <li>Suck it up and add another <code class="highlighter-rouge">rect</code></li>
+  <li>Sob quietly and figure out another method using d3</li>
+</ol>
+
+<p><strong>Method 1</strong> sounds okay until you realize what happens if you need <em>more</em> data points. What if you have eight, or thirty, or two hundred?</p>
+
+<p>Are you going to add each one of those <code class="highlighter-rouge">&lt;rect&gt;</code> elements in there? <strong>You probably don’t want to do that manually</strong>.</p>
+
+<p>For <strong>Method 2</strong> I usually skip the crying part and just go straight to d3. Let’s do that.</p>
+
+<h2 id="enter-enter-and-append">Enter <code class="highlighter-rouge">.enter</code> and <code class="highlighter-rouge">.append</code></h2>
+
+<p>After you bring data, <code class="highlighter-rouge">.enter()</code> is a way of talking about all of <strong>the data points that don’t have an element yet</strong>.</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">"420"</span> <span class="na">height=</span><span class="s">"100"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+  <span class="nt">&lt;rect&gt;&lt;/rect&gt;</span>
+<span class="nt">&lt;/svg&gt;</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">rectangles</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">).</span><span class="nx">data</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]);</span></code></pre></figure>
+
+<p>We have <strong>3 elements</strong>, but only <strong>5 data points</strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>data point</th>
+      <th><code class="highlighter-rouge">rect</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td><strong>No!</strong></td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td><strong>No!</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As a result, we’re left with <strong>two data points not represented</strong>. If we try to change attributes with <code class="highlighter-rouge">rectangles</code>, it will only affect the first three!</p>
+
+<p>In order to access the two other elements, we user <code class="highlighter-rouge">.enter()</code>.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// This is the three data points that have elements</span>
+<span class="kd">var</span> <span class="nx">rectangles</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">);</span>
+
+<span class="c1">// And this is the two data points without elements</span>
+<span class="kd">var</span> <span class="nx">new_rects</span> <span class="o">=</span> <span class="nx">rectangles</span><span class="p">.</span><span class="nx">enter</span><span class="p">();</span></code></pre></figure>
+
+<p>Even though we can <strong>access</strong> them now, there are still only three <code class="highlighter-rouge">rect</code> elements on the page. With five data points, <strong>we need two more <code class="highlighter-rouge">rect</code> elements.</strong></p>
+
+<p>In order to add the elements, you use <code class="highlighter-rouge">.enter()</code>’s best friend: <code class="highlighter-rouge">.append</code>. <code class="highlighter-rouge">.append</code> will… append a new element for each of your data points.</p>
+
+<p>In this case, we need to use <code class="highlighter-rouge">new_rects.enter().append('rect')</code>. <code class="highlighter-rouge">.enter()</code> accesses the lonely data points, and then <code class="highlighter-rouge">append</code> will add a rectangle for each of them.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">rectangles</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">new_rects</span> <span class="o">=</span> <span class="nx">rectangles</span><span class="p">.</span><span class="nx">enter</span><span class="p">();</span>
+<span class="nx">new_rects</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">"rect"</span><span class="p">);</span></code></pre></figure>
+
+<p><code class="highlighter-rouge">new_rects</code> loops through those two lonely data points, and adds a <code class="highlighter-rouge">rect</code> for each of them.</p>
+
+<p>Now you have five rectangles!</p>
+
+<p><em>BUT.</em></p>
+
+<p>Your first three rectangles are in <code class="highlighter-rouge">var rectangles</code>, and your second (new) three rectangles are in <code class="highlighter-rouge">var new_rects</code>. They need heights and widths and all of that, but because they’re in different variables, <strong>you’re going to have to set them both separately</strong>.</p>
+
+<p>You’ll need to give <code class="highlighter-rouge">rectangles</code> a width, and <code class="highlighter-rouge">new_rects</code> a width. <em>Separately.</em></p>
+
+<p>You’ll need to give <code class="highlighter-rouge">rectangles</code> a fill color, and <code class="highlighter-rouge">new_rects</code> a fill color. <em>Separately.</em></p>
+
+<p>This is stupid! Can’t we just get them all on the same team?</p>
+
+<p>The answer is <strong>yes</strong>,</p>
+
+<p>Here’s the secret: <strong>delete all of the <code class="highlighter-rouge">rect</code>s inside of the SVG.</strong> Now <em>all of the rects are new</em>.</p>
+
+<p>If they’re <em>all</em> new, that means they’re <em>all</em> represented by <code class="highlighter-rouge">.enter()</code>. <code class="highlighter-rouge">new_rects</code> will have five, and <code class="highlighter-rouge">rectangles</code> will have zero!</p>
+
+<p>Usually it looks like this:</p>
+
+<iframe class="iframe-demo" src="/demos/using-enter-and-append-2337c6fb99ae224e569cc5a78a61ddeb.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-2337c6fb99ae224e569cc5a78a61ddeb.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">"420"</span> <span class="na">height=</span><span class="s">"100"</span> <span class="na">class=</span><span class="s">"chart"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">90</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s2">".chart"</span><span class="p">);</span> <span class="c1">// Grab the svg container</span>
+<span class="kd">var</span> <span class="nx">new_rects</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span> <span class="c1">// Get all the rectangles in the svg</span>
+                  <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span> <span class="c1">// Bind the 5 data points</span>
+                  <span class="p">.</span><span class="nx">enter</span><span class="p">()</span> <span class="c1">// Grab the 5 'new' data points</span>
+                  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span> <span class="c1">// Add a rectangles for each 'new' data point</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// Begin setting attributes</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// i is an index, 0, 1, 2, 3</span>
+                    <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span><span class="p">;</span>  <span class="c1">// this spaces them out evenly</span>
+                  <span class="p">})</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+                  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">d</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// data point * 2 pixels wide</span>
+                  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-2337c6fb99ae224e569cc5a78a61ddeb.html">Open example in new window</a></p>
+
+<p>The other big thing you need to make a note of that the <code class="highlighter-rouge">attr</code> function isn’t just <code class="highlighter-rouge">function(d) { }</code> any more, but <code class="highlighter-rouge">function(d, i) { }</code>. <code class="highlighter-rouge">i</code> is an index, and it keeps track of <em>how many elements you’ve gone through</em>.</p>
+
+<p>You can can use this with a little multiplication to space things out. Let’s look at what happens each time we go through <code class="highlighter-rouge">attr</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>time through</th>
+      <th>data point <code class="highlighter-rouge">d</code></th>
+      <th>index <code class="highlighter-rouge">i</code></th>
+      <th><code class="highlighter-rouge">y</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>First</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0 * 20 = <strong>0</strong></td>
+    </tr>
+    <tr>
+      <td>Second</td>
+      <td>70</td>
+      <td>1</td>
+      <td>1 * 20 = <strong>20</strong></td>
+    </tr>
+    <tr>
+      <td>Third</td>
+      <td>30</td>
+      <td>2</td>
+      <td>2 * 20 = <strong>40</strong></td>
+    </tr>
+    <tr>
+      <td>Fourth</td>
+      <td>40</td>
+      <td>3</td>
+      <td>4 * 20 = <strong>60</strong></td>
+    </tr>
+    <tr>
+      <td>Fifth</td>
+      <td>90</td>
+      <td>4</td>
+      <td>4 * 20 = <strong>80</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Each time we go through to a new data point, <code class="highlighter-rouge">i</code> gets one bigger. We multiply that out and voila! We have the <code class="highlighter-rouge">y</code> offset that we need.</p>
+
+<h2 id="review">Review</h2>
+
+<p>You know what’s <em>the best part</em> of this? The fact that now that we have <code class="highlighter-rouge">enter</code> and <code class="highlighter-rouge">append</code> we can add a million things to our chart. With <strong>five data points</strong>, we can automatically add not only five rectangles, but five of anything else! Like, oh, I don’t know, <em>annotations?</em></p>
+
+<p><strong>For example!!!</strong></p>
+
+<iframe class="iframe-demo" src="/demos/using-enter-and-append-490990371d1b091f9f8637054852337a.html"></iframe>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-490990371d1b091f9f8637054852337a.html">Open example in new window</a></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">"200"</span> <span class="na">width=</span><span class="s">"500"</span><span class="nt">&gt;&lt;/svg&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+<span class="kd">var</span> <span class="nx">datapoints</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">:</span> <span class="mi">19</span>	<span class="p">},</span>
+  <span class="p">{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'Texas'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">:</span> <span class="mi">26</span> <span class="p">},</span>
+  <span class="p">{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'California'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">:</span> <span class="mi">38</span> <span class="p">},</span>
+  <span class="p">{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'Florida'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">:</span> <span class="mi">20</span> <span class="p">},</span>
+  <span class="p">{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'Illinois'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">:</span> <span class="mi">12</span>	<span class="p">}</span>
+<span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'svg'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">rectangles</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">30</span><span class="p">;</span> <span class="p">})</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'height'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="p">;</span> <span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">annotations</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">'text'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">datapoints</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+                    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">'text'</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="mi">65</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">30</span> <span class="o">+</span> <span class="mi">15</span><span class="p">;</span> <span class="p">})</span>
+                    <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">[</span><span class="s1">'name'</span><span class="p">];</span> <span class="p">})</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'font-size'</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">'text-anchor'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">);</span>
+
+<span class="nt">&lt;/script&gt;</span></code></pre></figure>
+<p class="iframe-note"><a target="_new" href="/demos/using-enter-and-append-490990371d1b091f9f8637054852337a.html">Open example in new window</a></p>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>

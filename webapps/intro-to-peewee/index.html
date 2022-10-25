@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Intro to peewee</title>
+  <meta name="description" content="">
+
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="/css/new.css">
+  
+  <link rel="canonical" href="http://jonathansoma.com/tutorials/webapps/intro-to-peewee/">
+  <link rel="alternate" type="application/rss+xml" title="Things by Jonathan Soma" href="../../../feed.xml" />
+  <link rel="stylesheet" href="/css/pygments/zenburn.css"></link>
+  
+  <meta property=”og:description” content=”” />
+  <meta property="og:title" content="Intro to peewee">
+  <meta property="twitter:title" content="Intro to peewee">
+  <meta property=”twitter:creator:id” content=”15921550” />
+  <meta property=”twitter:description” content=”” />
+  <meta property=”twitter:creator” content=”dangerscarf” />
+</head>
+
+
+  <body>
+    <div id="wrapper">
+      <div class="top-nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong><a href="/">Jonathan Soma</a></strong> 
+              <div class="pull-right">
+                <a target="_new" href="http://twitter.com/dangerscarf"><i class="fa fa-twitter fa-lg"></i></a>
+                <a target="_new" href="https://instagram.com/dangerscarf"><i class="fa fa-instagram fa-lg"></i></a>
+                <a target="_new" href="https://github.com/jsoma"><i class="fa fa-github fa-lg"></i></a>
+                <a target="_new" href="https://tinyletter.com/jsoma"><i class="fa fa-pencil fa-lg"></i></a>
+                <a target="_new" href="mailto:jonathan.soma@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
+              </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                      
+                      
+<p class="breadcrumbs"><a href="/">Home</a> &gt; <a href="../..">Tutorials</a> &gt; <a href="..">Web Applications for You and Me</a> &gt;  Intro to peewee</p>
+
+
+
+                      <p><strong>This tutorial is out of date!</strong> <a href="http://jonathansoma.com/tutorials/flask-sqlalchemy-mapbox/">Try my longer, updated Flask-SQLite webapp tutorial here</a></p>
+
+<h1 id="introduction-to-peewee">Introduction to peewee</h1>
+
+<p>Peewee is a “simple, expressive” <a href="dbs-and-orms">ORM</a> for Python. Instead of running SQL queries in your code, it allows you to connect to a database and run queries on it in a way that seems a little more Python-y.</p>
+
+<h2 id="prepping-our-data">Prepping our data</h2>
+
+<p>I took two datasets from the NYC data portal, one is a directory of high schools and one is their performance data.</p>
+
+<ol>
+  <li><a href="https://data.cityofnewyork.us/Education/DOE-High-School-Directory-2016/7crd-d9xh">High School Directory</a></li>
+  <li><a href="https://data.cityofnewyork.us/Education/SAT-College-Board-2010-School-Level-Results/zt9s-n5aj">High School SAT Results</a></li>
+</ol>
+
+<p>I downloaded them both as CSV files, then cleaned them up a little. Some columns are <em>almost</em> numbers-only, but not quite,</p>
+
+<ol>
+  <li>For the directory, I edited <code class="highlighter-rouge">grade_span_min</code>, <code class="highlighter-rouge">grade_span_max</code> and <code class="highlighter-rouge">expgrade_span_min</code>: I changed <code class="highlighter-rouge">K</code> to 0 and <code class="highlighter-rouge">PK</code> to -1. That way we’ll be able to do math with those numbers later.</li>
+  <li>For the SAT scores, for everything that has an <code class="highlighter-rouge">s</code> in it I just blanked out the cell (filter proved very useful).</li>
+  <li>I also renamed the columns to be all lowercase, with underscores. So now we have: <code class="highlighter-rouge">dbn</code>, <code class="highlighter-rouge">school_name</code>, <code class="highlighter-rouge">number_of_test_takers</code>, <code class="highlighter-rouge">critical_reading_mean</code>, <code class="highlighter-rouge">mathematics_mean</code>, <code class="highlighter-rouge">writing_mean</code></li>
+</ol>
+
+<p>Now we’ll use the wonderful <a href="http://csvkit.readthedocs.org/">CSVKit</a> to convert it into a SQLite database with a <code class="highlighter-rouge">schools</code> table and a <code class="highlighter-rouge">sat_scores</code> table.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">csvsql --db sqlite:///schools.db --insert --table schools DOE_High_School_Directory_2016.csv 
+csvsql --db sqlite:///schools.db --insert --table sat_scores SAT__College_Board__2010_School_Level_Results.csv </code></pre></figure>
+
+<blockquote>
+  <p><em>NOTE:</em>  If__ you_received an error about the data not being in UTF-8, you might want to give Google Spreadsheets a try instead of Excel.</p>
+</blockquote>
+
+<p>No error messages? Great! <strong>Let’s take a peek at our file</strong>. Run <code class="highlighter-rouge">sqlite3 schools.db</code> to open up the SQLite console with <code class="highlighter-rouge">schools.db</code>.</p>
+
+<p>First we’ll use <code class="highlighter-rouge">.tables</code> to see what our tables are</p>
+
+<figure class="highlight"><pre><code class="language-sqlite" data-lang="sqlite">sqlite&gt; .tables
+sat_scores  schools </code></pre></figure>
+
+<p>And then <code class="highlighter-rouge">.schema schools</code> and <code class="highlighter-rouge">.schema sat_scores</code> to see what’s hiding in the tables</p>
+
+<figure class="highlight"><pre><code class="language-sqlite" data-lang="sqlite">sqlite&gt; .schema schools
+CREATE TABLE schools (
+	dbn VARCHAR(6) NOT NULL, 
+	school_name VARCHAR(79) NOT NULL, 
+	boro VARCHAR(13) NOT NULL, 
+	building_code VARCHAR(4) NOT NULL, 
+	shared_space BOOLEAN NOT NULL, 
+	phone_number VARCHAR(12) NOT NULL, 
+	grade_span_min INTEGER NOT NULL, 
+	grade_span_max INTEGER NOT NULL, 
+  ....
+	priority09 VARCHAR(32), 
+	priority10 VARCHAR(32), 
+	CHECK (shared_space IN (0, 1))
+);  </code></pre></figure>
+
+<p>Looking good! We’ll want to remember the <code class="highlighter-rouge">.schema</code> command when we have to tell peewee what’s inside of the database, but for now we can rest easy that we have a working SQLite database.</p>
+
+<h2 id="installing-peewee">Installing peewee</h2>
+
+<p>Peewee is your standard Python library, you can install it with <code class="highlighter-rouge">pip</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pip install peewee</code></pre></figure>
+
+<h2 id="connecting-with-peewee">Connecting with peewee</h2>
+
+<p>The first thing we need to do is define our <strong>models</strong>. Models are representation of a <strong>databases table</strong>. We have two database tables - <code class="highlighter-rouge">schools</code> and <code class="highlighter-rouge">sat_scores</code>, so we’ll need two models, one to represent each of them.</p>
+
+<p>Take the following (halfway-complete) code and save it as <code class="highlighter-rouge">models.py</code>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># Import from peewee</span>
+<span class="kn">from</span> <span class="nn">peewee</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c"># Connect to the SQLite database</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">SqliteDatabase</span><span class="p">(</span><span class="s">'schools.db'</span><span class="p">)</span>
+
+<span class="c"># Define what a 'School' is</span>
+<span class="k">class</span> <span class="nc">School</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+  <span class="c"># These are all the fields it has</span>
+  <span class="c"># match up CharField/IntegerField/etc with correct type</span>
+  <span class="n">dbn</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># primary key = unique id</span>
+  <span class="n">school_name</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">boro</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">grade_span_min</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">grade_span_max</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">total_students</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+
+  <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+    <span class="c"># data is coming from schools.db</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="c"># and it's in the table called 'schools'</span>
+    <span class="n">db_table</span> <span class="o">=</span> <span class="s">'schools'</span>
+
+<span class="c"># Repeat with the SAT scores</span>
+<span class="k">class</span> <span class="nc">Score</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+  <span class="n">dbn</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">school_name</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">number_of_test_takers</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">critical_reading_mean</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">mathematics_mean</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">writing_mean</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  
+  <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="n">db_table</span> <span class="o">=</span> <span class="s">'sat_scores'</span></code></pre></figure>
+
+<p>Let’s break it down piece by piece, shall we?</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">peewee</span> <span class="kn">import</span> <span class="o">*</span></code></pre></figure>
+
+<p>Grab the peewee library and import all of the parts of it</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">db</span> <span class="o">=</span> <span class="n">SqliteDatabase</span><span class="p">(</span><span class="s">'schools.db'</span><span class="p">)</span></code></pre></figure>
+
+<p>Connect to the SQLite database called <code class="highlighter-rouge">schools.db</code>. This part is flexible - if you had a MySQL database you’d use <code class="highlighter-rouge">MySQLDatabase</code> instead of a <code class="highlighter-rouge">SqliteDatabase</code>. You could also connect to a lot of different SQLite databases, if you so desired! For example:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># If you wanted to connect to many databases, no problem</span>
+<span class="n">schools_db</span> <span class="o">=</span> <span class="n">SqliteDatabase</span><span class="p">(</span><span class="s">'schools.db'</span><span class="p">)</span>
+<span class="n">crime_db</span> <span class="o">=</span> <span class="n">SqliteDatabase</span><span class="p">(</span><span class="s">'crime.db'</span><span class="p">)</span>
+<span class="n">socks_db</span> <span class="o">=</span> <span class="n">SqliteDatabase</span><span class="p">(</span><span class="s">'socks_i_own.db'</span><span class="p">)</span></code></pre></figure>
+
+<p>Now we need to define the <strong>model</strong>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">School</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+  <span class="c"># These are all the fields it has</span>
+  <span class="c"># match up CharField/IntegerField/etc with correct type</span>
+  <span class="n">dbn</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># primary key = unique id</span>
+  <span class="n">school_name</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">boro</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+  <span class="n">grade_span_min</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">grade_span_max</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">total_students</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">()</span>
+
+  <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+    <span class="c"># data is coming from schools.db</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="c"># and it's in the table called 'schools'</span>
+    <span class="n">db_table</span> <span class="o">=</span> <span class="s">'schools'</span></code></pre></figure>
+
+<p>You need to explain to peewee what’s in the table and what each column is - <code class="highlighter-rouge">school_name = CharField()</code> means that <code class="highlighter-rouge">school_name</code> is a string, while <code class="highlighter-rouge">grade_span_min</code> is an <code class="highlighter-rouge">IntegerField()</code> because it is, of course, a number.</p>
+
+<p>There are a <a href="http://docs.peewee-orm.com/en/latest/peewee/models.html#field-types-table">whole lot of types</a>, including <code class="highlighter-rouge">BooleanField()</code> and <code class="highlighter-rouge">DateField()</code> and more.</p>
+
+<p>You then define a class called <code class="highlighter-rouge">Meta</code> <em>inside</em> of <code class="highlighter-rouge">School</code> to explain where exactly this model should be pulling its information from. We defined <code class="highlighter-rouge">db</code> earlier as attaching to <code class="highlighter-rouge">schools.db</code>, and we set the <code class="highlighter-rouge">db_table</code> since the information is sitting in the <code class="highlighter-rouge">schools</code> table. If your SQLite database only has one table, you can ignore <code class="highlighter-rouge">db_table</code>.</p>
+
+<p>We then repeat the process for SAT scores.</p>
+
+<p>TODO explain primary keys</p>
+
+<h2 id="querying-with-peewee">Querying with peewee</h2>
+
+<p>That was a heck of a lot of set up, wasn’t it? Now we can actually reach out to query our database.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Remember we saved the code above as <code class="highlighter-rouge">models.rb</code>! That means we can <code class="highlighter-rouge">import</code> it using Python so it can keep our code separated and clean.</p>
+</blockquote>
+
+<p>Let’s write a script to connect to import our models, then do some fun stuff with the database.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="o">*</span></code></pre></figure>
+
+<p>What is the DBN for Union Square Academy? You can use <code class="highlighter-rouge">.get</code> to query for one specific record in the database.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">school</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">school_name</span> <span class="o">==</span> <span class="s">'Union Square Academy for Health Sciences'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">dbn</span></code></pre></figure>
+
+<p>Most schools probably have unique names, but you can also use <code class="highlighter-rouge">.get</code> on non-unique fields. Let’s say I wanted exactly one school in Brooklyn.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">school</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">boro</span> <span class="o">==</span> <span class="s">'Brooklyn'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">school_name</span></code></pre></figure>
+
+<p>If you want to select <strong>multiple rows</strong>, though, you need to use <code class="highlighter-rouge">.select()</code>. If you’re particular about <em>which</em> ones, you’ll also want to use <code class="highlighter-rouge">.where</code>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">boro</span> <span class="o">==</span> <span class="s">'Brooklyn'</span><span class="p">)</span></code></pre></figure>
+
+<p>You can count them, or loop through them</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span> <span class="n">schools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">school</span> <span class="ow">in</span> <span class="n">schools</span><span class="p">:</span>
+  <span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">school_name</span></code></pre></figure>
+
+<p>Oh, was that too many to loop through? You can use <code class="highlighter-rouge">.limit()</code> to only take the first few results. Maybe we want the first five schools in Manhattan, ordered by the number of students?</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">boro</span> <span class="o">==</span> <span class="s">'Manhattan'</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">total_students</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">school</span> <span class="ow">in</span> <span class="n">schools</span><span class="p">:</span>
+  <span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">school_name</span><span class="p">,</span> <span class="n">school</span><span class="o">.</span><span class="n">total_students</span></code></pre></figure>
+
+<p>And the biggest schools in the Bronx?</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">schools</span> <span class="o">=</span> <span class="n">School</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">boro</span> <span class="o">==</span> <span class="s">'Bronx'</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">School</span><span class="o">.</span><span class="n">total_students</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">school</span> <span class="ow">in</span> <span class="n">schools</span><span class="p">:</span>
+  <span class="k">print</span> <span class="n">school</span><span class="o">.</span><span class="n">school_name</span><span class="p">,</span> <span class="n">school</span><span class="o">.</span><span class="n">total_students</span></code></pre></figure>
+
+<p>You can use all your favorite SQL query pieces - <strong>WHERE</strong>, <strong>ORDER</strong>, <strong>LIMIT</strong>, even <strong>JOIN</strong> and all of that.</p>
+
+<blockquote>
+  <p><strong>NOTE:</strong> I really recommend the <a href="http://docs.peewee-orm.com/en/latest/peewee/quickstart.html">peewee documentation</a>, it’s fantastic.</p>
+</blockquote>
+
+<p>Now that we’re good on this, let’s put peewee on the back burner for a hot second while we learn how to <a href="../intro-to-flask/">build tiny web apps with Flask</a></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="newsletter-banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+       <p><strong>Want to hear when I release new things?</strong><br />My infrequent and sporadic newsletter can help with that.</p>
+       <form style="" action="https://tinyletter.com/jsoma" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/jsoma', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"><p><input type="text" placeholder="email@example.com" name="email" id="tlemail" /> <input type="submit" value="Get updates" /><input type="hidden" value="1" name="embed"/></p></form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+    <div class="footer">
+       <div class="container">
+         <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p><strong>Hi, I'm Soma</strong></p>
+            <p>I run a <a href="http://brooklynbrainery.com">fake school in Brooklyn</a> and a <a href="http://ledeprogram.com">data journalism program</a> at Columbia University's Journalism School.</p>
+            <p>I also co-host talks about food science and culture in a semi-monthly lecture series called <a href="http://omgmsg.com">Masters of Social Gastronomy</a>. We <a href="https://soundcloud.com/msgpodcast">have a podcast</a> that doesn't get updated nearly often enough, too.</p>
+            <p><a href="http://tinyletter.com/jsoma">Sign up for my newsletter</a> and I will <em>definitely</em> disappoint you.</p>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Track me down</strong></p>
+        <ul class="social-media-list">
+          
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:jonathan.soma@gmail.com">jonathan.soma@gmail.com</a>
+          </li>
+
+          <li>
+            <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+            <a href="mailto:soma@brooklynbrainery.com">soma@brooklynbrainery.com</a>
+          </li>
+
+          
+          <li>
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <a href="https://twitter.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <a href="https://instagram.com/dangerscarf">
+              <span class="username">dangerscarf</span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <i class="fa fa-github fa-lg" aria-hidden="true"></i>
+
+            <a href="https://github.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+          
+
+          <li>
+            <i class="fa fa-pencil-square fa-lg" aria-hidden="true"></i>
+            <a href="https://tinyletter.com/jsoma">
+              <span class="username">jsoma</span>
+            </a>
+          </li>
+
+        </ul>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <p><strong>Miscellaneous projects</strong></p>
+            <ul>
+              <li><a target="_new" href="http://www.handsomeatlas.com/">Handsome Atlas</a></li>
+              <li><a target="_new" href="https://dabbles.in/">Dabbler</a></li>
+              <li><a target="_new" href="http://vintagevisualizations.com/">Vintage Visualizations</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/singles/">Interactive Singles Map</a></li>
+              <li><a target="_new" href="http://visualizing.nyc/">visualizing.nyc</a></li>
+              <li><a target="_new" href="http://jonathansoma.com/open-source-language-map/">Open-Source Language Map</a></li>
+          </div>
+        </div>
+       </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</footer>
+    </div>
+
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-5541738-17', 'jonathansoma.com');
+      ga('send', 'pageview');
+
+    </script>
+      <script>
+    function setIframeHeight() {
+      var remaining = false,
+          iframes = document.getElementsByClassName("iframe-demo");
+
+      for(var i = 0; i < iframes.length; i++) {
+        var iframe = iframes[i],
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        if(doc.readyState == 'complete') {
+          // console.log(doc.body.scrollHeight);
+          // console.log(doc.body.offsetHeight);
+          // I don't know why scrollHeight gives 150 always
+          // but suddenly offsetHeight won't work?
+          // 8 pixels padding isn't factored into height?
+          iframe.height = doc.body.offsetHeight + 16;
+          // iframe.height = doc.body.scrollHeight;
+          iframe.width = doc.body.scrollWidth;
+        } else {
+          console.log("Not ready yet");
+          remaining = true;
+        }
+      }
+
+      setTimeout(setIframeHeight, 1500);
+
+    }
+
+    document.addEventListener("DOMContentReady", setIframeHeight)
+    window.addEventListener( "load", setIframeHeight, false );
+
+    </script>
+
+  </body>
+
+</html>
